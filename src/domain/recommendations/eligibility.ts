@@ -88,10 +88,10 @@ export function evaluateProductEligibility(
   if (profile.recentProcedure && flags.has('recent_procedure_exclude')) reasons.push('recent_procedure_exclusion');
 
   const sensitivityConflict =
-    flags.has('sensitivity_exclude') ||
+    (profile.sensitivityPreference === 'sensitive' && flags.has('sensitivity_exclude')) ||
     (profile.avoidFragrance && flags.has('contains_fragrance')) ||
     (profile.avoidEssentialOils && flags.has('contains_essential_oils'));
-  if (profile.sensitivityPreference === 'sensitive' && sensitivityConflict) reasons.push('sensitivity_exclusion');
+  if (sensitivityConflict) reasons.push('sensitivity_exclusion');
 
   if (overlaps(profile.allergies, product.ingredients)) reasons.push('allergy_match');
   if (overlaps(profile.currentActiveFamilies, product.activeFamilies)) reasons.push('duplicate_active_family');

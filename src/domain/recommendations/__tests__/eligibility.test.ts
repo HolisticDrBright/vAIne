@@ -70,6 +70,15 @@ describe('product eligibility', () => {
     expect(result.reasons).toEqual(expect.arrayContaining(['allergy_match', 'duplicate_active_family']));
   });
 
+  test('treats an explicit fragrance preference as a hard filter', () => {
+    const result = evaluateProductEligibility(
+      { ...baseProduct, exclusionFlags: ['contains_fragrance'] },
+      { ...baseProfile, avoidFragrance: true },
+      ['appearance.hydration_look_low'],
+    );
+    expect(result.reasons).toContain('sensitivity_exclusion');
+  });
+
   test('ranks using tag match and verification only', () => {
     const official = { ...baseProduct, id: 'official', productName: 'Official Example', verificationStatus: 'official' as const };
     const verified = { ...baseProduct, id: 'verified', productName: 'Verified Example' };

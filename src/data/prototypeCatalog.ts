@@ -1,4 +1,4 @@
-import type { ProductCandidate } from '@/domain/recommendations/eligibility';
+import type { ProductCandidate } from '../domain/recommendations/eligibility';
 
 /**
  * Fictional products for demonstrating the approved-catalog UI. They are not
@@ -26,7 +26,7 @@ export const approvedPrototypeCatalog: readonly ProductCandidate[] = [
     catalogReviewState: 'catalog_approved',
     catalogSource: 'synthetic_prototype',
     routineSlot: 'support',
-    observationTags: ['appearance.dullness_visible'],
+    observationTags: ['appearance.dullness_visible', 'appearance.texture_irregular'],
     activeFamilies: ['antioxidant-family'],
     ingredients: ['synthetic antioxidant complex'],
     exclusionFlags: [],

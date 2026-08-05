@@ -77,7 +77,7 @@ export default function OverviewScreen() {
 
       <InfoCard title="What can change this view" body={result.limitations[0]} tone="lilac" />
       <PrimaryButton label="Explore facial zones" onPress={() => router.push('/zones')} />
-      <SecondaryButton label="See today’s routine" onPress={() => router.push('/routine')} />
+      <SecondaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
       <LegalNote />
     </Screen>
   );

@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
+import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, radius } from '@/theme';
 
 interface ConsentRowProps {
@@ -45,12 +46,14 @@ export default function ConsentScreen() {
   const [starting, setStarting] = useState(false);
   const { resetAnalysis } = useAnalysisSession();
   const { startSession } = useCaptureSession();
+  const { clearRoutineProfile } = useRoutineProfile();
   const canContinue = analysis && temporaryStorage && !starting;
 
   const beginCapture = async () => {
     if (!canContinue) return;
     setStarting(true);
     resetAnalysis();
+    clearRoutineProfile();
     await startSession({
       analysis,
       temporaryDeviceStorage: temporaryStorage,

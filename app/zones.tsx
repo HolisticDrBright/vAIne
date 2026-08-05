@@ -65,7 +65,7 @@ export default function ZonesScreen() {
         label={`Zoom into ${presentation.label}`}
         onPress={() => router.push({ pathname: '/zone-detail', params: { zone: selectedZone } })}
       />
-      <SecondaryButton label="See today’s routine" onPress={() => router.push('/routine')} />
+      <SecondaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
       <LegalNote />
     </Screen>
   );

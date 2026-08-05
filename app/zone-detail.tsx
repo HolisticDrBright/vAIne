@@ -57,7 +57,7 @@ export default function ZoneDetailScreen() {
       </View>
 
       <InfoCard title="Close-up, same boundary" body="This screen magnifies a cosmetic appearance observation. It does not reveal health status or establish a diagnosis." tone="lilac" />
-      <PrimaryButton label="Build today’s routine" onPress={() => router.push('/routine')} />
+      <PrimaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
       <SecondaryButton label="Choose another zone" onPress={() => router.back()} />
       <LegalNote />
     </Screen>

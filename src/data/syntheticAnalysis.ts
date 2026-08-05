@@ -1,4 +1,4 @@
-import { SKIN_ANALYSIS_PROMPT_VERSION, skinAnalysisSchema } from '@/domain/analysis/skinAnalysisSchema';
+import { SKIN_ANALYSIS_PROMPT_VERSION, skinAnalysisSchema } from '../domain/analysis/skinAnalysisSchema';
 
 /** Synthetic fixture used by the prototype UI. No photograph or AI call is involved. */
 export const syntheticSkinAnalysis = skinAnalysisSchema.parse({

@@ -12,9 +12,10 @@ The local prototype contains a synthetic results journey plus a local-only camer
 4. A validated synthetic processing flow with ready, failure, and retry states
 5. A high-fidelity “Your Skin Today” overview with support-focus cards
 6. An interactive facial-zone explorer with a zoomed detail view for seven zones
-7. Morning routine using conspicuously labeled fictional catalog samples
-8. Optional progress comparison
-9. Working privacy status and current-session deletion
+7. A minimal in-memory routine safety intake with a conservative “prefer not to say” path
+8. Deterministic AM/PM routines derived from synthetic goals and conspicuously labeled fictional catalog samples
+9. Optional progress comparison
+10. Working privacy status and current-session deletion for photos, results, and routine answers
 
 All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta. The synthetic preparation service accepts no image input and makes no network request.
 
@@ -28,7 +29,7 @@ All displayed analysis results, people, scores, observations, dates, and routine
 
 ## Privacy boundaries
 
-This prototype has no backend, accounts, analytics, advertising trackers, uploads, persistent photo history, or AI analysis. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache and can be deleted from the current session; they are never transmitted.
+This prototype has no backend, accounts, analytics, advertising trackers, uploads, persistent photo history, or AI analysis. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache and can be deleted from the current session; they are never transmitted. Routine safety answers remain in memory only and are cleared with the check-in.
 
 Future implementation must keep separate consent for analysis, storage, progress tracking, and research. Original photographs should be deleted automatically after analysis unless the user explicitly enables progress tracking.
 
