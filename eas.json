@@ -1,0 +1,15 @@
+{
+  "cli": {
+    "version": ">= 21.6.0",
+    "appVersionSource": "remote",
+    "requireCommit": true
+  },
+  "build": {
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
