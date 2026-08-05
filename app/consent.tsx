@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
+import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, radius } from '@/theme';
 
@@ -42,12 +43,14 @@ export default function ConsentScreen() {
   const [temporaryStorage, setTemporaryStorage] = useState(false);
   const [progressTracking, setProgressTracking] = useState(false);
   const [starting, setStarting] = useState(false);
+  const { resetAnalysis } = useAnalysisSession();
   const { startSession } = useCaptureSession();
   const canContinue = analysis && temporaryStorage && !starting;
 
   const beginCapture = async () => {
     if (!canContinue) return;
     setStarting(true);
+    resetAnalysis();
     await startSession({
       analysis,
       temporaryDeviceStorage: temporaryStorage,

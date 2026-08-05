@@ -121,7 +121,7 @@ export default function CaptureScreen() {
 
   const continueToResults = () => {
     completeSession();
-    router.replace('/overview');
+    router.replace('/processing');
   };
 
   if (!session.consent?.analysis || !session.consent.temporaryDeviceStorage) {

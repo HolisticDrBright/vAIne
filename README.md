@@ -9,13 +9,14 @@ The local prototype contains a synthetic results journey plus a local-only camer
 1. Scan selection
 2. Separate consent for analysis, temporary device storage, and future progress tracking
 3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
-4. Visible skin-observation overview
-5. Facial-zone explorer
-6. Morning routine using conspicuously labeled fictional catalog samples
-7. Optional progress comparison
-8. Working privacy status and current-session deletion
+4. A validated synthetic processing flow with ready, failure, and retry states
+5. A high-fidelity “Your Skin Today” overview with support-focus cards
+6. An interactive facial-zone explorer with a zoomed detail view for seven zones
+7. Morning routine using conspicuously labeled fictional catalog samples
+8. Optional progress comparison
+9. Working privacy status and current-session deletion
 
-All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta.
+All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta. The synthetic preparation service accepts no image input and makes no network request.
 
 ## Safety boundaries
 

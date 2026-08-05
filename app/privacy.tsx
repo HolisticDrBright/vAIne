@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, Screen, SecondaryButton } from '@/components/AppChrome';
+import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, radius } from '@/theme';
 
 export default function PrivacyScreen() {
+  const { analysis, resetAnalysis } = useAnalysisSession();
   const { session, clearSession } = useCaptureSession();
   const controls = [
     ['Analysis consent', session.consent?.analysis ? 'ON' : 'OFF', 'Required before starting a local capture session.'],
@@ -15,6 +17,7 @@ export default function PrivacyScreen() {
 
   const deleteSession = async () => {
     await clearSession();
+    resetAnalysis();
     router.replace('/');
   };
 
@@ -30,8 +33,11 @@ export default function PrivacyScreen() {
           </View>
         ))}
       </View>
-      <InfoCard title="Deletion is immediate" body="Delete this check-in to remove every local file still referenced by the current session and clear the in-app state." tone="green" />
-      <SecondaryButton label={session.captures.length ? 'Delete this check-in' : 'No local check-in to delete'} onPress={() => { if (session.captures.length) void deleteSession(); }} />
+      <InfoCard title="Deletion is immediate" body="Delete this check-in to remove every local file still referenced by the current session and clear its in-memory synthetic result." tone="green" />
+      <SecondaryButton
+        label={session.captures.length || analysis.result ? 'Delete this check-in' : 'No local check-in to delete'}
+        onPress={() => { if (session.captures.length || analysis.result) void deleteSession(); }}
+      />
       <LegalNote />
     </Screen>
   );

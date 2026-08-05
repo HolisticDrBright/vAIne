@@ -11,6 +11,9 @@ export const syntheticSkinAnalysis = skinAnalysisSchema.parse({
     under_eyes: { appearanceScore: 82, observation: 'A well-rested appearance with a small opportunity to support hydration.', confidence: 0.8 },
     cheeks: { appearanceScore: 78, observation: 'Tone looks mostly even with mild visible redness.', confidence: 0.81 },
     nose_t_zone: { appearanceScore: 76, observation: 'Some pore visibility and light surface shine are visible.', confidence: 0.83 },
+    mouth_lips: { appearanceScore: 79, observation: 'The lip area looks comfortable with slight surface dryness visible.', confidence: 0.76 },
+    jawline: { appearanceScore: 83, observation: 'The jawline looks calm and mostly even in this photograph.', confidence: 0.79 },
+    chin: { appearanceScore: 77, observation: 'Light texture variation is visible across the chin.', confidence: 0.78 },
   },
   appearanceScores: {
     overall: 81,
