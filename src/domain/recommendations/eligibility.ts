@@ -1,0 +1,128 @@
+import type { SkinObservationTag } from '../analysis/observationTaxonomy';
+import type { CatalogReviewState, CatalogSource } from '../catalog/types';
+
+export type VerificationStatus = 'candidate' | 'verified' | 'official';
+export type RoutineSlot = 'cleanse' | 'support' | 'hydrate' | 'protect' | 'weekly';
+
+export type ExclusionFlag =
+  | 'pregnancy_exclude'
+  | 'nursing_exclude'
+  | 'retinoid'
+  | 'hydroquinone'
+  | 'salicylic_acid_over_2_percent'
+  | 'recent_procedure_exclude'
+  | 'sensitivity_exclude'
+  | 'contains_fragrance'
+  | 'contains_essential_oils'
+  | 'prescription_only';
+
+export interface ProductCandidate {
+  id: string;
+  brandName: string;
+  productName: string;
+  verificationStatus: VerificationStatus;
+  catalogReviewState: CatalogReviewState;
+  catalogSource: CatalogSource;
+  routineSlot: RoutineSlot;
+  observationTags: readonly SkinObservationTag[];
+  activeFamilies: readonly string[];
+  ingredients: readonly string[];
+  exclusionFlags: readonly ExclusionFlag[];
+}
+
+export interface SafetyProfile {
+  pregnantOrTrying: boolean;
+  nursing: boolean;
+  recentProcedure: boolean;
+  sensitivityPreference: 'standard' | 'sensitive';
+  avoidFragrance: boolean;
+  avoidEssentialOils: boolean;
+  allergies: readonly string[];
+  currentActiveFamilies: readonly string[];
+}
+
+export type IneligibilityReason =
+  | 'not_verified'
+  | 'catalog_not_approved'
+  | 'prescription_only'
+  | 'pregnancy_exclusion'
+  | 'nursing_exclusion'
+  | 'recent_procedure_exclusion'
+  | 'sensitivity_exclusion'
+  | 'allergy_match'
+  | 'duplicate_active_family';
+
+export interface EligibilityResult {
+  eligible: boolean;
+  reasons: IneligibilityReason[];
+  matchedTags: SkinObservationTag[];
+}
+
+const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+function overlaps(left: readonly string[], right: readonly string[]): boolean {
+  const normalizedRight = new Set(right.map(normalize));
+  return left.some((value) => normalizedRight.has(normalize(value)));
+}
+
+export function evaluateProductEligibility(
+  product: ProductCandidate,
+  profile: SafetyProfile,
+  requestedTags: readonly SkinObservationTag[],
+): EligibilityResult {
+  const reasons: IneligibilityReason[] = [];
+  const flags = new Set(product.exclusionFlags);
+
+  if (!['verified', 'official'].includes(product.verificationStatus)) reasons.push('not_verified');
+  if (product.catalogReviewState !== 'catalog_approved') reasons.push('catalog_not_approved');
+  if (flags.has('prescription_only')) reasons.push('prescription_only');
+
+  if (
+    profile.pregnantOrTrying &&
+    ['pregnancy_exclude', 'retinoid', 'hydroquinone', 'salicylic_acid_over_2_percent'].some((flag) => flags.has(flag as ExclusionFlag))
+  ) {
+    reasons.push('pregnancy_exclusion');
+  }
+
+  if (profile.nursing && flags.has('nursing_exclude')) reasons.push('nursing_exclusion');
+  if (profile.recentProcedure && flags.has('recent_procedure_exclude')) reasons.push('recent_procedure_exclusion');
+
+  const sensitivityConflict =
+    flags.has('sensitivity_exclude') ||
+    (profile.avoidFragrance && flags.has('contains_fragrance')) ||
+    (profile.avoidEssentialOils && flags.has('contains_essential_oils'));
+  if (profile.sensitivityPreference === 'sensitive' && sensitivityConflict) reasons.push('sensitivity_exclusion');
+
+  if (overlaps(profile.allergies, product.ingredients)) reasons.push('allergy_match');
+  if (overlaps(profile.currentActiveFamilies, product.activeFamilies)) reasons.push('duplicate_active_family');
+
+  const requested = new Set(requestedTags);
+  const matchedTags = product.observationTags.filter((tag) => requested.has(tag));
+
+  return { eligible: reasons.length === 0, reasons: [...new Set(reasons)], matchedTags };
+}
+
+export interface RankedEligibleProduct {
+  product: ProductCandidate;
+  eligibility: EligibilityResult;
+  rankScore: number;
+}
+
+/**
+ * Ranks eligible products using verified characteristics only.
+ * Commercial links, commission, discounts, and availability are deliberately absent.
+ */
+export function rankEligibleProducts(
+  products: readonly ProductCandidate[],
+  profile: SafetyProfile,
+  requestedTags: readonly SkinObservationTag[],
+): RankedEligibleProduct[] {
+  return products
+    .map((product) => {
+      const eligibility = evaluateProductEligibility(product, profile, requestedTags);
+      const verificationBonus = product.verificationStatus === 'official' ? 1 : 0;
+      return { product, eligibility, rankScore: eligibility.matchedTags.length * 10 + verificationBonus };
+    })
+    .filter((entry) => entry.eligibility.eligible && entry.eligibility.matchedTags.length > 0)
+    .sort((a, b) => b.rankScore - a.rankScore || a.product.productName.localeCompare(b.product.productName));
+}
