@@ -36,9 +36,15 @@ export function LegalNote() {
   return <Text style={styles.legal}>◌ Cosmetic observations, not a medical diagnosis</Text>;
 }
 
-export function PrimaryButton({ label, onPress }: { label: string; onPress: () => void }) {
+export function PrimaryButton({ label, onPress, disabled = false }: { label: string; onPress: () => void; disabled?: boolean }) {
   return (
-    <Pressable accessibilityRole="button" style={({ pressed }) => [styles.primary, pressed && styles.pressed]} onPress={onPress}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      style={({ pressed }) => [styles.primary, disabled && styles.disabled, pressed && !disabled && styles.pressed]}
+      onPress={onPress}
+    >
       <Text style={styles.primaryText}>{label}  →</Text>
     </Pressable>
   );
@@ -76,6 +82,7 @@ const styles = StyleSheet.create({
   secondary: { minHeight: 52, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, justifyContent: 'center', alignItems: 'center' },
   secondaryText: { color: colors.text, fontSize: 14, fontWeight: '600' },
   pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
+  disabled: { opacity: 0.42 },
   info: { padding: 15, borderRadius: radius.medium, borderWidth: 1 },
   infoTitle: { fontWeight: '700', fontSize: 12 },
   infoBody: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 5 },

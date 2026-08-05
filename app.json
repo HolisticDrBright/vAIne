@@ -24,7 +24,15 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow vAIne to capture photos for a local visual skin check-in.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

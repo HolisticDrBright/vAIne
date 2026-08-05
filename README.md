@@ -4,17 +4,18 @@ vAIne is an early, standalone mobile prototype for visual skin wellness check-in
 
 ## Current prototype
 
-The local prototype contains a synthetic, offline journey:
+The local prototype contains a synthetic results journey plus a local-only camera beta:
 
 1. Scan selection
-2. Guided camera framing
-3. Visible skin-observation overview
-4. Facial-zone explorer
-5. Morning routine using conspicuously labeled fictional catalog samples
-6. Optional progress comparison
-7. Privacy-control concept
+2. Separate consent for analysis, temporary device storage, and future progress tracking
+3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
+4. Visible skin-observation overview
+5. Facial-zone explorer
+6. Morning routine using conspicuously labeled fictional catalog samples
+7. Optional progress comparison
+8. Working privacy status and current-session deletion
 
-All displayed people, scores, observations, dates, and routines are fictional demonstration content.
+All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta.
 
 ## Safety boundaries
 
@@ -26,7 +27,7 @@ All displayed people, scores, observations, dates, and routines are fictional de
 
 ## Privacy boundaries
 
-This prototype has no backend, accounts, analytics, advertising trackers, camera access, uploads, storage, or AI analysis. It does not collect or transmit photographs or personal data.
+This prototype has no backend, accounts, analytics, advertising trackers, uploads, persistent photo history, or AI analysis. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache and can be deleted from the current session; they are never transmitted.
 
 Future implementation must keep separate consent for analysis, storage, progress tracking, and research. Original photographs should be deleted automatically after analysis unless the user explicitly enables progress tracking.
 

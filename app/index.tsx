@@ -12,7 +12,7 @@ export default function ScanSelectionScreen() {
       <Text style={styles.title}>Skin check-in</Text>
       <Text style={styles.subtitle}>A thoughtful way to notice your skin and build consistent care habits.</Text>
 
-      <Pressable accessibilityRole="button" style={styles.hero} onPress={() => router.push('/capture')}>
+      <Pressable accessibilityRole="button" style={styles.hero} onPress={() => router.push('/consent')}>
         <View style={styles.glow} />
         <View style={styles.heroCopy}>
           <View style={styles.ready}><Text style={styles.readyText}>READY NOW</Text></View>
@@ -34,6 +34,9 @@ export default function ScanSelectionScreen() {
           <View style={styles.coming}><Text style={styles.comingText}>COMING SOON</Text></View>
         </View>
       ))}
+      <Pressable accessibilityRole="button" style={styles.privacyLink} onPress={() => router.push('/privacy')}>
+        <Text style={styles.privacyLinkText}>Privacy controls and local photo deletion  →</Text>
+      </Pressable>
       <LegalNote />
     </Screen>
   );
@@ -60,4 +63,6 @@ const styles = StyleSheet.create({
   moduleSubtitle: { color: colors.muted, fontSize: 12, marginTop: 3 },
   coming: { borderRadius: radius.pill, backgroundColor: '#25344C', paddingHorizontal: 8, paddingVertical: 5 },
   comingText: { color: '#B8C5D7', fontSize: 8, letterSpacing: 0.6, fontWeight: '700' },
+  privacyLink: { minHeight: 48, justifyContent: 'center', alignItems: 'center' },
+  privacyLinkText: { color: colors.blue, fontSize: 12, fontWeight: '600' },
 });

@@ -6,10 +6,18 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { appearanceMetrics } from '@/data/prototype';
 import { syntheticSkinAnalysis } from '@/data/syntheticAnalysis';
 import { colors, radius } from '@/theme';
+import { useCaptureSession } from '@/state/CaptureSessionContext';
 
 export default function OverviewScreen() {
+  const { session } = useCaptureSession();
+  const hasLocalCaptures = session.captures.length > 0;
+
   return (
     <Screen title="Your skin today" back>
+      <View style={styles.prototypeNotice}>
+        <Text style={styles.prototypeNoticeTitle}>{hasLocalCaptures ? `${session.captures.length} local photos captured` : 'Demonstration mode'}</Text>
+        <Text style={styles.prototypeNoticeBody}>The results below are synthetic prototype content and were not produced from your photos. No image was uploaded or analyzed.</Text>
+      </View>
       <View style={styles.lead}>
         <ScoreRing score={syntheticSkinAnalysis.appearanceScores.overall} />
         <View style={styles.copy}>
@@ -46,4 +54,7 @@ const styles = StyleSheet.create({
   limitCard: { flex: 1, backgroundColor: colors.panelSoft, borderRadius: radius.medium, padding: 13 },
   limitTitle: { color: colors.gold, fontSize: 11, fontWeight: '700' },
   limitBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
+  prototypeNotice: { backgroundColor: `${colors.lilac}12`, borderWidth: 1, borderColor: `${colors.lilac}44`, borderRadius: radius.medium, padding: 14 },
+  prototypeNoticeTitle: { color: colors.lilac, fontSize: 12, fontWeight: '700' },
+  prototypeNoticeBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 4 },
 });
