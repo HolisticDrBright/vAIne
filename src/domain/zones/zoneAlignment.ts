@@ -294,6 +294,58 @@ export function deriveZoneCropRects(
   return crops;
 }
 
+export interface ZoneZoomLayout {
+  /** Display size of the full original image inside the crop viewport. */
+  imageWidth: number;
+  imageHeight: number;
+  /** Viewport-space position of the image origin (<= 0 when zoomed in). */
+  offsetX: number;
+  offsetY: number;
+}
+
+/**
+ * Pans and zooms the ORIGINAL image so the given zone fills a viewport,
+ * without ever revealing area outside the source. The window keeps the
+ * viewport's pixel aspect ratio, so the zone is never distorted; zones near
+ * an image edge pan back inside instead of stretching.
+ */
+export function getZoneZoomLayout(
+  zoneRect: NormalizedRect,
+  source: Size,
+  viewport: Size,
+  pad: number = 0.03,
+): ZoneZoomLayout {
+  const padded = padNormalizedRect(zoneRect, pad);
+  // Aspect the normalized window must have so its pixel shape matches the viewport.
+  const normalizedAspect = (viewport.width / viewport.height) * (source.height / source.width);
+
+  let width = padded.width;
+  let height = padded.height;
+  if (width / height < normalizedAspect) {
+    width = height * normalizedAspect;
+  } else {
+    height = width / normalizedAspect;
+  }
+  if (width > 1 || height > 1) {
+    const shrink = Math.min(1 / width, 1 / height);
+    width *= shrink;
+    height *= shrink;
+  }
+
+  const centerX = padded.x + padded.width / 2;
+  const centerY = padded.y + padded.height / 2;
+  const x = Math.min(Math.max(centerX - width / 2, 0), 1 - width);
+  const y = Math.min(Math.max(centerY - height / 2, 0), 1 - height);
+
+  const scale = viewport.width / (width * source.width);
+  return {
+    imageWidth: source.width * scale,
+    imageHeight: source.height * scale,
+    offsetX: -x * source.width * scale,
+    offsetY: -y * source.height * scale,
+  };
+}
+
 export type ZoneAlignmentResolution =
   | { mode: 'landmarks'; zones: Record<SkinZone, NormalizedRect> }
   | { mode: 'fixed_guide'; reason: 'no_detection' | 'low_confidence' | 'implausible_geometry' };

@@ -5,6 +5,7 @@ import {
   deriveZoneCropRects,
   deriveZoneRects,
   getCoverTransform,
+  getZoneZoomLayout,
   isPlausibleFaceGeometry,
   MIN_LANDMARK_CONFIDENCE,
   normalizedRectToSourcePixels,
@@ -177,6 +178,48 @@ describe('zone derivation from landmarks', () => {
         expect(crop.y).toBeGreaterThanOrEqual(0);
         expect(crop.x + crop.width).toBeLessThanOrEqual(source.width);
         expect(crop.y + crop.height).toBeLessThanOrEqual(source.height);
+      }
+    }
+  });
+});
+
+describe('zone zoom layout', () => {
+  const viewport: Size = { width: 300, height: 260 };
+
+  test('centers the zone in the viewport at the viewport aspect ratio', () => {
+    const zone = { x: 0.35, y: 0.4, width: 0.3, height: 0.2 };
+    const layout = getZoneZoomLayout(zone, portraitSource, viewport);
+
+    const zoneCenterX = (zone.x + zone.width / 2) * layout.imageWidth + layout.offsetX;
+    const zoneCenterY = (zone.y + zone.height / 2) * layout.imageHeight + layout.offsetY;
+    expect(zoneCenterX).toBeCloseTo(viewport.width / 2, 1);
+    expect(zoneCenterY).toBeCloseTo(viewport.height / 2, 1);
+
+    expect(layout.imageWidth / portraitSource.width).toBeCloseTo(
+      layout.imageHeight / portraitSource.height,
+      5,
+    );
+  });
+
+  test('never exposes area outside the source image', () => {
+    for (const zone of [
+      { x: 0.85, y: 0.02, width: 0.14, height: 0.1 },
+      { x: 0, y: 0.9, width: 0.2, height: 0.1 },
+      { x: 0, y: 0, width: 1, height: 1 },
+    ]) {
+      for (const source of [portraitSource, landscapeSource]) {
+        const layout = getZoneZoomLayout(zone, source, viewport);
+        expect(layout.offsetX).toBeLessThanOrEqual(0.001);
+        expect(layout.offsetY).toBeLessThanOrEqual(0.001);
+        expect(layout.offsetX + layout.imageWidth).toBeGreaterThanOrEqual(viewport.width - 0.001);
+        expect(layout.offsetY + layout.imageHeight).toBeGreaterThanOrEqual(viewport.height - 0.001);
+
+        const centerX = (zone.x + zone.width / 2) * layout.imageWidth + layout.offsetX;
+        const centerY = (zone.y + zone.height / 2) * layout.imageHeight + layout.offsetY;
+        expect(centerX).toBeGreaterThanOrEqual(-0.001);
+        expect(centerX).toBeLessThanOrEqual(viewport.width + 0.001);
+        expect(centerY).toBeGreaterThanOrEqual(-0.001);
+        expect(centerY).toBeLessThanOrEqual(viewport.height + 0.001);
       }
     }
   });
