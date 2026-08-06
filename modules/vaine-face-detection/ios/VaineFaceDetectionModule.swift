@@ -1,6 +1,8 @@
 import ExpoModulesCore
+import Foundation
 import MLKitFaceDetection
 import MLKitVision
+import UIKit
 
 /**
  Still-image face detection for capture alignment.
