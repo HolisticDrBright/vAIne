@@ -13,13 +13,15 @@ The interface uses a warm premium clinical-spa direction with ivory surfaces, bo
 3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
 4. A validated synthetic processing flow with ready, failure, and retry states
 5. A high-fidelity “Your Skin Today” overview with support-focus cards
-6. An interactive facial-zone explorer that uses the local front capture when available, with fixed-guide magnified crops for seven zones and an illustration fallback
+6. An interactive facial-zone explorer that uses the local front capture when available: when on-device face detection succeeds, zone markers and magnified crops align to the user's actual face (labeled "aligned on-device"); otherwise a clearly labeled fixed guide or illustration fallback is shown
+6b. On-device ML Kit face detection (local Expo module wrapping the official SDKs) used only for face bounds, landmarks, capture framing checks, and crop alignment — accurate still-image mode with contours, classification, and tracking disabled; no identity recognition or embeddings; geometry stays in memory and never leaves the device
+6c. An optional close-up stage that suggests at most three guided detail photos when zone crops lack real pixel detail, with honest reasons and a skip path
 7. A minimal in-memory routine safety intake with a conservative “prefer not to say” path and a per-product budget ceiling
 8. Deterministic, budget-aware AM/PM routines derived from synthetic goals and conspicuously labeled fictional catalog samples and prices
 9. An optional, consent-controlled local baseline with real-photo comparison and no invented progress score
 10. Working privacy status and deletion for temporary photos, saved baseline photos, results, and routine answers
 
-All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta. The synthetic preparation service accepts no image input and makes no network request.
+All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed for skin characteristics in this beta, and nothing is uploaded. The only image processing that occurs is optional on-device face detection for capture framing and zone alignment. The synthetic preparation service accepts no image input and makes no network request.
 
 ## Safety boundaries
 

@@ -3,11 +3,13 @@ import { StatusBar } from 'expo-status-bar';
 import { colors } from '@/theme';
 import { CaptureSessionProvider } from '@/state/CaptureSessionContext';
 import { AnalysisSessionProvider } from '@/state/AnalysisSessionContext';
+import { FaceDetectorProvider } from '@/state/FaceDetectorContext';
 import { RoutineProfileProvider } from '@/state/RoutineProfileContext';
 import { ProgressBaselineProvider } from '@/state/ProgressBaselineContext';
 
 export default function RootLayout() {
   return (
+    <FaceDetectorProvider>
     <CaptureSessionProvider>
       <ProgressBaselineProvider>
         <AnalysisSessionProvider>
@@ -18,5 +20,6 @@ export default function RootLayout() {
         </AnalysisSessionProvider>
       </ProgressBaselineProvider>
     </CaptureSessionProvider>
+    </FaceDetectorProvider>
   );
 }

@@ -72,7 +72,7 @@ export default function ConsentScreen() {
       <View style={styles.list}>
         <ConsentRow
           title="Use photos in this check-in"
-          body="Allows vAIne to hold the three captures in memory while you move between local app screens."
+          body="Allows vAIne to hold the captures in memory while you move between local app screens, and to run on-device face detection that only aligns the facial-zone views. It does not identify you, and nothing is uploaded."
           selected={analysis}
           required
           onPress={() => setAnalysis((value) => !value)}

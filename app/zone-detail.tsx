@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
@@ -5,6 +6,7 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { ZoneZoomIllustration } from '@/components/ZoneZoomIllustration';
 import { isSkinZone, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
+import { summarizeCaptureAlignment } from '@/domain/capture/adaptiveCapture';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, fonts, radius, shadows } from '@/theme';
@@ -22,6 +24,8 @@ export default function ZoneDetailScreen() {
   const presentation = zonePresentation[zone];
   const observation = analysis.result?.facialZones[zone];
   const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
+  const alignment = useMemo(() => summarizeCaptureAlignment(frontPhoto).alignment, [frontPhoto]);
+  const zoneRect = alignment.mode === 'landmarks' ? alignment.zones[zone] : null;
 
   if (analysis.status !== 'ready' || !analysis.result || !observation) {
     return (
@@ -34,16 +38,31 @@ export default function ZoneDetailScreen() {
 
   return (
     <Screen title={presentation.label} back>
-      <Text style={styles.eyebrow}>{frontPhoto ? 'YOUR LOCAL PHOTO · FIXED GUIDE CROP' : 'ZOOMED SAMPLE VIEW'}</Text>
+      <Text style={styles.eyebrow}>
+        {frontPhoto
+          ? zoneRect ? 'YOUR LOCAL PHOTO · ALIGNED ON-DEVICE' : 'YOUR LOCAL PHOTO · FIXED GUIDE CROP'
+          : 'ZOOMED SAMPLE VIEW'}
+      </Text>
       <Text style={styles.heading}>{presentation.focus}</Text>
       <Text style={styles.subtitle}>{frontPhoto
         ? `A magnified crop of the ${presentation.label.toLowerCase()} area from your front check-in photo.`
         : 'A closer presentation of the selected fictional facial zone.'}</Text>
 
-      <ZoneZoomIllustration zone={zone} photoUri={frontPhoto?.uri} />
+      <ZoneZoomIllustration
+        zone={zone}
+        photoUri={frontPhoto?.uri}
+        photoSize={frontPhoto ? { width: frontPhoto.width, height: frontPhoto.height } : undefined}
+        zoneRect={zoneRect}
+      />
 
       {frontPhoto ? (
-        <InfoCard title="Photo crop only" body="This crop uses a fixed position calibrated to the capture guide. It is not facial-landmark detection, and no photo analysis or upload occurred." tone="green" />
+        <InfoCard
+          title="Photo crop only"
+          body={zoneRect
+            ? 'This crop pans and zooms your original photo using on-device face landmarks. No skin analysis occurred, nothing identifies you, and no upload happened.'
+            : 'This crop uses a fixed position calibrated to the capture guide—face alignment was not available for this photo. No photo analysis or upload occurred.'}
+          tone="green"
+        />
       ) : null}
 
       <View style={styles.scoreCard}>
