@@ -1,4 +1,4 @@
-import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
+import type { SkinZone } from '../domain/analysis/observationTaxonomy';
 
 export interface ZonePresentation {
   label: string;

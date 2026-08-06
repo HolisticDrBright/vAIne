@@ -4,21 +4,24 @@ import { InfoCard, LegalNote, Screen, SecondaryButton } from '@/components/AppCh
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
+import { useProgressBaseline } from '@/state/ProgressBaselineContext';
 import { colors, radius } from '@/theme';
 
 export default function PrivacyScreen() {
   const { analysis, resetAnalysis } = useAnalysisSession();
   const { session, clearSession } = useCaptureSession();
   const { clearRoutineProfile, routineProfile } = useRoutineProfile();
+  const { baseline, clearBaseline } = useProgressBaseline();
   const controls = [
     ['Analysis consent', session.consent?.analysis ? 'ON' : 'OFF', 'Required before starting a local capture session.'],
     ['Temporary device storage', session.consent?.temporaryDeviceStorage ? 'ON' : 'OFF', `${session.captures.length} temporary photo${session.captures.length === 1 ? '' : 's'} currently referenced by this session.`],
-    ['Progress tracking', session.consent?.progressTracking ? 'ON' : 'OFF', 'Optional intent only; persistent comparison history is not enabled.'],
+    ['Progress tracking', baseline ? 'SAVED' : session.consent?.progressTracking ? 'ON' : 'OFF', baseline ? 'One three-photo baseline is stored in this app until you delete or replace it.' : 'No longer-term progress baseline is stored.'],
     ['Research use', 'OFF', 'Unavailable in this beta and always separate.'],
   ] as const;
 
   const deleteSession = async () => {
     await clearSession();
+    await clearBaseline();
     resetAnalysis();
     clearRoutineProfile();
     router.replace('/');
@@ -27,19 +30,19 @@ export default function PrivacyScreen() {
   return (
     <Screen title="Privacy controls" back>
       <Text style={styles.title}>Your image is personal.</Text>
-      <Text style={styles.subtitle}>This beta keeps camera photos in temporary app cache and routine answers in memory only. It has no upload, account, AI analysis, analytics, advertising, or research pipeline.</Text>
+      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. It has no app upload, account, AI analysis, analytics, advertising, or research pipeline.</Text>
       <View style={styles.list}>
         {controls.map(([title, status, body]) => (
           <View key={title} style={styles.row}>
-            <View style={[styles.status, status === 'ON' && styles.statusOn]}><Text style={styles.statusText}>{status}</Text></View>
+            <View style={[styles.status, status !== 'OFF' && styles.statusOn]}><Text style={styles.statusText}>{status}</Text></View>
             <View style={styles.copy}><Text style={styles.rowTitle}>{title}</Text><Text style={styles.rowBody}>{body}</Text></View>
           </View>
         ))}
       </View>
-      <InfoCard title="Deletion is immediate" body="Delete this check-in to remove every referenced local photo and clear its in-memory synthetic result and routine answers." tone="green" />
+      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos, any saved baseline photos, and the in-memory synthetic result and routine answers." tone="green" />
       <SecondaryButton
-        label={session.captures.length || analysis.result || routineProfile ? 'Delete this check-in' : 'No local check-in to delete'}
-        onPress={() => { if (session.captures.length || analysis.result || routineProfile) void deleteSession(); }}
+        label={session.captures.length || baseline || analysis.result || routineProfile ? 'Delete all local vAIne data' : 'No local vAIne data to delete'}
+        onPress={() => { if (session.captures.length || baseline || analysis.result || routineProfile) void deleteSession(); }}
       />
       <LegalNote />
     </Screen>

@@ -46,6 +46,7 @@ interface CaptureSessionValue {
   startSession: (consent: CaptureConsent) => Promise<void>;
   acceptCapture: (capture: LocalCapture) => Promise<void>;
   removeCapture: (angle: SkinCaptureAngle) => Promise<void>;
+  clearCaptures: () => Promise<void>;
   markReadyForResults: () => void;
   completeSession: () => void;
   setSessionError: (message: string) => void;
@@ -101,6 +102,15 @@ export function CaptureSessionProvider({ children }: PropsWithChildren) {
     setSession((current) => ({ ...current, status: 'ready_for_results', errorMessage: null }));
   }, []);
 
+  const clearCaptures = useCallback(async () => {
+    await deleteLocalPhotos(session.captures.map((capture) => capture.uri));
+    setSession((current) => ({
+      ...current,
+      captures: [],
+      errorMessage: null,
+    }));
+  }, [session.captures]);
+
   const completeSession = useCallback(() => {
     setSession((current) => ({ ...current, status: 'complete', errorMessage: null }));
   }, []);
@@ -119,6 +129,7 @@ export function CaptureSessionProvider({ children }: PropsWithChildren) {
     startSession,
     acceptCapture,
     removeCapture,
+    clearCaptures,
     markReadyForResults,
     completeSession,
     setSessionError,
@@ -128,6 +139,7 @@ export function CaptureSessionProvider({ children }: PropsWithChildren) {
     startSession,
     acceptCapture,
     removeCapture,
+    clearCaptures,
     markReadyForResults,
     completeSession,
     setSessionError,

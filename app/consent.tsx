@@ -86,7 +86,7 @@ export default function ConsentScreen() {
         />
         <ConsentRow
           title="Progress tracking"
-          body="Marks this check-in as eligible for a future comparison history. Persistent history is not enabled yet."
+          body="Makes this check-in eligible to become a local baseline. You will confirm again before any photo is copied into longer-term app storage."
           selected={progressTracking}
           onPress={() => setProgressTracking((value) => !value)}
         />
@@ -98,7 +98,7 @@ export default function ConsentScreen() {
         />
       </View>
 
-      <InfoCard title="Local capture beta" body="Your photos stay in the app’s temporary device cache. This build has no upload, analysis, account, advertising, or research pipeline." tone="green" />
+      <InfoCard title="Local capture beta" body="Check-in photos stay in temporary device cache unless you separately save a progress baseline. This build has no app upload, analysis, account, advertising, or research pipeline." tone="green" />
       <PrimaryButton label={starting ? 'Preparing camera…' : 'Continue to camera'} onPress={beginCapture} disabled={!canContinue} />
       <LegalNote />
     </Screen>

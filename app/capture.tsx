@@ -166,7 +166,7 @@ export default function CaptureScreen() {
             return capture ? <Image key={angle} source={{ uri: capture.uri }} style={styles.thumbnail} /> : null;
           })}
         </View>
-        <InfoCard title="No upload occurred" body="The photos remain temporary local files. Use Privacy controls to delete the session." tone="green" />
+        <InfoCard title="No upload occurred" body="The photos remain temporary local files. You can delete them on the next screen or from Privacy controls." tone="green" />
         <PrimaryButton label="View demonstration results" onPress={continueToResults} />
         <SecondaryButton label="Delete and cancel" onPress={() => { void cancelCheckIn(); }} />
         <LegalNote />

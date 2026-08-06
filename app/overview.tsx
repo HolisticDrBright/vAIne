@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
+import { LocalCaptureStrip } from '@/components/LocalCaptureStrip';
 import { MetricBar } from '@/components/MetricBar';
 import { ScoreRing } from '@/components/ScoreRing';
 import { getConfidenceBand } from '@/domain/analysis/analysisExperience';
@@ -10,7 +12,8 @@ import { colors, radius } from '@/theme';
 
 export default function OverviewScreen() {
   const { analysis } = useAnalysisSession();
-  const { session } = useCaptureSession();
+  const { session, clearCaptures } = useCaptureSession();
+  const [deletingPhotos, setDeletingPhotos] = useState(false);
 
   if (analysis.status !== 'ready' || !analysis.result) {
     return (
@@ -34,6 +37,12 @@ export default function OverviewScreen() {
   ];
   const supportFocus = [...metrics].sort((left, right) => left.value - right.value).slice(0, 2);
 
+  const deletePhotos = async () => {
+    setDeletingPhotos(true);
+    await clearCaptures();
+    setDeletingPhotos(false);
+  };
+
   return (
     <Screen title="Your skin today" back>
       <View style={styles.prototypeNotice}>
@@ -41,7 +50,21 @@ export default function OverviewScreen() {
           <Text style={styles.prototypeNoticeTitle}>SYNTHETIC SAMPLE</Text>
           <Text style={styles.localBadge}>{session.captures.length} LOCAL PHOTOS</Text>
         </View>
-        <Text style={styles.prototypeNoticeBody}>This fictional snapshot was not produced from your photos. No image was uploaded or analyzed.</Text>
+        <Text style={styles.prototypeNoticeBody}>The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.</Text>
+      </View>
+
+      <LocalCaptureStrip captures={session.captures} />
+      {session.captures.length ? (
+        <SecondaryButton
+          label={deletingPhotos ? 'Deleting local photos…' : 'Delete these local photos now'}
+          onPress={() => { if (!deletingPhotos) void deletePhotos(); }}
+        />
+      ) : (
+        <InfoCard title="Local photos deleted" body="No check-in photo is currently referenced by this session. The synthetic sample report remains visible because it is separate from your photos." tone="green" />
+      )}
+
+      <View style={styles.demoDivider}>
+        <Text style={styles.demoDividerText}>DEMONSTRATION REPORT · NOT PHOTO ANALYSIS</Text>
       </View>
 
       <View style={styles.lead}>
@@ -91,6 +114,8 @@ const styles = StyleSheet.create({
   prototypeNoticeTitle: { color: colors.lilac, fontSize: 10, fontWeight: '800', letterSpacing: 0.8 },
   localBadge: { color: colors.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.5 },
   prototypeNoticeBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
+  demoDivider: { borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 13, alignItems: 'center' },
+  demoDividerText: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
   lead: { flexDirection: 'row', alignItems: 'center', gap: 17, backgroundColor: colors.panel, padding: 18, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line },
   copy: { flex: 1 },
   eyebrow: { color: colors.gold, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
