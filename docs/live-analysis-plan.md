@@ -12,12 +12,22 @@ Status as of 2026-08-06:
   1.0.0 Build 7 (commit `64ecc7d`). The Swift module, ML Kit pod, Expo
   autolinking, and archive compiled successfully. Physical-iPhone validation
   of Build 7 is the open Phase 0 gate.
-- Backend (Supabase + server-side Anthropic vision): **conditionally approved
-  for planning and local interfaces only.** Nothing external exists yet; the
-  Phase 1 approval checkpoint below is the gate to create it.
-- Authentication decision: **Sign in with Apple** for the secure beta
-  (recommended and assumed below; the anonymous-beta alternative from earlier
-  drafts is retired unless the user asks for it).
+- Backend: **Phase 1 approved and provisioned (2026-08-06).** Supabase
+  project `vaine-beta` (ref `wfahmuxuldivkwzbtdcg`) exists in `us-west-1`
+  (owner is West Coast) on the free tier ($0/month) inside the user's
+  "The Holistic Approach" organization: photo-free schema with deny-by-default
+  RLS, quota and flag tables, the private `analysis-uploads` bucket (no client
+  policies), and the `delete-account` Edge Function. The `analysis_enabled`
+  kill switch ships **off**. Pro upgrade is a separate costed decision before
+  external testers upload real photographs. `vaine-prod` is not created.
+- Authentication decision: **Sign in with Apple** approved. Client code and
+  the live service are implemented behind environment configuration; the
+  remaining manual Apple/Supabase-dashboard steps are in
+  `docs/apple-signin-setup.md` and are the stop point.
+- Anthropic: approved as a separate vAIne workspace with a $50 initial
+  budget, a $5/day application ceiling, and the kill switch; the estimated
+  $0.05/analysis must be benchmarked with real analyses before the beta
+  expands. No key exists yet.
 
 ## Environments
 
