@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { BotanicalAccent } from '@/components/BotanicalAccent';
-import { FaceIllustration } from '@/components/FaceIllustration';
 import { LegalNote, Screen } from '@/components/AppChrome';
 import { futureModules } from '@/data/prototype';
 import { colors, fonts, radius, shadows } from '@/theme';
+
+const homePortrait = require('../assets/home-portrait-woman.jpg');
 
 export default function ScanSelectionScreen() {
   return (
@@ -18,7 +19,13 @@ export default function ScanSelectionScreen() {
       <View style={styles.heroWrap}>
         <View style={styles.botanical}><BotanicalAccent /></View>
         <View style={styles.portraitRing}>
-          <View style={styles.portraitInner}><FaceIllustration /></View>
+          <View style={styles.portraitInner}>
+            <Image
+              accessibilityLabel="Synthetic woman portrait"
+              source={homePortrait}
+              style={styles.portraitImage}
+            />
+          </View>
         </View>
         <Pressable accessibilityRole="button" style={({ pressed }) => [styles.startCard, pressed && styles.pressed]} onPress={() => router.push('/consent')}>
           <View>
@@ -59,6 +66,7 @@ const styles = StyleSheet.create({
   botanical: { position: 'absolute', right: -6, top: -5 },
   portraitRing: { width: 220, height: 220, borderRadius: 110, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel, padding: 7, ...shadows.card },
   portraitInner: { flex: 1, borderRadius: 103, overflow: 'hidden', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: colors.sageWash },
+  portraitImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   startCard: { width: 190, minHeight: 62, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.cream, marginTop: -16, paddingHorizontal: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', ...shadows.card },
   startTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 16 },
   startSubtitle: { color: colors.muted, fontSize: 10, marginTop: 3 },
