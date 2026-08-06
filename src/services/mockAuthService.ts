@@ -46,6 +46,12 @@ export function createMockAuthService(options?: {
       return { kind: 'signed_out' };
     },
 
+    onSessionEnded(): () => void {
+      // The mock has no server that could end a session behind the app's
+      // back, so the listener is never called.
+      return () => {};
+    },
+
     async deleteAccount(): Promise<DeleteAccountOutcome> {
       if (options?.offline) {
         return { kind: 'failed', failure: 'offline', message: describeAuthFailure('offline') };

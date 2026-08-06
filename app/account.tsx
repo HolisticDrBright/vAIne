@@ -91,7 +91,7 @@ export default function AccountScreen() {
         <InfoCard
           tone="green"
           title="Account deleted"
-          body="Your account, analysis results, usage records, and any temporary uploads are gone. Nothing about you remains on the server."
+          body="Your account and linked data were deleted — analysis results, usage records, and any temporary uploads. A non-identifying deletion record may remain for security and compliance auditing."
         />
       ) : null}
 
@@ -127,7 +127,8 @@ export default function AccountScreen() {
               {auth.account?.userId ?? ''}
             </Text>
             <Text style={styles.accountNote}>
-              This opaque identifier is all vAIne knows about you — no name, no email, no Apple ID.
+              vAIne does not request your name or use your email for profile features. Supabase
+              securely stores the account identifiers required to authenticate you.
             </Text>
           </View>
 

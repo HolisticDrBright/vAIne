@@ -53,6 +53,16 @@ export interface AuthService {
    * that freshness cannot be proven.
    */
   deleteAccount(): Promise<DeleteAccountOutcome>;
+  /**
+   * Notifies when the underlying session ends outside an explicit call made
+   * through this service instance — expiry, revocation, server-side account
+   * deletion, or a failed token refresh. A restored session must never be
+   * presented as signed-in forever on local say-so alone; this subscription
+   * is how the state machine learns the server disagrees. Returns an
+   * unsubscribe function; implementations with no push knowledge return a
+   * no-op unsubscriber and simply never call the listener.
+   */
+  onSessionEnded(listener: () => void): () => void;
 }
 
 /**

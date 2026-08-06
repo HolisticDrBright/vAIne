@@ -38,6 +38,7 @@ export type AuthExperienceEvent =
   | { type: 'SIGN_IN_FAILED'; message: string }
   | { type: 'SIGNED_OUT' }
   | { type: 'SIGN_OUT_FAILED'; message: string }
+  | { type: 'SESSION_ENDED'; message: string }
   | { type: 'REAUTH_START' }
   | { type: 'REAUTH_SUCCESS'; account: AuthAccount }
   | { type: 'REAUTH_CANCELLED' }
@@ -93,6 +94,14 @@ export function reduceAuthExperience(
       if (state.status !== 'signed_in') return state;
       // The session still exists; pretending otherwise would strand it.
       return { ...state, errorMessage: event.message };
+    case 'SESSION_ENDED':
+      // The server says the session is gone (expiry, revocation, deletion,
+      // failed refresh) — a restored session is never trusted over this.
+      // Explicit in-flight operations keep their own outcomes: an ordinary
+      // sign-out dispatches SIGNED_OUT, and deletion's internal sign-out
+      // arrives while deleting_account, which this deliberately ignores.
+      if (state.status !== 'signed_in' && state.status !== 'reauthenticating') return state;
+      return { status: 'signed_out', account: null, errorMessage: event.message, reauthRequired: false };
     case 'REAUTH_START':
       if (state.status !== 'signed_in') return state;
       return { ...state, status: 'reauthenticating', errorMessage: null };

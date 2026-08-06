@@ -1,10 +1,11 @@
 # Sign in with Apple — setup checklist (vaine-beta)
 
 The client code, backend project, and delete-account function are in place.
-The steps below are the **manual actions only you can perform**, because they
-create or handle Apple credentials. Nothing in this list is optional for the
-secure beta, and no secret from it ever goes into chat, the repository, or
-client code.
+The steps below are the **manual actions only you can perform**, because
+they happen inside your Apple Developer and Supabase dashboard accounts.
+vAIne uses the **native-only** Sign in with Apple flow (Expo
+AppleAuthentication → Supabase `signInWithIdToken`), so the list is short —
+and nothing from it ever goes into chat, the repository, or client code.
 
 Backend facts referenced below:
 
@@ -16,29 +17,32 @@ Backend facts referenced below:
 
 1. Certificates, Identifiers & Profiles → Identifiers → select the App ID
    `com.holisticdrbright.vaine` → enable the **Sign in with Apple**
-   capability → Save. (The repo already sets `ios.usesAppleSignIn`, so the
-   next EAS build regenerates provisioning with the entitlement; EAS manages
-   the profile automatically.)
-2. Create a **Services ID** (Identifiers → new → Services ID), proposed
-   identifier `com.holisticdrbright.vaine.auth`, with Sign in with Apple
-   enabled and configured for the primary App ID above. Add the return URL
-   `https://wfahmuxuldivkwzbtdcg.supabase.co/auth/v1/callback` under its
-   Sign in with Apple configuration.
-3. Create a **Sign in with Apple key** (Keys → new → enable Sign in with
-   Apple → select the primary App ID). Download the `.p8` once and store it
-   in your password manager. **Never** paste its contents into chat, commit
-   it, or upload it anywhere except the Supabase dashboard field in step 2
-   below. Note the Key ID and your Team ID.
+   capability → Save. Leave the Server-to-Server Notification Endpoint
+   blank (Supabase Auth does not support it). The repo already sets
+   `ios.usesAppleSignIn`, so the next EAS build regenerates provisioning
+   with the entitlement automatically.
+
+That is the only Apple-portal step. **Do not create** a Services ID, a
+callback/return URL, a signing key (`.p8`), a Team ID/Key ID entry, or a
+generated client secret, and no six-month secret rotation applies — per the
+official Supabase Apple guide, those belong exclusively to the browser
+OAuth flow, and "if you're building a native app only, you do not need to
+configure the OAuth settings." If vAIne ever adds web/browser sign-in,
+that becomes a separate reviewed task.
 
 ## 2. Supabase dashboard (vaine-beta → Authentication → Providers → Apple)
 
 1. Enable the Apple provider.
-2. Enter: Services ID (`com.holisticdrbright.vaine.auth`), Team ID, Key ID,
-   and the `.p8` key contents into the provider's secret field. The dashboard
-   generates and rotates the client secret from it.
-3. In the provider's **Authorized Client IDs**, add the native app bundle ID
-   `com.holisticdrbright.vaine` — this is what lets the app's native
-   identity-token flow validate.
+2. Add the native bundle ID `com.holisticdrbright.vaine` to the provider's
+   **Client IDs** — this is what validates the app's native identity-token
+   exchange.
+3. Leave the OAuth-only fields (client secret / Services ID) empty.
+
+If the dashboard refuses to save or enable the provider without OAuth-only
+fields filled in, **stop — do not create Apple credentials to satisfy the
+form.** Record the exact field names and validation message the UI shows
+and report them, so the checklist can be corrected against the real
+dashboard behavior.
 
 ## 3. Client configuration (publishable values only)
 
@@ -47,11 +51,21 @@ Backend facts referenced below:
    `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (dashboard → Project Settings →
    API Keys → **Publishable key**, the value starting `sb_publishable_`).
    `.env` is gitignored; never commit the real values.
-2. TestFlight builds: set the same two variables as EAS environment
-   variables in the beta environment used by the production build profile
-   (EAS dashboard → project → Environment variables). These are publishable
+2. TestFlight (Build 8): set the same two variables in the EAS **preview**
+   environment (EAS dashboard → project → Environment variables →
+   environment `preview`). Do **not** put them in the `production`
+   environment — the production profile and environment stay empty,
+   reserved for the future `vaine-prod` backend. These are publishable
    client values, not secrets; every table is guarded by RLS and grants,
    and privileged work happens only in Edge Functions.
+   Build 8 is created with the dedicated `beta` build profile in
+   `eas.json`, which extends `production`, explicitly selects the
+   `preview` environment, keeps remote versioning with auto-increment, and
+   has a matching submit profile for the existing App Store Connect app:
+
+   ```
+   eas build --platform ios --profile beta --auto-submit
+   ```
 3. The app validates the key's shape at startup and refuses anything that
    is not a modern publishable key: secret keys (`sb_secret_…`), legacy
    JWT-format keys (including service-role), and pasted private-key
@@ -83,8 +97,9 @@ Backend facts referenced below:
   guidance, and the labeled fixed-guide fallback.
 - **Build 8** must validate everything added after Build 7's commit: Sign in
   with Apple, session restoration across app restarts, sign-out,
-  reauthentication, and account deletion end to end. It is created only
-  after every manual step in sections 1–3 above is confirmed complete.
+  reauthentication, and account deletion end to end. It is created with the
+  dedicated `beta` build profile (EAS `preview` environment), only after
+  every manual step in sections 1–3 above is confirmed complete.
 - **PR #2 merges only after both Build 7 and Build 8 testing pass**, because
   the branch now extends beyond Build 7's commit.
 

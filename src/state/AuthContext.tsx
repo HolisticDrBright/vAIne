@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
 } from 'react';
 import type { AuthService, SignInOutcome } from '@/domain/auth/authService';
 import {
@@ -60,6 +61,7 @@ export function AuthProvider({
     [service, backendConfigured],
   );
   const [auth, dispatch] = useReducer(reduceAuthExperience, initialAuthExperienceState);
+  const explicitSignOutInFlight = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -75,6 +77,23 @@ export function AuthProvider({
     };
   }, [authService]);
 
+  // Server-truth subscription: expiry, revocation, failed token refresh, or
+  // deletion discovered outside an explicit call here downgrades the state.
+  // A session restored from local storage is never kept alive on local
+  // say-so alone. Explicit sign-out suppresses the duplicate notification;
+  // deletion's internal sign-out lands during deleting_account, which the
+  // reducer ignores so the deletion outcome governs.
+  useEffect(() => {
+    const unsubscribe = authService.onSessionEnded(() => {
+      if (explicitSignOutInFlight.current) return;
+      dispatch({
+        type: 'SESSION_ENDED',
+        message: 'Your session ended. Sign in again to manage your account.',
+      });
+    });
+    return unsubscribe;
+  }, [authService]);
+
   const signIn = useCallback(async () => {
     dispatch({ type: 'SIGN_IN_START' });
     const outcome = await authService.signInWithApple();
@@ -86,9 +105,14 @@ export function AuthProvider({
   }, [authService]);
 
   const signOut = useCallback(async () => {
-    const outcome = await authService.signOut();
-    if (outcome.kind === 'signed_out') dispatch({ type: 'SIGNED_OUT' });
-    else dispatch({ type: 'SIGN_OUT_FAILED', message: outcome.message });
+    explicitSignOutInFlight.current = true;
+    try {
+      const outcome = await authService.signOut();
+      if (outcome.kind === 'signed_out') dispatch({ type: 'SIGNED_OUT' });
+      else dispatch({ type: 'SIGN_OUT_FAILED', message: outcome.message });
+    } finally {
+      explicitSignOutInFlight.current = false;
+    }
   }, [authService]);
 
   const runDeletion = useCallback(async () => {

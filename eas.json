@@ -7,10 +7,20 @@
   "build": {
     "production": {
       "autoIncrement": true
+    },
+    "beta": {
+      "extends": "production",
+      "environment": "preview",
+      "autoIncrement": true
     }
   },
   "submit": {
     "production": {
+      "ios": {
+        "ascAppId": "6798456032"
+      }
+    },
+    "beta": {
       "ios": {
         "ascAppId": "6798456032"
       }

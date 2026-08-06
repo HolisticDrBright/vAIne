@@ -106,6 +106,19 @@ export const supabaseAuthService: AuthService = {
     return { kind: 'signed_out' };
   },
 
+  onSessionEnded(listener: () => void): () => void {
+    const client = getSupabaseClient();
+    if (!client) return () => {};
+    // SIGNED_OUT is how supabase-js reports every session ending it can
+    // observe: explicit sign-out, expiry with a failed/revoked refresh, and
+    // server-side account deletion discovered on refresh. Token refreshes
+    // that succeed arrive as TOKEN_REFRESHED and need no state change.
+    const { data } = client.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') listener();
+    });
+    return () => data.subscription.unsubscribe();
+  },
+
   async deleteAccount(): Promise<DeleteAccountOutcome> {
     const client = getSupabaseClient();
     if (!client) return { kind: 'failed', failure: 'unexpected', message: describeAuthFailure('unexpected') };

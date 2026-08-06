@@ -111,6 +111,34 @@ describe('auth state machine', () => {
     expect(deleted).toEqual({ status: 'signed_out', account: null, errorMessage: null, reauthRequired: false });
   });
 
+  test('a server-observed session end always wins over a restored session', () => {
+    const signedIn = run([
+      { type: 'RESTORE_START' },
+      { type: 'RESTORE_SIGNED_IN', account },
+    ]);
+
+    // Expiry / revocation / deletion-from-elsewhere → signed out, with copy.
+    const ended = run([{ type: 'SESSION_ENDED', message: 'session ended copy' }], signedIn);
+    expect(ended).toEqual({ status: 'signed_out', account: null, errorMessage: 'session ended copy', reauthRequired: false });
+
+    // Also honored while waiting on the Apple sheet for reauthentication.
+    const endedDuringReauth = run(
+      [{ type: 'DELETE_START' }, { type: 'DELETE_REAUTH_REQUIRED' }, { type: 'REAUTH_START' }, { type: 'SESSION_ENDED', message: 'session ended copy' }],
+      signedIn,
+    );
+    expect(endedDuringReauth.status).toBe('signed_out');
+
+    // Ignored during deletion: the internal sign-out after a successful
+    // delete must not preempt the explicit deletion outcome.
+    const duringDeletion = run([{ type: 'DELETE_START' }], signedIn);
+    const preserved = run([{ type: 'SESSION_ENDED', message: 'session ended copy' }], duringDeletion);
+    expect(preserved.status).toBe('deleting_account');
+    expect(run([{ type: 'DELETE_SUCCESS' }], preserved).status).toBe('signed_out');
+
+    // A no-op when already signed out.
+    expect(run([{ type: 'SESSION_ENDED', message: 'x' }], ended)).toBe(ended);
+  });
+
   test('out-of-order events cannot conjure a session', () => {
     expect(run([{ type: 'SIGN_IN_SUCCESS', account }])).toBe(initialAuthExperienceState);
     expect(run([{ type: 'DELETE_SUCCESS' }])).toBe(initialAuthExperienceState);
@@ -161,5 +189,16 @@ describe('mock auth service honors the contract', () => {
     const service = createMockAuthService({ offline: true });
     expect((await service.signInWithApple()).kind).toBe('failed');
     expect((await service.restoreSession()).kind).toBe('failed');
+  });
+
+  test('session-end subscription returns a working unsubscriber and never fires', () => {
+    const service = createMockAuthService({ startSignedIn: true });
+    let calls = 0;
+    const unsubscribe = service.onSessionEnded(() => {
+      calls += 1;
+    });
+    expect(typeof unsubscribe).toBe('function');
+    unsubscribe();
+    expect(calls).toBe(0);
   });
 });

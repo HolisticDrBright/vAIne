@@ -30,12 +30,14 @@ Status as of 2026-08-06:
   expands. No key exists yet.
 - Release gates (2026-08-06): Build 7 validates the on-device capture stack
   (camera, ML Kit, facial-zone alignment, crops, retakes, fixed-guide
-  fallback). Build 8 — created only after the Apple provider and
-  publishable-key configuration are confirmed — validates everything added
-  since Build 7: Sign in with Apple, session restoration, sign-out,
-  reauthentication, and account deletion, using a disposable beta account
-  and a generated solid-color JPEG for storage-cleanup checks (never a real
-  face). PR #2 merges only after both builds pass. Account deletion is
+  fallback). Build 8 — created with the dedicated `beta` EAS build profile
+  (EAS `preview` environment), only after the native-only Apple
+  configuration (App ID capability + provider Client IDs, no OAuth
+  credentials) and publishable-key values are confirmed — validates
+  everything added since Build 7: Sign in with Apple, session restoration,
+  sign-out, reauthentication, and account deletion, using a disposable
+  beta account and a generated solid-color JPEG for storage-cleanup checks
+  (never a real face). PR #2 merges only after both builds pass. Account deletion is
   unit- and structurally verified today, not yet end-to-end verified: the
   project has zero users and objects, so true end-to-end proof happens in
   Build 8.
