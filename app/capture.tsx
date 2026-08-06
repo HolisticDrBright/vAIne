@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions, type CameraCapturedPicture } from 'expo-camera';
 import { router, useFocusEffect } from 'expo-router';
@@ -12,8 +12,17 @@ import {
   type ReadinessCheck,
   type ReadinessState,
 } from '@/domain/capture/captureQuality';
+import {
+  assessFrontCaptureDetection,
+  assessProfileCaptureDetection,
+} from '@/domain/capture/captureDetectionPolicy';
+import { summarizeCaptureAlignment } from '@/domain/capture/adaptiveCapture';
+import { DETAIL_GROUP_GUIDANCE, type DetailCaptureGroup } from '@/domain/capture/zoneCropQuality';
+import type { FaceDetectionOutcome } from '@/domain/zones/faceDetection';
+import type { SkinCaptureAngle } from '@/domain/analysis/observationTaxonomy';
 import { deleteLocalPhoto } from '@/services/localPhotoStorage';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
+import { useFaceDetector } from '@/state/FaceDetectorContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 const angleCopy = {
@@ -21,6 +30,12 @@ const angleCopy = {
   left_profile: { title: 'Turn slightly left', instruction: 'Keep both shoulders level and turn your face gently to the left.' },
   right_profile: { title: 'Turn slightly right', instruction: 'Keep both shoulders level and turn your face gently to the right.' },
 } as const;
+
+const detailGroupTitles: Record<DetailCaptureGroup, string> = {
+  upper_face: 'Upper-face close-up',
+  center_face: 'Center-face close-up',
+  lower_face: 'Lower-face close-up',
+};
 
 const readinessCopy: Record<ReadinessCheck, string> = {
   even_lighting: 'Even light, no sharp shadows',
@@ -35,18 +50,32 @@ const metadataErrorCopy = {
   invalid_dimensions: 'The image dimensions could not be read. Please retake it.',
 } as const;
 
+type PendingReview =
+  | { kind: 'angle'; angle: SkinCaptureAngle; photo: CameraCapturedPicture; detection: FaceDetectionOutcome | null }
+  | { kind: 'detail'; group: DetailCaptureGroup; photo: CameraCapturedPicture };
+
+function describeDetectionForReview(detection: FaceDetectionOutcome | null): string {
+  if (detection?.kind === 'detected') {
+    return 'Face found on this device. Facial-zone views can align to your photo.';
+  }
+  return 'Face alignment is not available for this photo, so zone views will use the clearly labeled fixed guide.';
+}
+
 export default function CaptureScreen() {
   const cameraRef = useRef<CameraView | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [screenFocused, setScreenFocused] = useState(true);
   const [cameraReady, setCameraReady] = useState(false);
   const [readiness, setReadiness] = useState<ReadinessState>(EMPTY_READINESS_STATE);
-  const [pendingPhoto, setPendingPhoto] = useState<CameraCapturedPicture | null>(null);
+  const [pending, setPending] = useState<PendingReview | null>(null);
+  const [detailMode, setDetailMode] = useState(false);
   const [busy, setBusy] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const faceDetector = useFaceDetector();
   const {
     session,
     acceptCapture,
+    acceptDetailCapture,
     markReadyForResults,
     completeSession,
     setSessionError,
@@ -60,20 +89,37 @@ export default function CaptureScreen() {
 
   const capturedAngles = new Set(session.captures.map((capture) => capture.angle));
   const currentAngle = REQUIRED_CAPTURE_ANGLES.find((angle) => !capturedAngles.has(angle));
-  const readyToShoot = cameraReady && areReadinessChecksComplete(readiness) && !busy;
+  const frontCapture = session.captures.find((capture) => capture.angle === 'front');
+  const alignmentSummary = useMemo(() => summarizeCaptureAlignment(frontCapture), [frontCapture]);
+
+  const detailRequests = alignmentSummary.plan?.kind === 'detail_requests'
+    ? alignmentSummary.plan.requests
+    : [];
+  const capturedDetailGroups = new Set(session.detailCaptures.map((capture) => capture.group));
+  const nextDetailGroup = detailRequests.find((request) => !capturedDetailGroups.has(request.group));
+  const inDetailStage = detailMode && !currentAngle && Boolean(nextDetailGroup);
+
+  const readyToShoot = cameraReady && !busy && (inDetailStage || areReadinessChecksComplete(readiness));
 
   const toggleReadiness = (check: ReadinessCheck) => {
     setReadiness((current) => ({ ...current, [check]: !current[check] }));
   };
 
-  const discardPendingPhoto = async () => {
-    if (pendingPhoto) await deleteLocalPhoto(pendingPhoto.uri);
-    setPendingPhoto(null);
+  const discardPending = async () => {
+    if (pending) await deleteLocalPhoto(pending.photo.uri);
+    setPending(null);
     setLocalError(null);
   };
 
   const takePhoto = async () => {
-    if (!cameraRef.current || !currentAngle || !readyToShoot) return;
+    if (!cameraRef.current || !readyToShoot) return;
+    const target: { kind: 'angle'; angle: SkinCaptureAngle } | { kind: 'detail'; group: DetailCaptureGroup } | null =
+      currentAngle
+        ? { kind: 'angle', angle: currentAngle }
+        : inDetailStage && nextDetailGroup
+          ? { kind: 'detail', group: nextDetailGroup.group }
+          : null;
+    if (!target) return;
     setBusy(true);
     setLocalError(null);
 
@@ -87,7 +133,30 @@ export default function CaptureScreen() {
         setSessionError(message);
         return;
       }
-      setPendingPhoto(photo);
+
+      if (target.kind === 'detail') {
+        setPending({ kind: 'detail', group: target.group, photo });
+        return;
+      }
+
+      // On-device only: face bounds and landmarks for alignment. No identity
+      // features run, and neither the photo nor the geometry leaves the phone.
+      const detection = await faceDetector.detect({
+        uri: photo.uri,
+        width: photo.width,
+        height: photo.height,
+      });
+      const decision = target.angle === 'front'
+        ? assessFrontCaptureDetection(detection, { width: photo.width, height: photo.height })
+        : assessProfileCaptureDetection(detection);
+
+      if (decision.kind === 'retake') {
+        await deleteLocalPhoto(photo.uri);
+        setLocalError(decision.reasons.join(' '));
+        return;
+      }
+
+      setPending({ kind: 'angle', angle: target.angle, photo, detection });
     } catch {
       const message = 'The camera could not complete this capture. No photo was added; please try again.';
       setLocalError(message);
@@ -98,23 +167,33 @@ export default function CaptureScreen() {
   };
 
   const usePendingPhoto = async () => {
-    if (!pendingPhoto || !currentAngle) return;
-    await acceptCapture({
-      angle: currentAngle,
-      uri: pendingPhoto.uri,
-      width: pendingPhoto.width,
-      height: pendingPhoto.height,
-      capturedAtIso: new Date().toISOString(),
-    });
-    setPendingPhoto(null);
-    setReadiness(EMPTY_READINESS_STATE);
+    if (!pending) return;
+    if (pending.kind === 'angle') {
+      await acceptCapture({
+        angle: pending.angle,
+        uri: pending.photo.uri,
+        width: pending.photo.width,
+        height: pending.photo.height,
+        capturedAtIso: new Date().toISOString(),
+        faceDetection: pending.detection ?? undefined,
+      });
+      setReadiness(EMPTY_READINESS_STATE);
+      if (session.captures.length + 1 === REQUIRED_CAPTURE_ANGLES.length) markReadyForResults();
+    } else {
+      await acceptDetailCapture({
+        group: pending.group,
+        uri: pending.photo.uri,
+        width: pending.photo.width,
+        height: pending.photo.height,
+        capturedAtIso: new Date().toISOString(),
+      });
+    }
+    setPending(null);
     setLocalError(null);
-
-    if (session.captures.length + 1 === REQUIRED_CAPTURE_ANGLES.length) markReadyForResults();
   };
 
   const cancelCheckIn = async () => {
-    await discardPendingPhoto();
+    await discardPending();
     await clearSession();
     router.replace('/');
   };
@@ -154,7 +233,37 @@ export default function CaptureScreen() {
     );
   }
 
-  if (!currentAngle && !pendingPhoto) {
+  if (pending) {
+    const title = pending.kind === 'angle'
+      ? `Use this ${angleCopy[pending.angle].title.toLowerCase()} photo?`
+      : `Use this ${detailGroupTitles[pending.group].toLowerCase()}?`;
+    return (
+      <Screen title="Review photo" back>
+        <Text style={styles.step}>
+          {pending.kind === 'angle'
+            ? `${session.captures.length + 1} OF ${REQUIRED_CAPTURE_ANGLES.length}`
+            : 'OPTIONAL CLOSE-UP'}
+        </Text>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.previewFrame}><Image source={{ uri: pending.photo.uri }} style={styles.previewImage} /></View>
+        {pending.kind === 'angle' ? (
+          <InfoCard
+            title={pending.angle === 'front' ? 'On-device face check' : 'Photo check'}
+            body={describeDetectionForReview(pending.detection)}
+            tone={pending.detection?.kind === 'detected' ? 'green' : 'lilac'}
+          />
+        ) : (
+          <Text style={styles.subtitle}>Check that the area is sharp, evenly lit, and fills the frame.</Text>
+        )}
+        <PrimaryButton label="Use this photo" onPress={() => { void usePendingPhoto(); }} />
+        <SecondaryButton label="Retake" onPress={() => { void discardPending(); }} />
+        <LegalNote />
+      </Screen>
+    );
+  }
+
+  if (!currentAngle && !inDetailStage) {
+    const showRetakeSuggestion = alignmentSummary.plan?.kind === 'front_retake';
     return (
       <Screen title="Capture complete" back>
         <Text style={styles.step}>3 OF 3 LOCAL PHOTOS</Text>
@@ -166,6 +275,41 @@ export default function CaptureScreen() {
             return capture ? <Image key={angle} source={{ uri: capture.uri }} style={styles.thumbnail} /> : null;
           })}
         </View>
+
+        {session.detailCaptures.length ? (
+          <View style={styles.thumbnailRow}>
+            {session.detailCaptures.map((capture) => (
+              <Image key={capture.group} source={{ uri: capture.uri }} style={styles.thumbnail} />
+            ))}
+          </View>
+        ) : null}
+
+        {showRetakeSuggestion ? (
+          <InfoCard
+            title="Optional: retake the front photo"
+            body="Your face could not be located reliably, so zone views will use the labeled fixed guide. You can continue, or retake the front photo in even light for individualized alignment."
+            tone="gold"
+          />
+        ) : null}
+
+        {detailRequests.length ? (
+          <>
+            <InfoCard
+              title={`Optional: ${detailRequests.length} close-up ${detailRequests.length === 1 ? 'photo' : 'photos'} suggested`}
+              body={`${detailRequests[0].reason} Close-ups stay on this device like every other capture.`}
+              tone="lilac"
+            />
+            {nextDetailGroup ? (
+              <PrimaryButton
+                label={`Add close-ups (${capturedDetailGroups.size} of ${detailRequests.length} done)`}
+                onPress={() => setDetailMode(true)}
+              />
+            ) : (
+              <InfoCard title="Close-ups captured" body="All suggested close-up areas are covered." tone="green" />
+            )}
+          </>
+        ) : null}
+
         <InfoCard title="No upload occurred" body="The photos remain temporary local files. You can delete them on the next screen or from Privacy controls." tone="green" />
         <PrimaryButton label="View demonstration results" onPress={continueToResults} />
         <SecondaryButton label="Delete and cancel" onPress={() => { void cancelCheckIn(); }} />
@@ -174,27 +318,20 @@ export default function CaptureScreen() {
     );
   }
 
-  if (pendingPhoto && currentAngle) {
-    return (
-      <Screen title="Review photo" back>
-        <Text style={styles.step}>{session.captures.length + 1} OF {REQUIRED_CAPTURE_ANGLES.length}</Text>
-        <Text style={styles.title}>Use this {angleCopy[currentAngle].title.toLowerCase()} photo?</Text>
-        <View style={styles.previewFrame}><Image source={{ uri: pendingPhoto.uri }} style={styles.previewImage} /></View>
-        <Text style={styles.subtitle}>Check that the face is clear, evenly lit, and positioned as requested. Automated blur and lighting analysis are not enabled yet.</Text>
-        <PrimaryButton label="Use this photo" onPress={() => { void usePendingPhoto(); }} />
-        <SecondaryButton label="Retake" onPress={() => { void discardPendingPhoto(); }} />
-        <LegalNote />
-      </Screen>
-    );
-  }
-
-  if (!currentAngle) return null;
+  const stageTitle = currentAngle ? angleCopy[currentAngle].title : detailGroupTitles[nextDetailGroup!.group];
+  const stageInstruction = currentAngle
+    ? `${angleCopy[currentAngle].instruction} Confirm the visual checks before capture.`
+    : nextDetailGroup!.guidance;
 
   return (
-      <Screen title="Capture guide" back>
-      <Text style={styles.step}>{session.captures.length + 1} OF {REQUIRED_CAPTURE_ANGLES.length}</Text>
-      <Text style={styles.title}>{angleCopy[currentAngle].title}</Text>
-      <Text style={styles.subtitle}>{angleCopy[currentAngle].instruction} Confirm the visual checks before capture.</Text>
+      <Screen title={currentAngle ? 'Capture guide' : 'Close-up guide'} back>
+      <Text style={styles.step}>
+        {currentAngle
+          ? `${session.captures.length + 1} OF ${REQUIRED_CAPTURE_ANGLES.length}`
+          : `OPTIONAL CLOSE-UP · ${capturedDetailGroups.size + 1} OF ${detailRequests.length}`}
+      </Text>
+      <Text style={styles.title}>{stageTitle}</Text>
+      <Text style={styles.subtitle}>{stageInstruction}</Text>
 
       <View style={styles.cameraStage}>
         {screenFocused ? (
@@ -210,29 +347,52 @@ export default function CaptureScreen() {
         <View pointerEvents="none" style={styles.faceGuide} />
         <View pointerEvents="none" style={styles.cameraHint}>
           <Text style={styles.cameraHintTitle}>{cameraReady ? 'Camera ready' : 'Starting camera…'}</Text>
-          <Text style={styles.cameraHintBody}>Keep your face fully inside the oval.</Text>
+          <Text style={styles.cameraHintBody}>
+            {currentAngle ? 'Keep your face fully inside the oval.' : 'Move closer so the area fills the oval.'}
+          </Text>
         </View>
       </View>
 
-      <View style={styles.readinessList}>
-        {READINESS_CHECKS.map((check) => (
-          <Pressable
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: readiness[check] }}
-            key={check}
-            onPress={() => toggleReadiness(check)}
-            style={[styles.readinessRow, readiness[check] && styles.readinessRowChecked]}
-          >
-            <View style={[styles.smallCheckbox, readiness[check] && styles.smallCheckboxChecked]}>
-              <Text style={styles.smallCheckboxText}>{readiness[check] ? '✓' : ''}</Text>
-            </View>
-            <Text style={styles.readinessText}>{readinessCopy[check]}</Text>
-          </Pressable>
-        ))}
-      </View>
+      {currentAngle ? (
+        <View style={styles.readinessList}>
+          {READINESS_CHECKS.map((check) => (
+            <Pressable
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: readiness[check] }}
+              key={check}
+              onPress={() => toggleReadiness(check)}
+              style={[styles.readinessRow, readiness[check] && styles.readinessRowChecked]}
+            >
+              <View style={[styles.smallCheckbox, readiness[check] && styles.smallCheckboxChecked]}>
+                <Text style={styles.smallCheckboxText}>{readiness[check] ? '✓' : ''}</Text>
+              </View>
+              <Text style={styles.readinessText}>{readinessCopy[check]}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+
+      {currentAngle === 'front' ? (
+        <InfoCard
+          title="On-device face check"
+          body="Face detection runs entirely on this phone to check framing and align facial zones. It does not identify you, and neither the photo nor the face geometry is uploaded or stored beyond this check-in."
+          tone="green"
+        />
+      ) : null}
 
       {localError ? <InfoCard title="Retake needed" body={localError} tone="gold" /> : null}
-      <PrimaryButton label={busy ? 'Capturing…' : `Capture ${session.captures.length + 1} of ${REQUIRED_CAPTURE_ANGLES.length}`} onPress={() => { void takePhoto(); }} disabled={!readyToShoot} />
+      <PrimaryButton
+        label={busy
+          ? 'Checking photo…'
+          : currentAngle
+            ? `Capture ${session.captures.length + 1} of ${REQUIRED_CAPTURE_ANGLES.length}`
+            : 'Capture close-up'}
+        onPress={() => { void takePhoto(); }}
+        disabled={!readyToShoot}
+      />
+      {inDetailStage ? (
+        <SecondaryButton label="Skip close-ups and continue" onPress={() => setDetailMode(false)} />
+      ) : null}
       <SecondaryButton label="Delete and cancel check-in" onPress={() => { void cancelCheckIn(); }} />
       <LegalNote />
     </Screen>

@@ -13,15 +13,22 @@ const preparationSteps = [
 ] as const;
 
 export default function ProcessingScreen() {
-  const { analysis, startSyntheticAnalysis, resetAnalysis } = useAnalysisSession();
-  const { session } = useCaptureSession();
+  const { analysis, serviceDescriptor, startAnalysis, resetAnalysis } = useAnalysisSession();
+  const { session, clearCaptures } = useCaptureSession();
+  const isDemo = serviceDescriptor.mode === 'synthetic_demo';
 
   useEffect(() => {
-    if (analysis.status === 'idle') void startSyntheticAnalysis();
-  }, [analysis.status, startSyntheticAnalysis]);
+    if (analysis.status === 'idle') void startAnalysis(session.captures);
+  }, [analysis.status, session.captures, startAnalysis]);
 
   const retry = () => {
     resetAnalysis();
+  };
+
+  const retakePhotos = async () => {
+    await clearCaptures();
+    resetAnalysis();
+    router.replace('/capture');
   };
 
   return (
@@ -30,16 +37,20 @@ export default function ProcessingScreen() {
         <View style={[styles.orbit, analysis.status === 'ready' && styles.orbitReady]}>
           <Text style={styles.orbitMark}>{analysis.status === 'ready' ? '✓' : 'vAI'}</Text>
         </View>
-        <Text style={styles.eyebrow}>SYNTHETIC DEMONSTRATION</Text>
+        <Text style={styles.eyebrow}>{isDemo ? 'SYNTHETIC DEMONSTRATION' : 'ANALYSIS IN PROGRESS'}</Text>
         <Text style={styles.title}>
           {analysis.status === 'ready'
             ? 'Your sample view is ready'
             : analysis.status === 'error'
               ? 'The sample could not be prepared'
-              : 'Building Your Skin Today'}
+              : analysis.status === 'retake'
+                ? 'A retake is needed'
+                : 'Building Your Skin Today'}
         </Text>
         <Text style={styles.subtitle}>
-          This milestone validates and presents fictional demonstration data. It does not inspect, transmit, or analyze your photos.
+          {isDemo
+            ? 'This milestone validates and presents fictional demonstration data. It does not inspect, transmit, or analyze your photos.'
+            : 'Your photos are being reviewed for visible appearance characteristics only.'}
         </Text>
       </View>
 
@@ -57,19 +68,32 @@ export default function ProcessingScreen() {
         })}
       </View>
 
-      <InfoCard
-        title={session.captures.length ? `${session.captures.length} photos remain local` : 'No photo input'}
-        body="The synthetic preparation service accepts no image input and makes no network request."
-        tone="green"
-      />
+      {isDemo ? (
+        <InfoCard
+          title={session.captures.length ? `${session.captures.length} photos remain local` : 'No photo input'}
+          body="The synthetic preparation service accepts no image input and makes no network request."
+          tone="green"
+        />
+      ) : null}
 
       {analysis.status === 'ready' ? (
         <PrimaryButton label="View Your Skin Today" onPress={() => router.replace('/overview')} />
       ) : null}
+      {analysis.status === 'retake' ? (
+        <>
+          <InfoCard
+            title="Please retake your photos"
+            body={analysis.retakeInstruction ?? 'The photos could not support a confident view. Please retake them.'}
+            tone="gold"
+          />
+          <PrimaryButton label="Retake photos" onPress={() => { void retakePhotos(); }} />
+          <SecondaryButton label="Return home" onPress={() => router.replace('/')} />
+        </>
+      ) : null}
       {analysis.status === 'error' ? (
         <>
           <InfoCard title="Preparation error" body={analysis.errorMessage ?? 'Please retry the demonstration.'} />
-          <PrimaryButton label="Retry demonstration" onPress={retry} />
+          <PrimaryButton label={isDemo ? 'Retry demonstration' : 'Retry'} onPress={retry} />
           <SecondaryButton label="Return home" onPress={() => router.replace('/')} />
         </>
       ) : null}

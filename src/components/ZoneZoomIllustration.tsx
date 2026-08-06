@@ -1,8 +1,13 @@
-import { Image, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { useState } from 'react';
+import { Image, StyleSheet, Text, View, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import { FaceIllustration } from './FaceIllustration';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
+import type { NormalizedRect, Size } from '@/domain/zones/zoneAlignment';
+import { getZoneZoomLayout } from '@/domain/zones/zoneAlignment';
 import { zonePresentation } from '@/data/zonePresentation';
 import { colors, radius } from '@/theme';
+
+const CROP_HEIGHT = 260;
 
 const facePositions: Record<SkinZone, ViewStyle> = {
   forehead: { top: 36 },
@@ -24,28 +29,67 @@ const photoOffsets: Record<SkinZone, number> = {
   chin: -72,
 };
 
-export function ZoneZoomIllustration({ zone, photoUri }: { zone: SkinZone; photoUri?: string }) {
+interface ZoneZoomIllustrationProps {
+  zone: SkinZone;
+  photoUri?: string;
+  /** Original pixel size of the photo; required for aligned cropping. */
+  photoSize?: Size;
+  /**
+   * Individually derived zone rect (normalized to the ORIGINAL photo). When
+   * present, the view pans/zooms the original file so this zone fills the
+   * crop — never a screenshot or a pre-enlarged copy. When absent, the honest
+   * fixed-guide crop is used and labeled as such.
+   */
+  zoneRect?: NormalizedRect | null;
+}
+
+export function ZoneZoomIllustration({ zone, photoUri, photoSize, zoneRect }: ZoneZoomIllustrationProps) {
+  const [viewportWidth, setViewportWidth] = useState<number | null>(null);
+  const aligned = Boolean(photoUri && photoSize && zoneRect);
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    setViewportWidth(event.nativeEvent.layout.width);
+  };
+
+  const alignedLayout = aligned && viewportWidth && photoSize && zoneRect
+    ? getZoneZoomLayout(zoneRect, photoSize, { width: viewportWidth, height: CROP_HEIGHT })
+    : null;
+
   return (
-    <View style={styles.crop}>
+    <View onLayout={onLayout} style={styles.crop}>
       <View pointerEvents="none" style={styles.glow} />
-      {photoUri ? (
+      {photoUri && alignedLayout ? (
+        <Image
+          accessibilityLabel={`Magnified ${zonePresentation[zone].label} aligned from your local front photo`}
+          source={{ uri: photoUri }}
+          style={{
+            position: 'absolute',
+            width: alignedLayout.imageWidth,
+            height: alignedLayout.imageHeight,
+            left: alignedLayout.offsetX,
+            top: alignedLayout.offsetY,
+          }}
+        />
+      ) : photoUri && !aligned ? (
         <Image
           accessibilityLabel={`Magnified ${zonePresentation[zone].label} from your local front photo`}
           source={{ uri: photoUri }}
           style={[styles.photo, { transform: [{ scale: 2.05 }, { translateY: photoOffsets[zone] }] }]}
         />
-      ) : (
+      ) : !photoUri ? (
         <View style={[styles.faceLayer, facePositions[zone]]}>
           <View style={styles.faceScale}><FaceIllustration /></View>
         </View>
-      )}
+      ) : null}
       <View pointerEvents="none" style={styles.focusFrame} />
       <View style={styles.label}>
         <Text style={styles.labelText}>{zonePresentation[zone].label.toUpperCase()}</Text>
       </View>
       {photoUri ? (
         <View pointerEvents="none" style={styles.localBadge}>
-          <Text style={styles.localBadgeText}>LOCAL PHOTO · FIXED GUIDE CROP</Text>
+          <Text style={styles.localBadgeText}>
+            {aligned ? 'LOCAL PHOTO · ALIGNED ON-DEVICE' : 'LOCAL PHOTO · FIXED GUIDE CROP'}
+          </Text>
         </View>
       ) : null}
     </View>
@@ -53,7 +97,7 @@ export function ZoneZoomIllustration({ zone, photoUri }: { zone: SkinZone; photo
 }
 
 const styles = StyleSheet.create({
-  crop: { height: 260, overflow: 'hidden', borderRadius: 28, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.sageWash, alignItems: 'center' },
+  crop: { height: CROP_HEIGHT, overflow: 'hidden', borderRadius: 28, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.sageWash, alignItems: 'center' },
   glow: { position: 'absolute', width: 330, height: 330, borderRadius: 165, backgroundColor: colors.white, opacity: 0.75, top: -50 },
   faceLayer: { position: 'absolute', alignItems: 'center' },
   faceScale: { transform: [{ scale: 1.75 }] },

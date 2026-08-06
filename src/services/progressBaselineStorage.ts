@@ -52,7 +52,14 @@ export async function saveProgressBaseline(sourceSessionId: string, captures: re
       if (!source.exists) throw new Error('A temporary photo is no longer available.');
       const destination = new File(directory, `${capture.angle}.jpg`);
       await source.copy(destination, { overwrite: true });
-      storedCaptures.push({ ...capture, uri: destination.uri });
+      // Persist only the photo metadata — never in-memory detection geometry.
+      storedCaptures.push({
+        angle: capture.angle,
+        uri: destination.uri,
+        width: capture.width,
+        height: capture.height,
+        capturedAtIso: capture.capturedAtIso,
+      });
     }
 
     const baseline: ProgressBaseline = {

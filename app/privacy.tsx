@@ -30,7 +30,7 @@ export default function PrivacyScreen() {
   return (
     <Screen title="Privacy controls" back>
       <Text style={styles.title}>Your image is personal.</Text>
-      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. It has no app upload, account, AI analysis, analytics, advertising, or research pipeline.</Text>
+      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. On-device face detection may run to align facial-zone views: it does not identify you, its geometry stays in memory only, and it is deleted with the check-in. The beta has no app upload, account, AI skin analysis, analytics, advertising, or research pipeline.</Text>
       <View style={styles.list}>
         {controls.map(([title, status, body]) => (
           <View key={title} style={styles.row}>
@@ -39,7 +39,7 @@ export default function PrivacyScreen() {
           </View>
         ))}
       </View>
-      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos, any saved baseline photos, and the in-memory synthetic result and routine answers." tone="green" />
+      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos (including optional close-ups), any saved baseline photos, in-memory face-alignment geometry, and the in-memory synthetic result and routine answers." tone="green" />
       <SecondaryButton
         label={session.captures.length || baseline || analysis.result || routineProfile ? 'Delete all local vAIne data' : 'No local vAIne data to delete'}
         onPress={() => { if (session.captures.length || baseline || analysis.result || routineProfile) void deleteSession(); }}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { FacialZoneMap } from '@/components/FacialZoneMap';
@@ -6,6 +6,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/c
 import { ScoreRing } from '@/components/ScoreRing';
 import { zoneOrder, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
+import { summarizeCaptureAlignment } from '@/domain/capture/adaptiveCapture';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, fonts, radius, shadows } from '@/theme';
@@ -27,13 +28,17 @@ export default function ZonesScreen() {
   const presentation = zonePresentation[selectedZone];
   const observation = analysis.result.facialZones[selectedZone];
   const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
+  const alignment = useMemo(() => summarizeCaptureAlignment(frontPhoto).alignment, [frontPhoto]);
+  const alignedZones = alignment.mode === 'landmarks' ? alignment.zones : null;
 
   return (
     <Screen title="Facial-zone view" back>
       <Text style={styles.eyebrow}>VISIBLE APPEARANCE ONLY</Text>
       <Text style={styles.heading}>{frontPhoto ? 'Explore your check-in by zone' : 'Explore the sample by zone'}</Text>
       <Text style={styles.subtitle}>{frontPhoto
-        ? 'Tap your front photo or a label. The overlays use the same fixed positioning guide as capture.'
+        ? alignedZones
+          ? 'Tap your front photo or a label. Markers are aligned to your face by on-device detection.'
+          : 'Tap your front photo or a label. The overlays use the clearly labeled fixed positioning guide.'
         : 'Tap the face or a label to move through the fictional observation areas.'}</Text>
 
       <View style={styles.tabs}>
@@ -53,7 +58,13 @@ export default function ZonesScreen() {
         })}
       </View>
 
-      <FacialZoneMap selectedZone={selectedZone} onSelectZone={setSelectedZone} photoUri={frontPhoto?.uri} />
+      <FacialZoneMap
+        selectedZone={selectedZone}
+        onSelectZone={setSelectedZone}
+        photoUri={frontPhoto?.uri}
+        photoSize={frontPhoto ? { width: frontPhoto.width, height: frontPhoto.height } : undefined}
+        alignedZones={alignedZones}
+      />
 
       <View style={styles.summary}>
         <View style={styles.summaryCopy}>
@@ -68,7 +79,9 @@ export default function ZonesScreen() {
       <InfoCard
         title={frontPhoto ? 'Your photo, demonstration observations' : 'How to read this'}
         body={frontPhoto
-          ? 'The background is your local front capture. Marker placement uses a fixed guide—not facial-landmark detection—and the score and observation remain fictional demonstration data.'
+          ? alignedZones
+            ? 'The background is your local front capture with markers aligned to your face by on-device detection. The scores and observations remain fictional demonstration data, not an analysis of your skin.'
+            : 'The background is your local front capture. Marker placement uses a fixed guide—face alignment was not available for this photo—and the score and observation remain fictional demonstration data.'
           : 'Zone markers describe what is visible in fictional sample data—not underlying health, identity, age, or a diagnosis.'}
         tone="lilac"
       />

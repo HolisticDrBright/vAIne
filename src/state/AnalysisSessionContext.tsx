@@ -12,22 +12,34 @@ import {
   reduceAnalysisExperience,
   type AnalysisExperienceState,
 } from '@/domain/analysis/analysisExperience';
-import { runSyntheticAnalysis } from '@/services/syntheticAnalysisService';
+import {
+  buildAnalysisRequest,
+  describeAnalysisFailure,
+  type AnalysisCaptureInput,
+  type AnalysisServiceDescriptor,
+  type SkinAnalysisService,
+} from '@/domain/analysis/analysisService';
+import { syntheticSkinAnalysisService } from '@/services/syntheticAnalysisService';
 
 interface AnalysisSessionValue {
   analysis: AnalysisExperienceState;
-  startSyntheticAnalysis: () => Promise<void>;
+  /** Which implementation is wired: drives honest demo/live labeling. */
+  serviceDescriptor: AnalysisServiceDescriptor;
+  startAnalysis: (captures: readonly AnalysisCaptureInput[]) => Promise<void>;
   resetAnalysis: () => void;
 }
 
 const AnalysisSessionContext = createContext<AnalysisSessionValue | null>(null);
 
-export function AnalysisSessionProvider({ children }: PropsWithChildren) {
+export function AnalysisSessionProvider({
+  children,
+  service = syntheticSkinAnalysisService,
+}: PropsWithChildren<{ service?: SkinAnalysisService }>) {
   const [analysis, dispatch] = useReducer(reduceAnalysisExperience, initialAnalysisExperienceState);
   const inFlightRef = useRef<Promise<void> | null>(null);
   const runGenerationRef = useRef(0);
 
-  const startSyntheticAnalysis = useCallback(async () => {
+  const startAnalysis = useCallback(async (captures: readonly AnalysisCaptureInput[]) => {
     if (inFlightRef.current) return inFlightRef.current;
 
     const runGeneration = runGenerationRef.current + 1;
@@ -35,15 +47,18 @@ export function AnalysisSessionProvider({ children }: PropsWithChildren) {
     dispatch({ type: 'START' });
     const run = (async () => {
       try {
-        const result = await runSyntheticAnalysis();
+        const outcome = await service.analyze(buildAnalysisRequest(captures));
         if (runGeneration !== runGenerationRef.current) return;
-        dispatch({ type: 'SUCCEED', result });
+        if (outcome.kind === 'completed') {
+          dispatch({ type: 'COMPLETE', record: outcome.record });
+        } else if (outcome.kind === 'retake_required') {
+          dispatch({ type: 'RETAKE', instruction: outcome.instruction });
+        } else {
+          dispatch({ type: 'FAIL', message: outcome.message });
+        }
       } catch {
         if (runGeneration !== runGenerationRef.current) return;
-        dispatch({
-          type: 'FAIL',
-          message: 'The demonstration result could not be prepared. Your local photos were not used or uploaded.',
-        });
+        dispatch({ type: 'FAIL', message: describeAnalysisFailure('unexpected_error') });
       } finally {
         if (runGeneration === runGenerationRef.current) inFlightRef.current = null;
       }
@@ -51,7 +66,7 @@ export function AnalysisSessionProvider({ children }: PropsWithChildren) {
 
     inFlightRef.current = run;
     return run;
-  }, []);
+  }, [service]);
 
   const resetAnalysis = useCallback(() => {
     runGenerationRef.current += 1;
@@ -61,9 +76,10 @@ export function AnalysisSessionProvider({ children }: PropsWithChildren) {
 
   const value = useMemo<AnalysisSessionValue>(() => ({
     analysis,
-    startSyntheticAnalysis,
+    serviceDescriptor: service.descriptor,
+    startAnalysis,
     resetAnalysis,
-  }), [analysis, resetAnalysis, startSyntheticAnalysis]);
+  }), [analysis, resetAnalysis, service.descriptor, startAnalysis]);
 
   return <AnalysisSessionContext.Provider value={value}>{children}</AnalysisSessionContext.Provider>;
 }

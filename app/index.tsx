@@ -49,6 +49,9 @@ export default function ScanSelectionScreen() {
         ))}
       </View>
 
+      <Pressable accessibilityRole="button" style={styles.privacyLink} onPress={() => router.push('/account')}>
+        <Text style={styles.privacyText}>Account and sign-in  →</Text>
+      </Pressable>
       <Pressable accessibilityRole="button" style={styles.privacyLink} onPress={() => router.push('/privacy')}>
         <Text style={styles.privacyText}>Privacy controls and local photo deletion  →</Text>
       </Pressable>
