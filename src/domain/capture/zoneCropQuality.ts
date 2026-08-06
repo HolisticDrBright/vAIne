@@ -12,7 +12,13 @@ import type { NormalizedPoint, NormalizedRect, PixelRect, Size } from '../zones/
  * Phase 5 repeatability work.
  */
 
-export const MIN_ZONE_CROP_SHORT_SIDE_PX = 180;
+/**
+ * Zone shapes differ a lot (the under-eye band is a thin strip, cheeks are a
+ * wide block), so resolution is gated on BOTH a minimum short side and a
+ * minimum pixel area rather than one blanket square size.
+ */
+export const MIN_ZONE_CROP_SHORT_SIDE_PX = 110;
+export const MIN_ZONE_CROP_AREA_PX = 44_000;
 export const MIN_SHARPNESS_SCORE = 0.35;
 export const MIN_MEAN_LUMA = 60;
 export const MAX_MEAN_LUMA = 210;
@@ -66,7 +72,10 @@ export function assessZoneCrop(metrics: ZoneCropMetrics): ZoneCropAssessment {
     };
   }
 
-  if (Math.min(metrics.crop.width, metrics.crop.height) < MIN_ZONE_CROP_SHORT_SIDE_PX) {
+  if (
+    Math.min(metrics.crop.width, metrics.crop.height) < MIN_ZONE_CROP_SHORT_SIDE_PX ||
+    metrics.crop.width * metrics.crop.height < MIN_ZONE_CROP_AREA_PX
+  ) {
     deficiencies.push('insufficient_resolution');
   }
 

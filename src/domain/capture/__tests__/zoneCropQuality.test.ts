@@ -9,6 +9,7 @@ import {
   MAX_MEAN_LUMA,
   MAX_OCCLUSION_RATIO,
   MIN_MEAN_LUMA,
+  MIN_ZONE_CROP_AREA_PX,
   MIN_SHARPNESS_SCORE,
   MIN_ZONE_CROP_SHORT_SIDE_PX,
   planDetailCapture,
@@ -49,6 +50,7 @@ describe('zone crop gates', () => {
 
   test.each([
     ['insufficient_resolution', { crop: { ...goodCrop, height: MIN_ZONE_CROP_SHORT_SIDE_PX - 1 } }],
+    ['insufficient_resolution', { crop: { ...goodCrop, width: 200, height: 150 } }],
     ['blurred', { sharpness: MIN_SHARPNESS_SCORE - 0.01 }],
     ['underexposed', { meanLuma: MIN_MEAN_LUMA - 1 }],
     ['overexposed', { meanLuma: MAX_MEAN_LUMA + 1 }],
@@ -58,6 +60,12 @@ describe('zone crop gates', () => {
     const assessment = assessZoneCrop(metrics(overrides));
     expect(assessment.sufficient).toBe(false);
     expect(assessment.deficiencies).toEqual([deficiency]);
+  });
+
+  test('a wide, thin strip passes when both short side and area are adequate', () => {
+    const strip = { x: 0, y: 0, width: 1800, height: 120 };
+    expect(strip.width * strip.height).toBeGreaterThanOrEqual(MIN_ZONE_CROP_AREA_PX);
+    expect(assessZoneCrop(metrics({ crop: strip })).sufficient).toBe(true);
   });
 
   test('unmeasured metrics never pass silently and never fail dishonestly', () => {
