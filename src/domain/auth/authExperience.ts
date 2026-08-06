@@ -15,6 +15,7 @@ export type AuthExperienceStatus =
   | 'signed_out'
   | 'signing_in'
   | 'signed_in'
+  | 'reauthenticating'
   | 'deleting_account';
 
 export interface AuthExperienceState {
@@ -36,6 +37,11 @@ export type AuthExperienceEvent =
   | { type: 'SIGN_IN_CANCELLED' }
   | { type: 'SIGN_IN_FAILED'; message: string }
   | { type: 'SIGNED_OUT' }
+  | { type: 'SIGN_OUT_FAILED'; message: string }
+  | { type: 'REAUTH_START' }
+  | { type: 'REAUTH_SUCCESS'; account: AuthAccount }
+  | { type: 'REAUTH_CANCELLED' }
+  | { type: 'REAUTH_FAILED'; message: string }
   | { type: 'DELETE_START' }
   | { type: 'DELETE_SUCCESS' }
   | { type: 'DELETE_REAUTH_REQUIRED' }
@@ -83,6 +89,23 @@ export function reduceAuthExperience(
     case 'SIGNED_OUT':
       if (state.status !== 'signed_in' && state.status !== 'deleting_account') return state;
       return { status: 'signed_out', account: null, errorMessage: null, reauthRequired: false };
+    case 'SIGN_OUT_FAILED':
+      if (state.status !== 'signed_in') return state;
+      // The session still exists; pretending otherwise would strand it.
+      return { ...state, errorMessage: event.message };
+    case 'REAUTH_START':
+      if (state.status !== 'signed_in') return state;
+      return { ...state, status: 'reauthenticating', errorMessage: null };
+    case 'REAUTH_SUCCESS':
+      if (state.status !== 'reauthenticating') return state;
+      return { status: 'signed_in', account: event.account, errorMessage: null, reauthRequired: false };
+    case 'REAUTH_CANCELLED':
+      if (state.status !== 'reauthenticating') return state;
+      // Changing their mind keeps the demand pending but shows no error.
+      return { ...state, status: 'signed_in', errorMessage: null };
+    case 'REAUTH_FAILED':
+      if (state.status !== 'reauthenticating') return state;
+      return { ...state, status: 'signed_in', errorMessage: event.message };
     case 'DELETE_START':
       if (state.status !== 'signed_in') return state;
       return { ...state, status: 'deleting_account', errorMessage: null };

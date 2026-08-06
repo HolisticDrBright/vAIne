@@ -17,7 +17,7 @@ export function getSupabaseClient(): SupabaseClient | null {
   initialized = true;
   const config = getBackendConfig();
   if (!config) return null;
-  client = createClient(config.url, config.anonKey, {
+  client = createClient(config.url, config.publishableKey, {
     auth: {
       storage: AsyncStorage,
       autoRefreshToken: true,

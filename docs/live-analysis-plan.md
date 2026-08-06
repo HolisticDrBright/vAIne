@@ -28,6 +28,17 @@ Status as of 2026-08-06:
   budget, a $5/day application ceiling, and the kill switch; the estimated
   $0.05/analysis must be benchmarked with real analyses before the beta
   expands. No key exists yet.
+- Release gates (2026-08-06): Build 7 validates the on-device capture stack
+  (camera, ML Kit, facial-zone alignment, crops, retakes, fixed-guide
+  fallback). Build 8 — created only after the Apple provider and
+  publishable-key configuration are confirmed — validates everything added
+  since Build 7: Sign in with Apple, session restoration, sign-out,
+  reauthentication, and account deletion, using a disposable beta account
+  and a generated solid-color JPEG for storage-cleanup checks (never a real
+  face). PR #2 merges only after both builds pass. Account deletion is
+  unit- and structurally verified today, not yet end-to-end verified: the
+  project has zero users and objects, so true end-to-end proof happens in
+  Build 8.
 - Hardening milestone (2026-08-06): the `delete-account` function was
   rewritten fail-safe and idempotent (function source now lives in
   `supabase/functions/delete-account/` with its orchestrator under test);

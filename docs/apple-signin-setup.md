@@ -44,12 +44,21 @@ Backend facts referenced below:
 
 1. Local development: copy `.env.example` to `.env` and fill
    `EXPO_PUBLIC_SUPABASE_URL` (the API URL above) and
-   `EXPO_PUBLIC_SUPABASE_ANON_KEY` (dashboard → Project Settings → API →
-   anon/publishable key). `.env` is gitignored.
+   `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (dashboard → Project Settings →
+   API Keys → **Publishable key**, the value starting `sb_publishable_`).
+   `.env` is gitignored; never commit the real values.
 2. TestFlight builds: set the same two variables as EAS environment
-   variables for the production profile (EAS dashboard or `eas.json` env).
-   These are publishable client values, not secrets; every table is guarded
-   by RLS and privileged work happens only in Edge Functions.
+   variables in the beta environment used by the production build profile
+   (EAS dashboard → project → Environment variables). These are publishable
+   client values, not secrets; every table is guarded by RLS and grants,
+   and privileged work happens only in Edge Functions.
+3. The app validates the key's shape at startup and refuses anything that
+   is not a modern publishable key: secret keys (`sb_secret_…`), legacy
+   JWT-format keys (including service-role), and pasted private-key
+   material (such as an Apple `.p8`) all cause the app to stay fully local
+   rather than ship a dangerous credential. No service-role key, secret
+   key, or `.p8` ever belongs in the app, `.env`, EAS variables, or this
+   repository.
 
 ## 4. What happens automatically after that
 
@@ -66,6 +75,51 @@ Backend facts referenced below:
   deletes results, counters, and audit history with every step checked, and
   only then deletes the auth user; any failure preserves the account so
   deletion can be retried to convergence.
+
+## Release gates
+
+- **Build 7 (on TestFlight)** validates the on-device capture stack: camera,
+  ML Kit face detection, facial-zone alignment, magnified crops, retake
+  guidance, and the labeled fixed-guide fallback.
+- **Build 8** must validate everything added after Build 7's commit: Sign in
+  with Apple, session restoration across app restarts, sign-out,
+  reauthentication, and account deletion end to end. It is created only
+  after every manual step in sections 1–3 above is confirmed complete.
+- **PR #2 merges only after both Build 7 and Build 8 testing pass**, because
+  the branch now extends beyond Build 7's commit.
+
+## Build 8 test checklist (disposable beta account only)
+
+Rules: use a disposable Apple ID / beta account, never a personal one. When
+a storage object is needed to prove cleanup, use a generated solid-color
+JPEG — never a person's face; infrastructure testing does not need real
+photos. `analysis_enabled` stays false throughout.
+
+1. First Sign in with Apple completes and the account screen shows only the
+   opaque account identifier (no name or email anywhere).
+2. Cancelling the Apple sheet returns to signed-out with no error message.
+3. Close and reopen the app: the session restores without re-prompting
+   (brief "checking for an existing session" state, never a wrong flash).
+4. Sign out; reopening the app shows signed-out (no session).
+5. Sign in again successfully.
+6. Tap Delete account: the destructive confirmation appears and Cancel
+   backs out with nothing deleted.
+7. With a session older than ten minutes, confirming deletion returns the
+   "confirm it's you" reauthentication demand (server answered
+   `reauth_required` — verify no data was deleted).
+8. The reauth card reruns the full Apple ceremony; a fresh sign-in
+   proceeds directly into deletion.
+9. Deletion succeeds and the app lands signed-out with the deletion notice.
+10. Backend verification: no Auth user remains, `analysis_results`,
+    `usage_counters`, and user-linked audit rows are gone (lifecycle rows
+    carry a null user), and zero objects remain under the user's storage
+    prefix (verify with the solid-color JPEG placed before deletion).
+11. Retry/idempotency: force one controlled failure mid-cleanup (e.g.
+    temporarily revoke a service permission or use the disposable object to
+    simulate), confirm the account survives, then retry deletion to full
+    convergence.
+12. Regression: re-run the Build 7 capture checks (camera, face detection,
+    zone alignment, crops, retakes, fallback) on the same build.
 
 ## Not yet configured anywhere (later phases)
 
