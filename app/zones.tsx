@@ -7,10 +7,12 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { zoneOrder, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
+import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 export default function ZonesScreen() {
   const { analysis } = useAnalysisSession();
+  const { session } = useCaptureSession();
   const [selectedZone, setSelectedZone] = useState<SkinZone>('under_eyes');
 
   if (analysis.status !== 'ready' || !analysis.result) {
@@ -24,12 +26,15 @@ export default function ZonesScreen() {
 
   const presentation = zonePresentation[selectedZone];
   const observation = analysis.result.facialZones[selectedZone];
+  const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
 
   return (
     <Screen title="Facial-zone view" back>
       <Text style={styles.eyebrow}>VISIBLE APPEARANCE ONLY</Text>
-      <Text style={styles.heading}>Explore the sample by zone</Text>
-      <Text style={styles.subtitle}>Tap the face or a label to move through the fictional observation areas.</Text>
+      <Text style={styles.heading}>{frontPhoto ? 'Explore your check-in by zone' : 'Explore the sample by zone'}</Text>
+      <Text style={styles.subtitle}>{frontPhoto
+        ? 'Tap your front photo or a label. The overlays use the same fixed positioning guide as capture.'
+        : 'Tap the face or a label to move through the fictional observation areas.'}</Text>
 
       <View style={styles.tabs}>
         {zoneOrder.map((zone) => {
@@ -48,11 +53,11 @@ export default function ZonesScreen() {
         })}
       </View>
 
-      <FacialZoneMap selectedZone={selectedZone} onSelectZone={setSelectedZone} />
+      <FacialZoneMap selectedZone={selectedZone} onSelectZone={setSelectedZone} photoUri={frontPhoto?.uri} />
 
       <View style={styles.summary}>
         <View style={styles.summaryCopy}>
-          <Text style={styles.summaryEyebrow}>{presentation.focus.toUpperCase()}</Text>
+          <Text style={styles.summaryEyebrow}>{frontPhoto ? 'FICTIONAL SAMPLE · NOT CALCULATED FROM PHOTO' : presentation.focus.toUpperCase()}</Text>
           <Text style={styles.title}>{presentation.label}</Text>
           <Text style={styles.body}>{observation?.observation ?? 'No sample observation is available for this zone.'}</Text>
           <Text style={styles.confidence}>Presentation confidence {Math.round((observation?.confidence ?? 0) * 100)}%</Text>
@@ -60,7 +65,13 @@ export default function ZonesScreen() {
         <ScoreRing score={observation?.appearanceScore ?? 0} compact />
       </View>
 
-      <InfoCard title="How to read this" body="Zone markers describe what is visible in fictional sample data—not underlying health, identity, age, or a diagnosis." tone="lilac" />
+      <InfoCard
+        title={frontPhoto ? 'Your photo, demonstration observations' : 'How to read this'}
+        body={frontPhoto
+          ? 'The background is your local front capture. Marker placement uses a fixed guide—not facial-landmark detection—and the score and observation remain fictional demonstration data.'
+          : 'Zone markers describe what is visible in fictional sample data—not underlying health, identity, age, or a diagnosis.'}
+        tone="lilac"
+      />
       <PrimaryButton
         label={`Zoom into ${presentation.label}`}
         onPress={() => router.push({ pathname: '/zone-detail', params: { zone: selectedZone } })}

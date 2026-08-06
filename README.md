@@ -13,7 +13,7 @@ The interface uses a warm premium clinical-spa direction with ivory surfaces, bo
 3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
 4. A validated synthetic processing flow with ready, failure, and retry states
 5. A high-fidelity “Your Skin Today” overview with support-focus cards
-6. An interactive facial-zone explorer with a zoomed detail view for seven zones
+6. An interactive facial-zone explorer that uses the local front capture when available, with fixed-guide magnified crops for seven zones and an illustration fallback
 7. A minimal in-memory routine safety intake with a conservative “prefer not to say” path
 8. Deterministic AM/PM routines derived from synthetic goals and conspicuously labeled fictional catalog samples
 9. An optional, consent-controlled local baseline with real-photo comparison and no invented progress score

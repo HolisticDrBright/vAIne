@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { FaceIllustration } from './FaceIllustration';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
 import { zoneOrder, zonePresentation } from '@/data/zonePresentation';
@@ -8,16 +8,23 @@ import { colors, radius } from '@/theme';
 interface FacialZoneMapProps {
   selectedZone: SkinZone;
   onSelectZone: (zone: SkinZone) => void;
+  photoUri?: string;
 }
 
-export function FacialZoneMap({ selectedZone, onSelectZone }: FacialZoneMapProps) {
+export function FacialZoneMap({ selectedZone, onSelectZone, photoUri }: FacialZoneMapProps) {
   const selectedGeometry = zoneGeometry[selectedZone];
 
   return (
     <View style={styles.stage}>
       <View pointerEvents="none" style={styles.glow} />
       <View style={styles.faceCanvas}>
-        <FaceIllustration />
+        {photoUri ? (
+          <Image
+            accessibilityLabel="Your local front check-in photo"
+            source={{ uri: photoUri }}
+            style={styles.photo}
+          />
+        ) : <FaceIllustration />}
         <View pointerEvents="none" style={[styles.highlight, selectedGeometry.highlight]} />
         {zoneOrder.map((zone) => {
           const selected = zone === selectedZone;
@@ -56,6 +63,7 @@ const styles = StyleSheet.create({
   stage: { height: 340, overflow: 'hidden', borderRadius: 26, backgroundColor: colors.sageWash, alignItems: 'center', justifyContent: 'flex-end', borderWidth: 1, borderColor: colors.line },
   glow: { position: 'absolute', width: 310, height: 310, borderRadius: 155, backgroundColor: colors.white, opacity: 0.7, top: 12 },
   faceCanvas: { width: FACE_CANVAS.width, height: FACE_CANVAS.height, position: 'relative' },
+  photo: { width: FACE_CANVAS.width, height: FACE_CANVAS.height, borderRadius: 104, borderWidth: 2, borderColor: colors.white, resizeMode: 'cover' },
   highlight: { position: 'absolute', borderWidth: 2, borderColor: colors.oliveDark, backgroundColor: `${colors.gold}24` },
   marker: { position: 'absolute', width: 22, height: 22, borderWidth: 1, borderColor: colors.oliveDark, borderRadius: 11, backgroundColor: `${colors.white}E8`, alignItems: 'center', justifyContent: 'center' },
   markerSelected: { borderWidth: 2, borderColor: colors.gold, backgroundColor: colors.gold },

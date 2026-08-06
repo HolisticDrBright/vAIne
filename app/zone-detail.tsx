@@ -6,6 +6,7 @@ import { ZoneZoomIllustration } from '@/components/ZoneZoomIllustration';
 import { isSkinZone, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
+import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 function resolveZone(value: string | string[] | undefined): SkinZone {
@@ -16,9 +17,11 @@ function resolveZone(value: string | string[] | undefined): SkinZone {
 export default function ZoneDetailScreen() {
   const params = useLocalSearchParams<{ zone?: string | string[] }>();
   const { analysis } = useAnalysisSession();
+  const { session } = useCaptureSession();
   const zone = resolveZone(params.zone);
   const presentation = zonePresentation[zone];
   const observation = analysis.result?.facialZones[zone];
+  const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
 
   if (analysis.status !== 'ready' || !analysis.result || !observation) {
     return (
@@ -31,16 +34,22 @@ export default function ZoneDetailScreen() {
 
   return (
     <Screen title={presentation.label} back>
-      <Text style={styles.eyebrow}>ZOOMED SAMPLE VIEW</Text>
+      <Text style={styles.eyebrow}>{frontPhoto ? 'YOUR LOCAL PHOTO · FIXED GUIDE CROP' : 'ZOOMED SAMPLE VIEW'}</Text>
       <Text style={styles.heading}>{presentation.focus}</Text>
-      <Text style={styles.subtitle}>A closer presentation of the selected fictional facial zone.</Text>
+      <Text style={styles.subtitle}>{frontPhoto
+        ? `A magnified crop of the ${presentation.label.toLowerCase()} area from your front check-in photo.`
+        : 'A closer presentation of the selected fictional facial zone.'}</Text>
 
-      <ZoneZoomIllustration zone={zone} />
+      <ZoneZoomIllustration zone={zone} photoUri={frontPhoto?.uri} />
+
+      {frontPhoto ? (
+        <InfoCard title="Photo crop only" body="This crop uses a fixed position calibrated to the capture guide. It is not facial-landmark detection, and no photo analysis or upload occurred." tone="green" />
+      ) : null}
 
       <View style={styles.scoreCard}>
         <ScoreRing score={observation.appearanceScore} compact />
         <View style={styles.scoreCopy}>
-          <Text style={styles.cardEyebrow}>ZONE APPEARANCE INDEX</Text>
+          <Text style={styles.cardEyebrow}>{frontPhoto ? 'FICTIONAL SAMPLE INDEX · NOT FROM PHOTO' : 'ZONE APPEARANCE INDEX'}</Text>
           <Text style={styles.title}>{presentation.label}</Text>
           <Text style={styles.body}>{observation.observation}</Text>
         </View>
@@ -56,7 +65,7 @@ export default function ZoneDetailScreen() {
         ))}
       </View>
 
-      <InfoCard title="Close-up, same boundary" body="This screen magnifies a cosmetic appearance observation. It does not reveal health status or establish a diagnosis." tone="lilac" />
+      <InfoCard title="Close-up, same boundary" body="The photo stays local. Demonstration text does not reveal health status or establish a diagnosis." tone="lilac" />
       <PrimaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
       <SecondaryButton label="Choose another zone" onPress={() => router.back()} />
       <LegalNote />
