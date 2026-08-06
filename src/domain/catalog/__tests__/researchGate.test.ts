@@ -49,6 +49,9 @@ describe('Phase 9F catalog gate', () => {
       catalogApproved: true,
       consumerMapping: {
         routineSlot: 'hydrate' as const,
+        listPriceCents: 3200,
+        currencyCode: 'USD',
+        priceVerifiedAtIso: '2026-08-05T12:00:00.000Z',
         observationTags: ['appearance.hydration_look_low'] as const,
         activeFamilies: ['synthetic-family'],
         ingredients: ['synthetic ingredient'],

@@ -1,63 +1,86 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { FaceIllustration } from '@/components/FaceIllustration';
+import { BotanicalAccent } from '@/components/BotanicalAccent';
 import { LegalNote, Screen } from '@/components/AppChrome';
 import { futureModules } from '@/data/prototype';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
+
+const homePortrait = require('../assets/home-portrait-woman.jpg');
 
 export default function ScanSelectionScreen() {
   return (
-    <Screen title="vAIne">
-      <Text style={styles.eyebrow}>YOUR VISUAL WELLNESS SPACE</Text>
-      <Text style={styles.title}>Skin check-in</Text>
-      <Text style={styles.subtitle}>A thoughtful way to notice your skin and build consistent care habits.</Text>
+    <Screen title="Skin Longevity">
+      <View style={styles.intro}>
+        <Text style={styles.eyebrow}>YOUR DAILY SKIN RITUAL</Text>
+        <Text style={styles.title}>Understand your skin, nourish your future.</Text>
+        <Text style={styles.subtitle}>A calm, guided space for visible skin check-ins and consistent care.</Text>
+      </View>
 
-      <Pressable accessibilityRole="button" style={styles.hero} onPress={() => router.push('/capture')}>
-        <View style={styles.glow} />
-        <View style={styles.heroCopy}>
-          <View style={styles.ready}><Text style={styles.readyText}>READY NOW</Text></View>
-          <Text style={styles.heroTitle}>Skin Longevity</Text>
-          <Text style={styles.heroBody}>Guided photos, visible observations, and a routine built around your goals.</Text>
-          <Text style={styles.heroAction}>Start check-in  →</Text>
-        </View>
-        <FaceIllustration compact />
-      </Pressable>
-
-      <Text style={styles.section}>Explore more</Text>
-      {futureModules.map((module) => (
-        <View key={module.title} style={styles.module}>
-          <View style={styles.moduleMark}><Text style={styles.moduleMarkText}>{module.mark}</Text></View>
-          <View style={styles.moduleCopy}>
-            <Text style={styles.moduleTitle}>{module.title}</Text>
-            <Text style={styles.moduleSubtitle}>{module.subtitle}</Text>
+      <View style={styles.heroWrap}>
+        <View style={styles.botanical}><BotanicalAccent /></View>
+        <View style={styles.portraitRing}>
+          <View style={styles.portraitInner}>
+            <Image
+              accessibilityLabel="Synthetic woman portrait"
+              source={homePortrait}
+              style={styles.portraitImage}
+            />
           </View>
-          <View style={styles.coming}><Text style={styles.comingText}>COMING SOON</Text></View>
         </View>
-      ))}
+        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.startCard, pressed && styles.pressed]} onPress={() => router.push('/consent')}>
+          <View>
+            <Text style={styles.startTitle}>Skin</Text>
+            <Text style={styles.startSubtitle}>Start analysis</Text>
+          </View>
+          <View style={styles.arrowCircle}><Text style={styles.arrow}>→</Text></View>
+        </Pressable>
+      </View>
+
+      <View style={styles.moduleRow}>
+        {futureModules.map((module) => (
+          <View key={module.title} style={styles.moduleItem}>
+            <View style={styles.moduleCircle}>
+              <Text style={styles.moduleMark}>{module.mark}</Text>
+              <View style={styles.lock}><Text style={styles.lockText}>⌑</Text></View>
+            </View>
+            <Text style={styles.moduleTitle}>{module.title}</Text>
+            <Text style={styles.moduleSubtitle}>Coming soon</Text>
+          </View>
+        ))}
+      </View>
+
+      <Pressable accessibilityRole="button" style={styles.privacyLink} onPress={() => router.push('/privacy')}>
+        <Text style={styles.privacyText}>Privacy controls and local photo deletion  →</Text>
+      </Pressable>
       <LegalNote />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  eyebrow: { color: colors.gold, fontSize: 10, letterSpacing: 1.4, fontWeight: '700' },
-  title: { color: colors.text, fontSize: 34, fontWeight: '700' },
-  subtitle: { color: colors.muted, fontSize: 15, lineHeight: 22, marginBottom: 8 },
-  hero: { minHeight: 210, overflow: 'hidden', borderRadius: 24, borderWidth: 1, borderColor: colors.gold, backgroundColor: '#102746', padding: 20, flexDirection: 'row', alignItems: 'flex-end' },
-  glow: { position: 'absolute', width: 250, height: 250, borderRadius: 125, backgroundColor: '#1E5EA8', opacity: 0.36, right: -50, top: -90 },
-  heroCopy: { flex: 1, zIndex: 2 },
-  ready: { borderRadius: radius.pill, backgroundColor: 'rgba(232,187,105,.18)', alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 5 },
-  readyText: { color: colors.gold, fontWeight: '700', fontSize: 9, letterSpacing: 0.8 },
-  heroTitle: { color: colors.text, fontWeight: '700', fontSize: 25, marginTop: 12 },
-  heroBody: { color: '#CDD9EB', fontSize: 13, lineHeight: 18, marginTop: 6, maxWidth: 210 },
-  heroAction: { color: colors.gold, fontSize: 14, fontWeight: '700', marginTop: 17 },
-  section: { color: colors.text, fontSize: 17, fontWeight: '700', marginTop: 8 },
-  module: { backgroundColor: colors.panel, minHeight: 72, borderRadius: radius.medium, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: colors.line },
-  moduleMark: { height: 42, width: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1B3453' },
-  moduleMarkText: { color: colors.lilac, fontSize: 20 },
-  moduleCopy: { flex: 1 },
-  moduleTitle: { color: colors.text, fontSize: 16, fontWeight: '600' },
-  moduleSubtitle: { color: colors.muted, fontSize: 12, marginTop: 3 },
-  coming: { borderRadius: radius.pill, backgroundColor: '#25344C', paddingHorizontal: 8, paddingVertical: 5 },
-  comingText: { color: '#B8C5D7', fontSize: 8, letterSpacing: 0.6, fontWeight: '700' },
+  intro: { alignItems: 'center', gap: 7, paddingHorizontal: 20 },
+  eyebrow: { color: colors.green, fontSize: 9, letterSpacing: 1.4, fontWeight: '800' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 24, lineHeight: 31, fontWeight: '400', textAlign: 'center', maxWidth: 310 },
+  subtitle: { color: colors.muted, fontSize: 12, lineHeight: 18, textAlign: 'center', maxWidth: 300 },
+  heroWrap: { alignItems: 'center', paddingTop: 3, marginTop: 2 },
+  botanical: { position: 'absolute', right: -6, top: -5 },
+  portraitRing: { width: 220, height: 220, borderRadius: 110, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel, padding: 7, ...shadows.card },
+  portraitInner: { flex: 1, borderRadius: 103, overflow: 'hidden', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: colors.sageWash },
+  portraitImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  startCard: { width: 190, minHeight: 62, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.cream, marginTop: -16, paddingHorizontal: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', ...shadows.card },
+  startTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 16 },
+  startSubtitle: { color: colors.muted, fontSize: 10, marginTop: 3 },
+  arrowCircle: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.sageWash },
+  arrow: { color: colors.oliveDark, fontSize: 18 },
+  pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
+  moduleRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginTop: 4 },
+  moduleItem: { flex: 1, alignItems: 'center' },
+  moduleCircle: { width: 88, height: 88, borderRadius: 44, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel, alignItems: 'center', justifyContent: 'center', ...shadows.card },
+  moduleMark: { color: colors.oliveDark, fontSize: 30 },
+  lock: { position: 'absolute', right: -1, bottom: -1, width: 25, height: 25, borderRadius: 13, backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.gold, alignItems: 'center', justifyContent: 'center' },
+  lockText: { color: colors.oliveDark, fontSize: 12 },
+  moduleTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 13, marginTop: 9 },
+  moduleSubtitle: { color: colors.muted, fontSize: 9, marginTop: 2 },
+  privacyLink: { minHeight: 42, justifyContent: 'center', alignItems: 'center' },
+  privacyText: { color: colors.green, fontSize: 11, fontWeight: '600' },
 });

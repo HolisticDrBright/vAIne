@@ -14,6 +14,7 @@ Research products enter the app boundary as `research_only`. A product can becom
 6. A practitioner verifies the reviewed facts.
 7. A reviewer creates the consumer-safe routine mapping.
 8. A catalog reviewer explicitly records `catalog_approved`.
+9. Any consumer-visible price has a currency and a verification timestamp.
 
 The source package's `clinically_approved` and `imported` values are preserved as research provenance only. They never grant catalog access.
 
@@ -27,3 +28,9 @@ Commercial links remain outside product eligibility and ranking. A link attaches
 - an affiliate or referral relationship has disclosure text.
 
 Synthetic prototype products never receive real commercial links.
+
+## Budget matching
+
+Budget is a user preference, not evidence of quality or effectiveness. The app applies safety exclusions and appearance-goal matching first, removes products above the user's per-product ceiling, and uses lower list price only to break an otherwise equal match. Affiliate relationships, commissions, discounts, and merchant placement cannot improve a match score.
+
+Prices can change. A future live catalog must retain currency and a recent verification timestamp, refresh stale prices, and show category-level guidance when it cannot confirm a product falls within the selected budget.

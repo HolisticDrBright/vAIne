@@ -24,6 +24,9 @@ export interface ProductCandidate {
   catalogReviewState: CatalogReviewState;
   catalogSource: CatalogSource;
   routineSlot: RoutineSlot;
+  listPriceCents: number;
+  currencyCode: string;
+  priceVerifiedAtIso: string;
   observationTags: readonly SkinObservationTag[];
   activeFamilies: readonly string[];
   ingredients: readonly string[];
@@ -88,10 +91,10 @@ export function evaluateProductEligibility(
   if (profile.recentProcedure && flags.has('recent_procedure_exclude')) reasons.push('recent_procedure_exclusion');
 
   const sensitivityConflict =
-    flags.has('sensitivity_exclude') ||
+    (profile.sensitivityPreference === 'sensitive' && flags.has('sensitivity_exclude')) ||
     (profile.avoidFragrance && flags.has('contains_fragrance')) ||
     (profile.avoidEssentialOils && flags.has('contains_essential_oils'));
-  if (profile.sensitivityPreference === 'sensitive' && sensitivityConflict) reasons.push('sensitivity_exclusion');
+  if (sensitivityConflict) reasons.push('sensitivity_exclusion');
 
   if (overlaps(profile.allergies, product.ingredients)) reasons.push('allergy_match');
   if (overlaps(profile.currentActiveFamilies, product.activeFamilies)) reasons.push('duplicate_active_family');
@@ -109,13 +112,15 @@ export interface RankedEligibleProduct {
 }
 
 /**
- * Ranks eligible products using verified characteristics only.
- * Commercial links, commission, discounts, and availability are deliberately absent.
+ * Ranks eligible products using reviewed match characteristics first. A user's
+ * list-price ceiling is a hard filter, and lower price is only a tie-breaker.
+ * Commercial links, commission, discounts, and availability are absent.
  */
 export function rankEligibleProducts(
   products: readonly ProductCandidate[],
   profile: SafetyProfile,
   requestedTags: readonly SkinObservationTag[],
+  maxPriceCents: number | null = null,
 ): RankedEligibleProduct[] {
   return products
     .map((product) => {
@@ -123,6 +128,14 @@ export function rankEligibleProducts(
       const verificationBonus = product.verificationStatus === 'official' ? 1 : 0;
       return { product, eligibility, rankScore: eligibility.matchedTags.length * 10 + verificationBonus };
     })
-    .filter((entry) => entry.eligibility.eligible && entry.eligibility.matchedTags.length > 0)
-    .sort((a, b) => b.rankScore - a.rankScore || a.product.productName.localeCompare(b.product.productName));
+    .filter((entry) => (
+      entry.eligibility.eligible &&
+      entry.eligibility.matchedTags.length > 0 &&
+      (maxPriceCents === null || entry.product.listPriceCents <= maxPriceCents)
+    ))
+    .sort((a, b) => (
+      b.rankScore - a.rankScore ||
+      a.product.listPriceCents - b.product.listPriceCents ||
+      a.product.productName.localeCompare(b.product.productName)
+    ));
 }

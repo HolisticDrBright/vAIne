@@ -4,17 +4,22 @@ vAIne is an early, standalone mobile prototype for visual skin wellness check-in
 
 ## Current prototype
 
-The local prototype contains a synthetic, offline journey:
+The local prototype contains a synthetic results journey plus a local-only camera beta:
+
+The interface uses a warm premium clinical-spa direction with ivory surfaces, botanical olive accents, editorial headings, and soft rounded cards throughout the phone journey.
 
 1. Scan selection
-2. Guided camera framing
-3. Visible skin-observation overview
-4. Facial-zone explorer
-5. Morning routine using conspicuously labeled fictional catalog samples
-6. Optional progress comparison
-7. Privacy-control concept
+2. Separate consent for check-in use, temporary device storage, and optional progress tracking
+3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
+4. A validated synthetic processing flow with ready, failure, and retry states
+5. A high-fidelity “Your Skin Today” overview with support-focus cards
+6. An interactive facial-zone explorer that uses the local front capture when available, with fixed-guide magnified crops for seven zones and an illustration fallback
+7. A minimal in-memory routine safety intake with a conservative “prefer not to say” path and a per-product budget ceiling
+8. Deterministic, budget-aware AM/PM routines derived from synthetic goals and conspicuously labeled fictional catalog samples and prices
+9. An optional, consent-controlled local baseline with real-photo comparison and no invented progress score
+10. Working privacy status and deletion for temporary photos, saved baseline photos, results, and routine answers
 
-All displayed people, scores, observations, dates, and routines are fictional demonstration content.
+All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed in this beta. The synthetic preparation service accepts no image input and makes no network request.
 
 ## Safety boundaries
 
@@ -26,9 +31,9 @@ All displayed people, scores, observations, dates, and routines are fictional de
 
 ## Privacy boundaries
 
-This prototype has no backend, accounts, analytics, advertising trackers, camera access, uploads, storage, or AI analysis. It does not collect or transmit photographs or personal data.
+This prototype has no backend, accounts, analytics, advertising trackers, app uploads, or AI analysis. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache unless the user separately opts into progress tracking and confirms that the three photos should be copied into one longer-term local baseline. The app discloses that operating-system backups may include app data. Temporary photos and the saved baseline can be deleted independently, and the privacy screen deletes both. Routine safety answers remain in memory only and are cleared with the check-in.
 
-Future implementation must keep separate consent for analysis, storage, progress tracking, and research. Original photographs should be deleted automatically after analysis unless the user explicitly enables progress tracking.
+Future implementation must keep separate consent for analysis, storage, progress tracking, and research. Before a secure beta, saved progress photos need a documented encryption, backup-exclusion, retention, and migration policy.
 
 ## Standalone analysis foundations
 
