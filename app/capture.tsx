@@ -14,7 +14,7 @@ import {
 } from '@/domain/capture/captureQuality';
 import { deleteLocalPhoto } from '@/services/localPhotoStorage';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 const angleCopy = {
   front: { title: 'Face forward', instruction: 'Center your face and look directly toward the camera.' },
@@ -126,7 +126,7 @@ export default function CaptureScreen() {
 
   if (!session.consent?.analysis || !session.consent.temporaryDeviceStorage) {
     return (
-      <Screen title="Camera guide" back>
+      <Screen title="Capture guide" back>
         <Text style={styles.title}>Consent comes first</Text>
         <Text style={styles.subtitle}>Start from the privacy choices before granting camera access.</Text>
         <PrimaryButton label="Review privacy choices" onPress={() => router.replace('/consent')} />
@@ -191,7 +191,7 @@ export default function CaptureScreen() {
   if (!currentAngle) return null;
 
   return (
-    <Screen title="Camera guide" back>
+      <Screen title="Capture guide" back>
       <Text style={styles.step}>{session.captures.length + 1} OF {REQUIRED_CAPTURE_ANGLES.length}</Text>
       <Text style={styles.title}>{angleCopy[currentAngle].title}</Text>
       <Text style={styles.subtitle}>{angleCopy[currentAngle].instruction} Confirm the visual checks before capture.</Text>
@@ -241,13 +241,13 @@ export default function CaptureScreen() {
 
 const styles = StyleSheet.create({
   step: { color: colors.lilac, fontSize: 11, fontWeight: '700', letterSpacing: 1.3, textAlign: 'center' },
-  title: { color: colors.text, fontSize: 28, fontWeight: '700', textAlign: 'center' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 28, fontWeight: '400', textAlign: 'center' },
   subtitle: { color: colors.muted, fontSize: 14, lineHeight: 20, textAlign: 'center' },
-  cameraStage: { height: 410, backgroundColor: '#192B3E', borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
-  faceGuide: { position: 'absolute', width: 230, height: 310, borderRadius: 116, borderWidth: 2, borderColor: colors.gold, alignSelf: 'center', top: 30 },
-  cameraHint: { position: 'absolute', bottom: 14, left: 14, right: 14, padding: 11, borderRadius: radius.small, backgroundColor: 'rgba(8,17,31,.78)' },
-  cameraHintTitle: { color: colors.gold, fontSize: 11, fontWeight: '700' },
-  cameraHintBody: { color: colors.text, fontSize: 11, marginTop: 3 },
+  cameraStage: { height: 410, backgroundColor: '#D9D8CF', borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
+  faceGuide: { position: 'absolute', width: 230, height: 310, borderRadius: 116, borderWidth: 2, borderColor: colors.cream, alignSelf: 'center', top: 30 },
+  cameraHint: { position: 'absolute', bottom: 14, left: 14, right: 14, padding: 11, borderRadius: radius.small, backgroundColor: 'rgba(46,57,41,.78)' },
+  cameraHintTitle: { color: colors.white, fontSize: 11, fontWeight: '700' },
+  cameraHintBody: { color: colors.cream, fontSize: 11, marginTop: 3 },
   readinessList: { gap: 8 },
   readinessRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: radius.small, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, paddingHorizontal: 12 },
   readinessRowChecked: { borderColor: `${colors.green}66`, backgroundColor: `${colors.green}10` },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   smallCheckboxChecked: { backgroundColor: colors.green, borderColor: colors.green },
   smallCheckboxText: { color: colors.ink, fontWeight: '800' },
   readinessText: { color: colors.text, fontSize: 12, flex: 1 },
-  previewFrame: { height: 430, borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel },
+  previewFrame: { height: 430, borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel, ...shadows.card },
   previewImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   thumbnailRow: { flexDirection: 'row', gap: 8 },
   thumbnail: { flex: 1, height: 190, borderRadius: radius.medium, backgroundColor: colors.panel },

@@ -30,11 +30,11 @@ export function ZoneZoomIllustration({ zone }: { zone: SkinZone }) {
 }
 
 const styles = StyleSheet.create({
-  crop: { height: 260, overflow: 'hidden', borderRadius: 28, borderWidth: 1, borderColor: colors.gold, backgroundColor: '#142840', alignItems: 'center' },
-  glow: { position: 'absolute', width: 330, height: 330, borderRadius: 165, backgroundColor: colors.lilac, opacity: 0.12, top: -50 },
+  crop: { height: 260, overflow: 'hidden', borderRadius: 28, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.sageWash, alignItems: 'center' },
+  glow: { position: 'absolute', width: 330, height: 330, borderRadius: 165, backgroundColor: colors.white, opacity: 0.75, top: -50 },
   faceLayer: { position: 'absolute', alignItems: 'center' },
   faceScale: { transform: [{ scale: 1.75 }] },
   focusFrame: { position: 'absolute', left: 24, right: 24, top: 34, bottom: 34, borderRadius: 90, borderWidth: 1.5, borderColor: colors.gold, backgroundColor: `${colors.gold}0A` },
-  label: { position: 'absolute', left: 14, bottom: 14, backgroundColor: 'rgba(8,17,31,.88)', paddingHorizontal: 11, paddingVertical: 7, borderRadius: radius.pill },
-  labelText: { color: colors.gold, fontWeight: '800', fontSize: 9, letterSpacing: 0.8 },
+  label: { position: 'absolute', left: 14, bottom: 14, backgroundColor: `${colors.white}ED`, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 11, paddingVertical: 7, borderRadius: radius.pill },
+  labelText: { color: colors.oliveDark, fontWeight: '800', fontSize: 9, letterSpacing: 0.8 },
 });

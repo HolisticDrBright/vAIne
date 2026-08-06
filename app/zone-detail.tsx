@@ -6,7 +6,7 @@ import { ZoneZoomIllustration } from '@/components/ZoneZoomIllustration';
 import { isSkinZone, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 function resolveZone(value: string | string[] | undefined): SkinZone {
   const candidate = Array.isArray(value) ? value[0] : value;
@@ -66,12 +66,12 @@ export default function ZoneDetailScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1.1 },
-  heading: { color: colors.text, fontSize: 27, lineHeight: 33, fontWeight: '700', marginTop: -5 },
+  heading: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -5 },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -7 },
-  scoreCard: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.panel, padding: 16, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line },
+  scoreCard: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.panel, padding: 16, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, ...shadows.card },
   scoreCopy: { flex: 1 },
   cardEyebrow: { color: colors.blue, fontSize: 8, fontWeight: '800', letterSpacing: 0.7 },
-  title: { color: colors.text, fontSize: 17, fontWeight: '700', marginTop: 4 },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 18, fontWeight: '400', marginTop: 4 },
   body: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
   signals: { backgroundColor: colors.panelSoft, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
   signalHeading: { color: colors.text, fontSize: 13, fontWeight: '700', padding: 15, borderBottomWidth: 1, borderBottomColor: colors.line },

@@ -4,7 +4,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/c
 import { LocalCaptureStrip } from '@/components/LocalCaptureStrip';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 function formatDate(iso: string): string {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso));
@@ -125,10 +125,10 @@ export default function CompareScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  title: { color: colors.text, fontSize: 27, lineHeight: 33, fontWeight: '700', marginTop: -4 },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -4 },
   subtitle: { color: colors.muted, lineHeight: 20, fontSize: 13, marginTop: -6 },
   comparison: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  photoCard: { flex: 1, backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.line, borderRadius: radius.large, overflow: 'hidden' },
+  photoCard: { flex: 1, backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.line, borderRadius: radius.large, overflow: 'hidden', ...shadows.card },
   photoHeading: { padding: 10, gap: 2 },
   photoLabel: { color: colors.text, fontSize: 12, fontWeight: '700' },
   photoDate: { color: colors.muted, fontSize: 9 },

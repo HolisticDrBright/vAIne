@@ -7,7 +7,7 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { zoneOrder, zonePresentation } from '@/data/zonePresentation';
 import type { SkinZone } from '@/domain/analysis/observationTaxonomy';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 export default function ZonesScreen() {
   const { analysis } = useAnalysisSession();
@@ -73,17 +73,17 @@ export default function ZonesScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1.1 },
-  heading: { color: colors.text, fontSize: 27, lineHeight: 33, fontWeight: '700', marginTop: -5 },
+  heading: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -5 },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -7 },
   tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   tab: { minHeight: 34, paddingHorizontal: 11, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.panel },
   tabActive: { borderColor: colors.gold, backgroundColor: `${colors.gold}1C` },
   tabText: { color: colors.muted, fontSize: 9, fontWeight: '700' },
   tabTextActive: { color: colors.text },
-  summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.panel, padding: 16, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, gap: 10 },
+  summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.panel, padding: 16, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, gap: 10, ...shadows.card },
   summaryCopy: { flex: 1 },
   summaryEyebrow: { color: colors.lilac, fontSize: 8, fontWeight: '800', letterSpacing: 0.7 },
-  title: { color: colors.text, fontWeight: '700', fontSize: 18, marginTop: 5 },
+  title: { color: colors.text, fontFamily: fonts.display, fontWeight: '400', fontSize: 19, marginTop: 5 },
   body: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 5 },
   confidence: { color: colors.green, fontSize: 9, fontWeight: '700', marginTop: 8 },
 });

@@ -12,7 +12,7 @@ export default function RootLayout() {
       <ProgressBaselineProvider>
         <AnalysisSessionProvider>
           <RoutineProfileProvider>
-            <StatusBar style="light" />
+            <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.ink }, animation: 'slide_from_right' }} />
           </RoutineProfileProvider>
         </AnalysisSessionProvider>

@@ -53,17 +53,17 @@ export function FacialZoneMap({ selectedZone, onSelectZone }: FacialZoneMapProps
 }
 
 const styles = StyleSheet.create({
-  stage: { height: 340, overflow: 'hidden', borderRadius: 26, backgroundColor: '#142840', alignItems: 'center', justifyContent: 'flex-end', borderWidth: 1, borderColor: colors.line },
-  glow: { position: 'absolute', width: 310, height: 310, borderRadius: 155, backgroundColor: colors.blue, opacity: 0.09, top: 12 },
+  stage: { height: 340, overflow: 'hidden', borderRadius: 26, backgroundColor: colors.sageWash, alignItems: 'center', justifyContent: 'flex-end', borderWidth: 1, borderColor: colors.line },
+  glow: { position: 'absolute', width: 310, height: 310, borderRadius: 155, backgroundColor: colors.white, opacity: 0.7, top: 12 },
   faceCanvas: { width: FACE_CANVAS.width, height: FACE_CANVAS.height, position: 'relative' },
-  highlight: { position: 'absolute', borderWidth: 2, borderColor: colors.gold, backgroundColor: `${colors.gold}20` },
-  marker: { position: 'absolute', width: 22, height: 22, borderWidth: 1, borderColor: `${colors.lilac}AA`, borderRadius: 11, backgroundColor: 'rgba(8,17,31,.82)', alignItems: 'center', justifyContent: 'center' },
+  highlight: { position: 'absolute', borderWidth: 2, borderColor: colors.oliveDark, backgroundColor: `${colors.gold}24` },
+  marker: { position: 'absolute', width: 22, height: 22, borderWidth: 1, borderColor: colors.oliveDark, borderRadius: 11, backgroundColor: `${colors.white}E8`, alignItems: 'center', justifyContent: 'center' },
   markerSelected: { borderWidth: 2, borderColor: colors.gold, backgroundColor: colors.gold },
   markerPressed: { opacity: 0.68 },
   markerDot: { color: colors.lilac, fontSize: 7 },
   markerDotSelected: { color: colors.ink },
-  selectionLabel: { position: 'absolute', left: 12, top: 12, backgroundColor: 'rgba(8,17,31,.82)', borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
-  selectionLabelText: { color: colors.gold, fontSize: 9, fontWeight: '800' },
-  hint: { position: 'absolute', right: 12, bottom: 12, backgroundColor: 'rgba(8,17,31,.82)', borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
+  selectionLabel: { position: 'absolute', left: 12, top: 12, backgroundColor: `${colors.white}E8`, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
+  selectionLabelText: { color: colors.oliveDark, fontSize: 9, fontWeight: '800' },
+  hint: { position: 'absolute', right: 12, bottom: 12, backgroundColor: `${colors.white}E8`, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
   hintText: { color: colors.muted, fontSize: 9, fontWeight: '700' },
 });

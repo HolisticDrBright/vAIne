@@ -5,7 +5,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChro
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 interface ConsentRowProps {
   title: string;
@@ -107,9 +107,9 @@ export default function ConsentScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 10, letterSpacing: 1.3, fontWeight: '700' },
-  title: { color: colors.text, fontSize: 29, lineHeight: 35, fontWeight: '700' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 29, lineHeight: 35, fontWeight: '400' },
   subtitle: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  list: { borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
+  list: { borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
   consentRow: { minHeight: 96, flexDirection: 'row', gap: 12, alignItems: 'flex-start', backgroundColor: colors.panel, padding: 15, borderBottomWidth: 1, borderBottomColor: colors.line },
   pressed: { opacity: 0.78 },
   checkbox: { width: 25, height: 25, borderRadius: 8, borderWidth: 1, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', marginTop: 1 },

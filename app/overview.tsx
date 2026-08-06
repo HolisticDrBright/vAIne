@@ -8,7 +8,7 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { getConfidenceBand } from '@/domain/analysis/analysisExperience';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 export default function OverviewScreen() {
   const { analysis } = useAnalysisSession();
@@ -44,7 +44,7 @@ export default function OverviewScreen() {
   };
 
   return (
-    <Screen title="Your skin today" back>
+    <Screen title="Skin snapshot" back>
       <View style={styles.prototypeNotice}>
         <View style={styles.noticeHeading}>
           <Text style={styles.prototypeNoticeTitle}>SYNTHETIC SAMPLE</Text>
@@ -107,7 +107,7 @@ export default function OverviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: colors.text, fontSize: 28, fontWeight: '700' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 28, fontWeight: '400' },
   subtitle: { color: colors.muted, fontSize: 14, lineHeight: 20 },
   prototypeNotice: { backgroundColor: `${colors.lilac}12`, borderWidth: 1, borderColor: `${colors.lilac}44`, borderRadius: radius.medium, padding: 14 },
   noticeHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
@@ -116,10 +116,10 @@ const styles = StyleSheet.create({
   prototypeNoticeBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
   demoDivider: { borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 13, alignItems: 'center' },
   demoDividerText: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
-  lead: { flexDirection: 'row', alignItems: 'center', gap: 17, backgroundColor: colors.panel, padding: 18, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line },
+  lead: { flexDirection: 'row', alignItems: 'center', gap: 17, backgroundColor: colors.panel, padding: 18, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, ...shadows.card },
   copy: { flex: 1 },
   eyebrow: { color: colors.gold, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
-  snapshotTitle: { color: colors.text, fontWeight: '700', fontSize: 17, lineHeight: 21, marginTop: 5 },
+  snapshotTitle: { color: colors.text, fontFamily: fonts.display, fontWeight: '400', fontSize: 18, lineHeight: 22, marginTop: 5 },
   body: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
   confidence: { backgroundColor: `${colors.green}14`, borderRadius: radius.pill, paddingVertical: 5, paddingHorizontal: 8, marginTop: 10, alignSelf: 'flex-start' },
   confidenceText: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.4 },
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   focusValue: { color: colors.blue, fontSize: 25, fontWeight: '800', marginTop: 5 },
   focusUnit: { color: colors.muted, fontSize: 9, fontWeight: '600' },
   focusBody: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 5 },
-  metrics: { backgroundColor: colors.panel, padding: 17, borderRadius: radius.large, gap: 14, borderWidth: 1, borderColor: colors.line },
+  metrics: { backgroundColor: colors.panel, padding: 17, borderRadius: radius.large, gap: 14, borderWidth: 1, borderColor: colors.line, ...shadows.card },
   cardHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   cardTitle: { color: colors.text, fontWeight: '700', fontSize: 15 },
   cardCaption: { color: colors.muted, fontSize: 7, fontWeight: '800', letterSpacing: 0.7 },

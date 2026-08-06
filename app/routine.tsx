@@ -10,7 +10,7 @@ import {
 } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 const modeDescriptions = {
   standard: 'A simple routine aligned with the fictional appearance goals.',
@@ -72,7 +72,7 @@ export default function RoutineScreen() {
   const modeCopy = modeDescriptions[routine.mode];
 
   return (
-    <Screen title="Today’s routine" back>
+    <Screen title="Routine" back>
       <View accessibilityRole="tablist" style={styles.switcher}>
         {(['am', 'pm'] as const).map((value) => {
           const selected = period === value;
@@ -125,13 +125,13 @@ export default function RoutineScreen() {
 const styles = StyleSheet.create({
   switcher: { borderRadius: radius.medium, flexDirection: 'row', backgroundColor: colors.panel, padding: 4 },
   periodTab: { flex: 1, minHeight: 42, borderRadius: radius.small, alignItems: 'center', justifyContent: 'center' },
-  periodTabActive: { backgroundColor: '#33466B' },
+  periodTabActive: { backgroundColor: colors.blue },
   periodText: { color: colors.muted, fontSize: 11, fontWeight: '700' },
-  periodTextActive: { color: colors.text },
+  periodTextActive: { color: colors.white },
   headingRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 6 },
   headingCopy: { flex: 1 },
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  title: { color: colors.text, fontSize: 26, fontWeight: '700', marginTop: 5 },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 26, fontWeight: '400', marginTop: 5 },
   subtitle: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 4 },
   stepCount: { width: 68, height: 68, borderRadius: 34, borderWidth: 1, borderColor: colors.blue, alignItems: 'center', justifyContent: 'center', backgroundColor: `${colors.blue}10` },
   stepCountNumber: { color: colors.text, fontSize: 22, fontWeight: '800' },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   goalRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   goalPill: { backgroundColor: `${colors.lilac}14`, borderRadius: radius.pill, borderWidth: 1, borderColor: `${colors.lilac}3A`, paddingHorizontal: 9, paddingVertical: 6 },
   goalText: { color: colors.lilac, fontSize: 8, fontWeight: '700', textTransform: 'capitalize' },
-  list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
+  list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
   row: { minHeight: 126, padding: 15, flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: colors.line },
   number: { height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: colors.gold },
   numberText: { color: colors.gold, fontSize: 9, fontWeight: '800' },

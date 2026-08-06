@@ -5,7 +5,7 @@ import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 export default function PrivacyScreen() {
   const { analysis, resetAnalysis } = useAnalysisSession();
@@ -50,11 +50,11 @@ export default function PrivacyScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: colors.text, fontSize: 29, fontWeight: '700' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 29, fontWeight: '400' },
   subtitle: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
+  list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
   row: { padding: 16, flexDirection: 'row', gap: 12, borderBottomWidth: 1, borderBottomColor: colors.line },
-  status: { width: 42, height: 28, borderRadius: radius.pill, backgroundColor: '#283A52', justifyContent: 'center', alignItems: 'center' },
+  status: { width: 42, height: 28, borderRadius: radius.pill, backgroundColor: colors.panelSoft, justifyContent: 'center', alignItems: 'center' },
   statusOn: { backgroundColor: `${colors.green}22` },
   statusText: { color: colors.gold, fontSize: 9, fontWeight: '700' },
   copy: { flex: 1 },

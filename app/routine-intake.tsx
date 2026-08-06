@@ -5,7 +5,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChro
 import type { SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 type ChoiceValue = SafetyAnswer | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
 
@@ -170,9 +170,9 @@ export default function RoutineIntakeScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1.1 },
-  heading: { color: colors.text, fontSize: 28, lineHeight: 34, fontWeight: '700', marginTop: -4 },
+  heading: { color: colors.text, fontFamily: fonts.display, fontSize: 28, lineHeight: 34, fontWeight: '400', marginTop: -4 },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -6 },
-  question: { backgroundColor: colors.panel, padding: 15, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line },
+  question: { backgroundColor: colors.panel, padding: 15, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, ...shadows.card },
   questionTitle: { color: colors.text, fontSize: 14, fontWeight: '700' },
   questionBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 4 },
   options: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 11 },

@@ -6,7 +6,8 @@
     "orientation": "portrait",
     "scheme": "vaine",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F3EA",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.holisticdrbright.vaine",
@@ -17,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F6F3EA",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

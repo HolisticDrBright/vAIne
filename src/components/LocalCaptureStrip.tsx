@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import type { LocalCapture } from '@/state/CaptureSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, radius, shadows } from '@/theme';
 
 interface LocalCaptureStripProps {
   captures: readonly LocalCapture[];
@@ -40,7 +40,7 @@ export function LocalCaptureStrip({ captures, title = 'Your local check-in photo
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.line, borderRadius: radius.large, padding: 14, gap: 11 },
+  card: { backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.line, borderRadius: radius.large, padding: 14, gap: 11, ...shadows.card },
   heading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   title: { color: colors.text, fontSize: 14, fontWeight: '700', flex: 1 },
   badge: { color: colors.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.7 },

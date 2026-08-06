@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
-import { colors, radius } from '@/theme';
+import { colors, fonts, radius, shadows } from '@/theme';
 
 const preparationSteps = [
   'Validate the consumer-safe result format',
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
   orbitReady: { borderColor: colors.green, backgroundColor: `${colors.green}12` },
   orbitMark: { color: colors.text, fontSize: 24, fontWeight: '800' },
   eyebrow: { color: colors.lilac, fontSize: 10, fontWeight: '800', letterSpacing: 1.2 },
-  title: { color: colors.text, fontSize: 28, lineHeight: 34, fontWeight: '700', textAlign: 'center' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 28, lineHeight: 34, fontWeight: '400', textAlign: 'center' },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, textAlign: 'center', maxWidth: 330 },
-  steps: { backgroundColor: colors.panel, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, overflow: 'hidden' },
+  steps: { backgroundColor: colors.panel, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, overflow: 'hidden', ...shadows.card },
   stepRow: { minHeight: 61, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: colors.line },
   stepNumber: { width: 28, height: 28, borderRadius: 14, borderWidth: 1, borderColor: colors.blue, alignItems: 'center', justifyContent: 'center' },
   stepNumberComplete: { borderColor: colors.green, backgroundColor: `${colors.green}18` },

@@ -6,6 +6,8 @@ vAIne is an early, standalone mobile prototype for visual skin wellness check-in
 
 The local prototype contains a synthetic results journey plus a local-only camera beta:
 
+The interface uses a warm premium clinical-spa direction with ivory surfaces, botanical olive accents, editorial headings, and soft rounded cards throughout the phone journey.
+
 1. Scan selection
 2. Separate consent for check-in use, temporary device storage, and optional progress tracking
 3. Front/left/right camera capture with permission, readiness, review, retake, cancellation, and deletion flows
