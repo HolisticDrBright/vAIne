@@ -39,6 +39,8 @@ Future implementation must keep separate consent for analysis, storage, progress
 
 The project now includes consumer-safe, provider-independent contracts for visible skin observations, structured output validation, deterministic product eligibility, quarantined Phase 9F staging, commercial-link approval, and recommendation-copy validation. Their selective provenance and exclusions are documented in `docs/selective-extraction.md` and `docs/product-catalog-governance.md`.
 
+Analysis now flows through a provider-independent service boundary (`src/domain/analysis/analysisService.ts`): every outcome is a validated completed record, an explicit retake request, or an explicit failure — never a silent substitute. Records and audit entries are structurally photo-free. The only wired implementation remains the synthetic demonstration service; the live path and its privacy architecture are planned in `docs/live-analysis-plan.md` and require separate approval before any external resource is created.
+
 ## Local development
 
 ```sh

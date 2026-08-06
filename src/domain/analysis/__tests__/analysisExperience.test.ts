@@ -1,20 +1,25 @@
 import { describe, expect, test } from 'vitest';
-import type { SkinAnalysis } from '../skinAnalysisSchema';
+import type { AnalysisRecord } from '../analysisService';
 import {
   getConfidenceBand,
   initialAnalysisExperienceState,
   reduceAnalysisExperience,
 } from '../analysisExperience';
 
-const syntheticResult = { modelVersion: 'synthetic-prototype' } as SkinAnalysis;
+const syntheticRecord = {
+  analysisId: 'analysis-test',
+  mode: 'synthetic_demo',
+  result: { modelVersion: 'synthetic-prototype' },
+} as AnalysisRecord;
 
 describe('analysis experience state', () => {
-  test('moves through processing to a validated result', () => {
+  test('moves through processing to a validated record', () => {
     const processing = reduceAnalysisExperience(initialAnalysisExperienceState, { type: 'START' });
-    const ready = reduceAnalysisExperience(processing, { type: 'SUCCEED', result: syntheticResult });
+    const ready = reduceAnalysisExperience(processing, { type: 'COMPLETE', record: syntheticRecord });
 
     expect(processing.status).toBe('processing');
     expect(ready.status).toBe('ready');
+    expect(ready.record?.mode).toBe('synthetic_demo');
     expect(ready.result?.modelVersion).toBe('synthetic-prototype');
   });
 
@@ -23,14 +28,43 @@ describe('analysis experience state', () => {
     const failed = reduceAnalysisExperience(processing, { type: 'FAIL', message: 'Fixture failed validation.' });
     const retrying = reduceAnalysisExperience(failed, { type: 'START' });
 
-    expect(failed).toEqual({ status: 'error', result: null, errorMessage: 'Fixture failed validation.' });
-    expect(retrying).toEqual({ status: 'processing', result: null, errorMessage: null });
+    expect(failed).toEqual({
+      status: 'error',
+      record: null,
+      result: null,
+      retakeInstruction: null,
+      errorMessage: 'Fixture failed validation.',
+    });
+    expect(retrying).toEqual({
+      status: 'processing',
+      record: null,
+      result: null,
+      retakeInstruction: null,
+      errorMessage: null,
+    });
   });
 
-  test('ignores a result that arrives outside an active processing run', () => {
+  test('holds a retake request without any result to display', () => {
+    const processing = reduceAnalysisExperience(initialAnalysisExperienceState, { type: 'START' });
+    const retake = reduceAnalysisExperience(processing, {
+      type: 'RETAKE',
+      instruction: 'Retake in even light.',
+    });
+
+    expect(retake.status).toBe('retake');
+    expect(retake.result).toBeNull();
+    expect(retake.record).toBeNull();
+    expect(retake.retakeInstruction).toBe('Retake in even light.');
+  });
+
+  test('ignores outcomes that arrive outside an active processing run', () => {
     expect(reduceAnalysisExperience(initialAnalysisExperienceState, {
-      type: 'SUCCEED',
-      result: syntheticResult,
+      type: 'COMPLETE',
+      record: syntheticRecord,
+    })).toBe(initialAnalysisExperienceState);
+    expect(reduceAnalysisExperience(initialAnalysisExperienceState, {
+      type: 'RETAKE',
+      instruction: 'Too late.',
     })).toBe(initialAnalysisExperienceState);
   });
 });
