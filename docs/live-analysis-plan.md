@@ -1,184 +1,146 @@
-# Live-analysis implementation plan
+# Live-analysis production plan
 
 This plan covers the transition from the current honest synthetic prototype to
-genuinely functional, validated skin-appearance analysis. Local interfaces,
-schemas, mocks, and tests are implemented ahead of approval. Every item marked
+a secure, genuinely functional consumer launch. Local interfaces, schemas,
+mocks, and tests are implemented ahead of approval. Every item marked
 **requires approval** must receive explicit user sign-off before any external
-resource, provider account, or dependency is created.
+resource, provider account, paid service, or dependency is created.
 
-Approval status as of 2026-08-06:
+Status as of 2026-08-06:
 
-- On-device ML Kit face detection: **approved** (local only; face bounds,
-  landmarks, contours, capture alignment, and crop calculations; no
-  recognition, identity matching, embeddings, tracking, demographic inference,
-  or emotion classification).
-- Supabase Edge Functions + server-side Claude vision: **conditionally
-  approved for planning and local interfaces only.** No Supabase project,
-  bucket, Edge Function, scheduled job, secret, Anthropic API integration, or
-  production resource may be created yet.
+- On-device ML Kit face detection: **approved and shipped** in TestFlight
+  1.0.0 Build 7 (commit `64ecc7d`). The Swift module, ML Kit pod, Expo
+  autolinking, and archive compiled successfully. Physical-iPhone validation
+  of Build 7 is the open Phase 0 gate.
+- Backend (Supabase + server-side Anthropic vision): **conditionally approved
+  for planning and local interfaces only.** Nothing external exists yet; the
+  Phase 1 approval checkpoint below is the gate to create it.
+- Authentication decision: **Sign in with Apple** for the secure beta
+  (recommended and assumed below; the anonymous-beta alternative from earlier
+  drafts is retired unless the user asks for it).
 
-## 1. Provider-independent analysis service
+## Environments
 
-Status: local boundary implemented.
+Three strictly separated environments; no resource is shared between them and
+none belongs to any other product.
 
-- `src/domain/analysis/analysisService.ts` defines the service contract:
-  `SkinAnalysisService.analyze(request) -> AnalysisOutcome`.
-- An `AnalysisOutcome` is exactly one of `completed`, `retake_required`, or
-  `failed`. There is no code path that substitutes synthetic content after a
-  live failure; failures surface as failures. This rule is restated below as a
-  backend requirement because it must hold on both sides of the network.
-- Every completed analysis produces an `AnalysisRecord` envelope carrying:
-  analysis ID, capture timestamps, prompt version, model/provider version,
-  schema version, overall confidence, limitations, and the image-quality
-  decision. The record intentionally has no field for photo URIs, image bytes,
-  or tokens, so downstream logging cannot leak them; a unit test enforces this.
-- `skinAnalysisSchema` (strict Zod, allow-listed taxonomy) remains the minimum
-  validation gate. Unknown fields and out-of-range values are rejected.
-- The synthetic implementation (`src/services/syntheticAnalysisService.ts`)
-  implements the same interface, accepts no image content influence, and is
-  labeled `mode: 'synthetic_demo'` in its records.
-- The live implementation will be added only after the backend architecture
-  below is fully approved. The client talks to our backend only — never
-  directly to an AI vendor — and holds no AI API key.
+| Environment | Client | Backend | Purpose |
+| --- | --- | --- | --- |
+| Local development | Expo dev build / web export | None — synthetic service, mock auth, mock upload | All UI and domain work; tests |
+| Secure beta | TestFlight builds | Supabase project `vaine-beta` (new, dedicated) | Real accounts, real uploads, live analysis for invited testers |
+| Production | App Store build | Supabase project `vaine-prod` (created only at launch approval) | Paying users |
 
-### Backend architecture (planning approved; build requires separate approval)
+Client selects the environment at build time via EAS environment variables
+(publishable URL + anon key only — never service keys). Demo mode (synthetic,
+no upload, no account) remains reachable in every environment and clearly
+labeled.
+
+## 1. Architecture (per approved direction)
+
+- Expo/React Native client; on-device ML Kit for framing and facial-zone
+  geometry (shipped).
+- A completely separate vAIne Supabase project per environment; **never** a
+  project shared with any other product.
+- Sign in with Apple for the secure beta; authentication required before any
+  cloud analysis; local-only demo requires no account and uploads nothing.
+- Private temporary photo storage (no public access, random per-analysis
+  paths, upload-only, immediate post-analysis deletion).
+- Supabase Edge Functions limited to authentication, authorization,
+  orchestration, schema validation, deletion, rate limiting, and cleanup —
+  no heavy image transformation server-side (that stays on the phone or at
+  the vision provider).
+- Server-side Anthropic vision analysis behind the existing
+  provider-independent `SkinAnalysisService` interface; versioned prompt and
+  schema; validated structured results; **no synthetic fallback, ever**.
+- Photo-free analysis results stored in the account (cloud) for history and
+  progress; progress photographs stay local by default. Any future cloud
+  photo baseline is a separate explicit approval and opt-in design.
+
+### Backend specification (unchanged commitments)
 
 | Concern | Specification |
 | --- | --- |
-| Project isolation | A completely separate Supabase project dedicated to vAIne — no resource shared with any other product. Region selected explicitly at approval time (proposed: `us-east-1` to match the initial US-only beta audience; revisit if the beta includes EU testers, and record the decision) |
-| Compute boundary | Edge Functions are the only photo entry point and stay thin: authentication, authorization, signed-URL issuance, provider-call orchestration, response validation, deletion, and cleanup. No computationally heavy image transformation server-side — resizing/cropping happens on the phone, and visual analysis happens at the approved vision provider |
-| Authentication | Required before any upload authorization is issued. Recommended: **Sign in with Apple** for the secure beta (matches Phase 8, no passwords, minimal identity data). Documented alternative if faster beta onboarding is wanted: Supabase anonymous sign-ins as a temporary beta identity — each install gets an anonymous user ID; upgradeable in place to Sign in with Apple (`linkIdentity`) preserving history; deletable on request exactly like a full account; orphaned anonymous accounts and their data deleted after 30 days of inactivity. The choice between these is an explicit approval item |
-| Storage | One private bucket, public access disabled, no public URLs ever issued. Photos are analysis inputs only |
-| Object paths | Random, unguessable paths scoped as `<user_id>/<analysis_id>/<random 128-bit token>/<angle>.jpg` — no sequential IDs, no user-supplied names |
-| Upload authorization | Short-lived signed upload URLs issued per analysis by the Edge Function after auth + rate-limit checks. Upload-only: no overwrite/upsert (`upsert: false`), each path single-use. Note: Supabase signed upload URLs are currently valid for two hours — treat that as the platform ceiling, enforce our own shorter freshness window (analysis slot expires server-side after 10 minutes) rather than relying on URL expiry |
-| Upload limits | Strict validation server-side: MIME type JPEG or HEIC only; max 8 MB per file; image dimensions within 480–6000 px per side; max 3 images per Quick Scan analysis and 6 with detail photos; count enforced per analysis ID |
-| Encryption | TLS in transit; provider-managed encryption at rest; bucket excluded from any backup/export tooling |
-| Retention | Photos deleted immediately after the analysis completes — on success **and** on failure. Orphan cleanup job runs every 15 minutes deleting abandoned objects older than one hour. 24 hours is the absolute maximum retention bound (a safety invariant, not the cleanup target) |
-| User deletion | Delete-my-data endpoint removes any remaining objects, derived rows, and audit rows for the requesting user |
-| Logging | No photo data, image URLs, base64 content, signed URLs, or user-identifying prompt content in application, provider, analytics, crash, or audit logs — enforced by logging only the photo-free `AnalysisAuditEntry` shape and by never constructing log strings from request bodies |
-| Schema validation | The structured analysis result is validated against the versioned schema **server-side** (before returning to the client) and **client-side** (`skinAnalysisSchema`). Either failure → typed `failed` outcome |
-| No synthetic fallback | A failed live analysis returns a typed failure. Neither the server nor the client ever substitutes synthetic or cached-other-user content |
-| Rate limiting & quotas | Per-user and per-IP caps on analysis starts; per-user daily quota during beta; hard org-level daily cap |
-| Cost caps & kill switch | Provider spend alarms; a single feature flag that immediately disables live analysis (clients degrade to an honest "analysis unavailable" state, never to fiction); one provider call per analysis; max image sizes enforced before the provider call |
-| Monitoring | Failure-rate, latency, quota, and spend dashboards on audit metadata only |
+| Compute boundary | Edge Functions are the only photo entry point and stay thin: auth, authorization, signed-URL issuance, provider-call orchestration, response validation, deletion, cleanup |
+| Storage | One private bucket, public access disabled, no public URLs ever issued |
+| Object paths | Random, unguessable: `<user_id>/<analysis_id>/<128-bit random>/<angle>.jpg`; no sequential IDs or user-supplied names |
+| Upload authorization | Single-use signed upload URLs issued per analysis after auth + quota + rate-limit checks; upload-only, `upsert: false`; server validates MIME by file signature, not filename |
+| Upload limits | JPEG/HEIC only; ≤ 8 MB per file; 480–6000 px per side; ≤ 3 images per Quick Scan, ≤ 6 with close-ups; count enforced per analysis ID |
+| Slot expiry | Supabase signed upload URLs currently allow up to two hours — treated as a platform ceiling only; the application expires each analysis slot after 10 minutes |
+| Retention | Photos deleted immediately after analysis completes, success **and** failure (finally-style cleanup); orphan sweep every 15 minutes deletes objects older than one hour; 24 hours is an absolute emergency maximum, never routine retention |
+| User deletion | Delete-my-data endpoint removes remaining objects, derived rows, and audit rows; account deletion removes everything associated with the account |
+| Logging | No photo data, image URLs, base64, signed URLs, facial geometry, or user-identifying prompt content in any application, provider, analytics, crash, or audit log — only the photo-free `AnalysisAuditEntry` shape is loggable |
+| Validation | Structured results validated server-side and client-side against the versioned schema; malformed or out-of-policy responses rejected as typed failures |
+| Rate limiting & quotas | Per-user and per-IP caps on analysis starts; per-user daily/monthly quotas; org-level daily cap |
+| Cost caps & kill switch | Provider spend alarms; a feature flag that immediately disables new analysis uploads; clients then show an honest "analysis temporarily unavailable" state — never fiction |
+| Monitoring | Failure-rate, latency, quota, and spend dashboards over photo-free audit metadata only |
+| Security testing | Automated tests for unauthorized access, cross-user object access, replayed uploads, invalid MIME, oversized images, excessive counts, expired slots, provider timeouts, deletion failure, and orphan cleanup |
 
-### AI vision provider (planning approved; build requires separate approval)
+### Anthropic provider commitments
 
-- Server-side call to the Anthropic API (Claude vision) from the Edge
-  Function, using `CONSUMER_SKIN_SYSTEM_PROMPT` and structured output
-  validated against the versioned schema.
-- **Before any real user photo is transmitted**, review and record: Anthropic
-  API data-retention behavior and available retention configurations, the
-  default no-training-on-API-inputs position, the current subprocessor list,
-  the Data Processing Addendum, and regional/data-residency implications
-  (including the `inference_geo` request option) — all verified against
-  Anthropic's current commercial terms at approval time, not assumed.
-- **Billing reality**: Claude.ai subscriptions and Claude Code credits do
-  **not** cover vAIne's production Anthropic API usage. vAIne needs its own
-  funded Anthropic API account with its own keys, billing, and limits.
+- Credentials exist only server-side (Edge Function secrets), never in the
+  client or repo.
+- Current official Anthropic API documentation is consulted at implementation
+  time; no remembered model names or behavior.
+- Output is visual appearance analysis only — never diagnosis, identity,
+  ethnicity, health conditions, hormones, age, or emotional state; concerning
+  appearances route to neutral professional-review language.
+- Before the first real user photo is transmitted: review and record
+  Anthropic's retention behavior and configurations, no-training default,
+  subprocessor list, DPA, and regional options (including `inference_geo`).
+- Claude.ai subscriptions and Claude Code credits do **not** cover production
+  API usage; vAIne needs its own funded API account.
 
-#### Estimated API cost per full analysis (pre-approval estimate)
+## 2. Approval checkpoint — Phase 1 gate (decision required)
 
-Assumptions: 3 photos ≈ 1080×1440 (≈ 2,000 image tokens each on current
-models), ~800 tokens of system prompt + instructions, ~700–1,500 output tokens
-for the structured result. Prices are the published per-MTok rates as of
-2026-08 and must be re-verified at implementation approval.
+No external resource is created until each line is explicitly approved.
 
-| Model | Input / output $ per MTok | Est. cost per Quick Scan (3 photos) | Est. per Detailed Scan (6 photos) |
-| --- | --- | --- | --- |
-| Claude Haiku 4.5 | $1 / $5 | ≈ $0.01 | ≈ $0.02 |
-| Claude Sonnet 5 | $3 / $15 (intro $2 / $10 through 2026-08-31) | ≈ $0.05 (intro ≈ $0.03) | ≈ $0.07–0.09 |
-| Claude Opus 5 | $5 / $25 | ≈ $0.09 | ≈ $0.12–0.15 |
+| # | Item | Proposal |
+| --- | --- | --- |
+| 1 | Supabase project name | `vaine-beta` (fresh project; `vaine-prod` deferred to launch approval) |
+| 2 | Supabase region | `us-east-1` — closest major region to the initial US beta audience and to the US-served Anthropic API; revisit only if EU testers join the beta (decision recorded here either way) |
+| 3 | Sign in with Apple configuration | Apple Developer portal: enable the Sign in with Apple capability on App ID `com.holisticdrbright.vaine`; create a Services ID (proposed `com.holisticdrbright.vaine.auth`) and a Sign in with Apple private key (`.p8`); enter Team ID, Key ID, Services ID, and the `.p8` into Supabase Auth's Apple provider settings (dashboard — never chat or repo). Client uses the native Apple flow and exchanges the identity token with Supabase |
+| 4 | Anthropic API billing | Dedicated vAIne workspace + API key in the user's Anthropic Console, funded separately (suggest $50–100 initial credit). Estimated ≈ $0.05 per Quick Scan (Sonnet-class; ≈ $0.01 Haiku-class, ≈ $0.09 Opus-class). Key stored only as a Supabase Edge Function secret |
+| 5 | Beta limits | 50 invited testers max; 3 analyses/day and 20/month per user; org-wide cap 100 analyses/day (≈ $5/day ceiling); ≤ 6 images per analysis; kill switch defaults to available |
+| 6 | New paid services | None expected for the beta: Supabase free tier suffices initially (flag: Supabase Pro at $25/mo becomes advisable for backups/log retention before production); Apple Developer membership already active; Anthropic prepaid credit above |
+| 7 | Credentials / manual user actions | (a) approve creation of `vaine-beta` (can be provisioned via the connected Supabase account after approval); (b) Apple portal steps in item 3; (c) create the Anthropic key and place it in Supabase Edge Function secrets; (d) optional, for builds from this cloud session: add `EXPO_TOKEN` to the environment and allow `api.expo.dev`/`expo.dev` in its network policy. No secret value is ever pasted into chat or committed |
 
-Recommendation: start beta validation with Sonnet-class quality (≈ $0.05 per
-analysis; 1,000 beta analyses ≈ $50), and evaluate Haiku-class for cost-down
-only if Phase 5 repeatability holds. Prompt caching of the system prompt and
-Batch API discounts do not materially apply to this interactive, low-volume
-shape. Per-user quotas (above) bound worst-case spend.
+## 3. Secure photo lifecycle (client work queued behind the gate)
 
-## 2. Secure temporary-photo lifecycle
+1. Reuse the existing consent and camera flow; on-device validation before
+   upload; strip EXIF/metadata and normalize orientation via re-encode;
+   resize only when skin detail is preserved.
+2. Authenticated user + explicit analysis consent → request analysis slot →
+   backend enforces quota/rate limits → single-use signed upload URLs.
+3. Upload JPEGs only — no names, contacts, or identifiers accompany photos.
+4. Backend runs one provider call, validates, writes the photo-free audit
+   entry and the photo-free result row, deletes uploads immediately, returns
+   the validated result or a typed failure.
+5. Client re-validates and shows upload, analysis, deletion, retake,
+   cancellation, offline, and failure states; leaving the flow cancels
+   safely; deleted photos never leave broken-image UI.
+6. Orphan cleanup as specified above.
 
-Client side (exists today): captures live in the app cache, deletable
-individually and in bulk; the optional progress baseline is a separate
-consented copy under the app's documents directory. Face-detection geometry is
-held in memory only and is never persisted or logged.
+## 4. On-device landmarks (shipped) and evaluation harness
 
-Live-analysis lifecycle (requires build approval together with the backend):
-
-1. User completes capture; quality gates pass locally.
-2. Client authenticates, then requests an analysis slot; backend enforces
-   rate limits/quotas and returns analysis ID + single-use signed upload URLs
-   (one per angle, upload-only, typed and size-limited).
-3. Client uploads JPEGs; nothing else (no name, no contact data) accompanies
-   the photos.
-4. Backend runs the single provider call, validates the structured result
-   against the versioned schema, writes the photo-free audit entry, deletes
-   the uploaded objects immediately (success or failure), and returns the
-   validated result or a typed failure.
-5. Client re-validates against `skinAnalysisSchema` and stores the result in
-   session state only (until approved history storage exists in Phase 8).
-6. The 15-minute orphan cleanup sweeps anything a crashed flow left behind
-   (older than one hour; 24 h absolute maximum retention).
-7. Local photos remain on-device under the existing deletion controls.
-
-## 3. On-device facial landmarks and accurate zone cropping
-
-Status: approved and in progress on this branch.
-
-- Detector: **local Expo native module** (`modules/vaine-face-detection`)
-  wrapping the official Google ML Kit face-detection SDKs directly (iOS
-  `GoogleMLKit/FaceDetection` pod, Android `com.google.mlkit:face-detection`).
-  Rationale: the two candidate third-party wrappers could not be confidently
-  established as Expo SDK 57-compatible (the strongest candidate's latest
-  release targets SDK 54 with no release since), which per the approval
-  conditions routes to the local-module path. The module is autolinked by
-  Expo's CNG/prebuild — no manually maintained ios/android project changes.
-- Configuration: accurate still-image mode, landmarks on, contours off,
-  classification (smiling/eyes-open) off, tracking off. Face bounds,
-  landmarks, alignment, and crop math only — no recognition, identity
-  matching, embeddings, demographic inference, or emotion classification, and
-  nothing leaves the device.
-- Orientation: the native layer normalizes EXIF/UIImage orientation before
-  detection and reports the exact oriented pixel dimensions it measured in, so
-  JavaScript normalizes against the detector's own coordinate space instead of
-  guessing; a plausibility pass rejects implausible geometry.
-- Exactly one plausible face is required for individualized alignment; zero,
-  multiple, or implausible faces resolve to the labeled fixed-guide fallback
-  or an honest retake request — falsely aligned markers are never displayed.
-- `src/domain/zones/zoneAlignment.ts` holds the pure geometry (cover-fit
-  transforms, mirrored-display projection, original-resolution crop rects,
-  zone derivation) with tests for portrait/landscape sources, mirroring, cover
-  cropping, aspect ratios, boundary faces, and missing/low-confidence
-  landmarks.
-
-## 4. Adaptive close-up capture
-
-- Quick Scan stays three photos (front, slight left, slight right) at full
-  resolution.
-- Each zone crop is quality-checked (`src/domain/capture/zoneCropQuality.ts`);
-  gates only fire on actually measured metrics, and unmeasured metrics are
-  reported as unmeasured, never silently passed.
-- `planDetailCapture` maps deficient zones to at most three guided detail
-  photos (upper / center / lower face) with honest reasons, and recommends a
-  front retake instead when landmarks are unreliable. Digital enlargement is
-  never presented as a substitute for missing detail.
+Detector integration is complete (see Status). Remaining: the versioned
+evaluation harness using only synthetic, licensed, or expressly consented
+images — covering orientation/mirroring, lighting, blur/exposure, devices,
+diverse visible skin tones, makeup/facial hair, glasses/occlusion, no-face,
+multi-face, overconfidence, unsupported medical claims, repeatability,
+schema failures, and retake behavior. Synthetic testing is never described
+as proof of fairness or clinical validity.
 
 ## 5. Transition from synthetic to real validated results
 
-Gate order, each independently verifiable:
+1. Phase 0: physical-iPhone validation of Build 7; merge PR #2 only after
+   user confirmation.
+2. Phase 1 approval → create `vaine-beta` only.
+3. Phases 2–3: auth + secure photo lifecycle against `vaine-beta`.
+4. Phase 4: live provider through `SkinAnalysisService`; contract tests
+   identical to the synthetic implementation's.
+5. Screens drop synthetic labels only when backed by a real validated
+   `AnalysisRecord` (mode `live`); demo mode stays clearly labeled.
+6. Phase 5 repeatability validation before numeric scores ship; qualitative
+   summaries otherwise.
 
-1. Backend + provider build approved and completed; live `SkinAnalysisService`
-   implementation passes the same contract tests as the synthetic one.
-2. Real capture → upload → validated result works end-to-end on a physical
-   iPhone via TestFlight.
-3. Zone observations bind to individually derived zone crops (landmarks), with
-   the labeled fixed-guide fallback retained for detection failures.
-4. Screens backed by a real validated `AnalysisRecord` (mode `live`) drop the
-   synthetic labels; a separate, unmistakable demo mode keeps the synthetic
-   path for development. Labels are driven by `record.mode`, not hand-edited
-   per screen.
-5. Repeatability validation (Phase 5 of the handoff) across skin tones, ages,
-   devices, lighting, makeup, facial hair, glasses, and repeat captures.
-   Numeric scores ship only if repeatable; otherwise qualitative summaries.
-
-Until step 4, every visible result remains labeled demonstration content.
+Until step 5, every visible result remains labeled demonstration content.
