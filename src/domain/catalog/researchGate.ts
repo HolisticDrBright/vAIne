@@ -36,6 +36,9 @@ export const phase9FResearchRecordSchema = z.object({
 
 export interface ConsumerCatalogMapping {
   routineSlot: RoutineSlot;
+  listPriceCents: number;
+  currencyCode: string;
+  priceVerifiedAtIso: string;
   observationTags: readonly SkinObservationTag[];
   activeFamilies: readonly string[];
   ingredients: readonly string[];

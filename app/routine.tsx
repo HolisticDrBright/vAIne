@@ -5,6 +5,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/c
 import { approvedPrototypeCatalog } from '@/data/prototypeCatalog';
 import {
   buildSyntheticRoutine,
+  budgetPreferenceLabels,
   type BuiltRoutineStep,
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
@@ -18,7 +19,22 @@ const modeDescriptions = {
   cautious: 'A conservative routine that pauses targeted active support.',
 } as const;
 
+const priceFormatters = new Map<string, Intl.NumberFormat>();
+
+function formatPrice(amountCents: number, currencyCode: string): string {
+  let formatter = priceFormatters.get(currencyCode);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode });
+    priceFormatters.set(currencyCode, formatter);
+  }
+  return formatter.format(amountCents / 100);
+}
+
 function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: number }) {
+  const formattedPrice = step.product
+    ? formatPrice(step.product.listPriceCents, step.product.currencyCode)
+    : null;
+
   return (
     <View style={styles.row}>
       <View style={styles.number}><Text style={styles.numberText}>{String(index + 1).padStart(2, '0')}</Text></View>
@@ -31,7 +47,10 @@ function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: numbe
         <Text style={styles.instruction}>{step.instruction}</Text>
         {step.product ? (
           <View style={styles.productLine}>
-            <Text style={styles.productBrand}>{step.product.brandName}</Text>
+            <View style={styles.productMeta}>
+              <Text style={styles.productBrand}>{step.product.brandName}</Text>
+              <Text style={styles.productPrice}>{formattedPrice}</Text>
+            </View>
             <Text style={styles.productName}>{step.product.productName}</Text>
           </View>
         ) : (
@@ -107,6 +126,12 @@ export default function RoutineScreen() {
         ))}
       </View>
 
+      <InfoCard
+        title="Your price preference"
+        body={`${budgetPreferenceLabels[routineProfile.budgetPreference]}. Safety and appearance-goal fit are applied before price, and equally matched options favor the lower list price.`}
+        tone="gold"
+      />
+
       <View style={styles.list}>
         {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} />)}
       </View>
@@ -114,7 +139,7 @@ export default function RoutineScreen() {
       {routine.notes.map((note, index) => (
         <InfoCard key={note} title={index === 0 ? 'Routine safety' : 'Why this routine changed'} body={note} tone={index === 0 ? 'lilac' : 'gold'} />
       ))}
-      <InfoCard title="Prototype catalog" body="Every named item is fictional. Real products and affiliate links remain hidden until identity, safety, catalog, and commercial reviews are complete." />
+      <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and affiliate links remain hidden until identity, safety, pricing, catalog, and commercial reviews are complete." />
       <PrimaryButton label="See progress" onPress={() => router.push('/compare')} />
       <SecondaryButton label="Change routine preferences" onPress={() => router.push('/routine-intake')} />
       <LegalNote />
@@ -150,7 +175,9 @@ const styles = StyleSheet.create({
   purpose: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
   instruction: { color: colors.text, fontSize: 10, lineHeight: 15, marginTop: 5 },
   productLine: { marginTop: 9, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line },
+  productMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   productBrand: { color: colors.blue, fontSize: 8, fontWeight: '800', letterSpacing: 0.6 },
+  productPrice: { color: colors.green, fontSize: 10, fontWeight: '800' },
   productName: { color: colors.muted, fontSize: 10, marginTop: 2 },
   categoryOnly: { color: colors.green, fontSize: 9, fontWeight: '700', marginTop: 8 },
 });

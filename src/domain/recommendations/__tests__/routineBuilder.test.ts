@@ -13,6 +13,7 @@ const standardIntake: RoutineSafetyIntake = {
   knownAllergyOrReaction: 'no',
   currentStrongActives: 'no',
   avoidFragrance: false,
+  budgetPreference: 'up_to_50',
 };
 
 describe('synthetic routine builder', () => {
@@ -22,7 +23,7 @@ describe('synthetic routine builder', () => {
     expect(routine.mode).toBe('standard');
     expect(routine.am.map((step) => step.slot)).toEqual(['cleanse', 'support', 'hydrate', 'protect']);
     expect(routine.pm.map((step) => step.slot)).toEqual(['cleanse', 'support', 'hydrate']);
-    expect(routine.am.find((step) => step.slot === 'protect')?.product?.id).toBe('synthetic-protect-01');
+    expect(routine.am.find((step) => step.slot === 'protect')?.product?.listPriceCents).toBeLessThanOrEqual(5000);
   });
 
   test('uses a gentle mode for a sensitive preference', () => {
@@ -61,5 +62,21 @@ describe('synthetic routine builder', () => {
   test('does not expose commercial fields in routine steps', () => {
     const routine = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog);
     expect(JSON.stringify(routine)).not.toMatch(/affiliate|commission|destinationUrl/i);
+  });
+
+  test('changes product samples when the per-product budget changes', () => {
+    const valueRoutine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'up_to_25' },
+      approvedPrototypeCatalog,
+    );
+    const premiumRoutine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'up_to_100' },
+      approvedPrototypeCatalog,
+    );
+
+    expect(valueRoutine.am.find((step) => step.slot === 'hydrate')?.product?.id).toBe('synthetic-hydrate-01');
+    expect(premiumRoutine.am.find((step) => step.slot === 'hydrate')?.product?.id).toBe('synthetic-hydrate-03');
   });
 });

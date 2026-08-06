@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
-import type { SafetyAnswer } from '@/domain/recommendations/routineBuilder';
+import type { BudgetPreference, SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
-type ChoiceValue = SafetyAnswer | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
+type ChoiceValue = SafetyAnswer | BudgetPreference | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
 
 interface ChoiceOption<T extends ChoiceValue> {
   label: string;
@@ -38,6 +38,13 @@ const fragranceOptions: readonly ChoiceOption<'avoid' | 'no_preference'>[] = [
   { label: 'Avoid fragrance', value: 'avoid' },
 ];
 
+const budgetOptions: readonly ChoiceOption<BudgetPreference>[] = [
+  { label: 'Up to $25', value: 'up_to_25' },
+  { label: 'Up to $50', value: 'up_to_50' },
+  { label: 'Up to $100', value: 'up_to_100' },
+  { label: 'No limit', value: 'no_limit' },
+];
+
 function ChoiceQuestion<T extends ChoiceValue>({ title, body, value, options, onSelect }: ChoiceQuestionProps<T>) {
   return (
     <View style={styles.question}>
@@ -65,13 +72,16 @@ function ChoiceQuestion<T extends ChoiceValue>({ title, body, value, options, on
 
 export default function RoutineIntakeScreen() {
   const { analysis } = useAnalysisSession();
-  const { saveRoutineProfile } = useRoutineProfile();
-  const [sensitivity, setSensitivity] = useState<'standard' | 'sensitive' | null>(null);
-  const [pregnancyOrNursing, setPregnancyOrNursing] = useState<SafetyAnswer | null>(null);
-  const [recentProcedure, setRecentProcedure] = useState<SafetyAnswer | null>(null);
-  const [knownAllergyOrReaction, setKnownAllergyOrReaction] = useState<SafetyAnswer | null>(null);
-  const [currentStrongActives, setCurrentStrongActives] = useState<SafetyAnswer | null>(null);
-  const [fragrancePreference, setFragrancePreference] = useState<'avoid' | 'no_preference' | null>(null);
+  const { routineProfile, saveRoutineProfile } = useRoutineProfile();
+  const [sensitivity, setSensitivity] = useState<'standard' | 'sensitive' | null>(() => routineProfile?.sensitivityPreference ?? null);
+  const [pregnancyOrNursing, setPregnancyOrNursing] = useState<SafetyAnswer | null>(() => routineProfile?.pregnancyOrNursing ?? null);
+  const [recentProcedure, setRecentProcedure] = useState<SafetyAnswer | null>(() => routineProfile?.recentProcedure ?? null);
+  const [knownAllergyOrReaction, setKnownAllergyOrReaction] = useState<SafetyAnswer | null>(() => routineProfile?.knownAllergyOrReaction ?? null);
+  const [currentStrongActives, setCurrentStrongActives] = useState<SafetyAnswer | null>(() => routineProfile?.currentStrongActives ?? null);
+  const [fragrancePreference, setFragrancePreference] = useState<'avoid' | 'no_preference' | null>(() => (
+    routineProfile ? (routineProfile.avoidFragrance ? 'avoid' : 'no_preference') : null
+  ));
+  const [budgetPreference, setBudgetPreference] = useState<BudgetPreference | null>(() => routineProfile?.budgetPreference ?? null);
 
   const complete = Boolean(
     sensitivity &&
@@ -79,7 +89,8 @@ export default function RoutineIntakeScreen() {
     recentProcedure &&
     knownAllergyOrReaction &&
     currentStrongActives &&
-    fragrancePreference,
+    fragrancePreference &&
+    budgetPreference,
   );
 
   const buildRoutine = () => {
@@ -89,7 +100,8 @@ export default function RoutineIntakeScreen() {
       !recentProcedure ||
       !knownAllergyOrReaction ||
       !currentStrongActives ||
-      !fragrancePreference
+      !fragrancePreference ||
+      !budgetPreference
     ) return;
 
     saveRoutineProfile({
@@ -99,6 +111,7 @@ export default function RoutineIntakeScreen() {
       knownAllergyOrReaction,
       currentStrongActives,
       avoidFragrance: fragrancePreference === 'avoid',
+      budgetPreference,
     });
     router.replace('/routine');
   };
@@ -117,6 +130,14 @@ export default function RoutineIntakeScreen() {
       <Text style={styles.eyebrow}>A SHORT SAFETY CHECK</Text>
       <Text style={styles.heading}>Keep today’s routine comfortably simple</Text>
       <Text style={styles.subtitle}>These answers stay in memory for this app session. They are not uploaded, saved to an account, or used for diagnosis.</Text>
+
+      <ChoiceQuestion
+        title="What should each product cost at most?"
+        body="We will stay at or below this amount per product. Price does not make a product a better match."
+        value={budgetPreference}
+        options={budgetOptions}
+        onSelect={setBudgetPreference}
+      />
 
       <ChoiceQuestion
         title="How should we approach sensitivity?"
@@ -162,6 +183,7 @@ export default function RoutineIntakeScreen() {
       />
 
       <InfoCard title="Prefer not to say is always valid" body="Private answers produce a conservative category-level routine. They never prevent access to the app." tone="green" />
+      <InfoCard title="Budget is part of the match" body="The routine first applies safety rules, then appearance-goal fit, then your maximum price. An expensive product never ranks higher just because it costs more." tone="gold" />
       <PrimaryButton label="Build today’s routine" onPress={buildRoutine} disabled={!complete} />
       <LegalNote />
     </Screen>

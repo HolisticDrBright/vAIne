@@ -26,6 +26,9 @@ const baseProduct: ProductCandidate = {
   catalogReviewState: 'catalog_approved',
   catalogSource: 'synthetic_prototype',
   routineSlot: 'hydrate',
+  listPriceCents: 3200,
+  currencyCode: 'USD',
+  priceVerifiedAtIso: '2026-08-05T12:00:00.000Z',
   observationTags: ['appearance.hydration_look_low'],
   activeFamilies: ['ceramide-family'],
   ingredients: ['water', 'synthetic ceramide'],
@@ -84,6 +87,23 @@ describe('product eligibility', () => {
     const verified = { ...baseProduct, id: 'verified', productName: 'Verified Example' };
     const ranked = rankEligibleProducts([verified, official], baseProfile, ['appearance.hydration_look_low']);
     expect(ranked.map((entry) => entry.product.id)).toEqual(['official', 'verified']);
+  });
+
+  test('filters above-budget products and uses lower price only as a tie-breaker', () => {
+    const value = { ...baseProduct, id: 'value', productName: 'Value Example', listPriceCents: 1800 };
+    const expensiveEqualMatch = { ...baseProduct, id: 'expensive', productName: 'Expensive Example', listPriceCents: 7800 };
+    const strongerMatch = {
+      ...baseProduct,
+      id: 'stronger',
+      productName: 'Stronger Match Example',
+      listPriceCents: 4200,
+      observationTags: ['appearance.hydration_look_low', 'appearance.texture_irregular'] as const,
+    };
+    const requested = ['appearance.hydration_look_low', 'appearance.texture_irregular'] as const;
+
+    expect(rankEligibleProducts([expensiveEqualMatch, value], baseProfile, requested, null)[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 2500)[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 5000)[0].product.id).toBe('stronger');
   });
 
   test('attaches commercial links after ranking without changing order', () => {

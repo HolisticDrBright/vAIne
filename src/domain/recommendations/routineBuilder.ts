@@ -10,6 +10,21 @@ import {
 export type SafetyAnswer = 'yes' | 'no' | 'prefer_not_to_say';
 export type RoutinePeriod = 'am' | 'pm';
 export type RoutineMode = 'standard' | 'gentle' | 'cautious';
+export type BudgetPreference = 'up_to_25' | 'up_to_50' | 'up_to_100' | 'no_limit';
+
+export const budgetMaximumCents: Record<BudgetPreference, number | null> = {
+  up_to_25: 2500,
+  up_to_50: 5000,
+  up_to_100: 10000,
+  no_limit: null,
+};
+
+export const budgetPreferenceLabels: Record<BudgetPreference, string> = {
+  up_to_25: 'Up to $25 per product',
+  up_to_50: 'Up to $50 per product',
+  up_to_100: 'Up to $100 per product',
+  no_limit: 'No price limit',
+};
 
 export interface RoutineSafetyIntake {
   sensitivityPreference: 'standard' | 'sensitive';
@@ -18,6 +33,7 @@ export interface RoutineSafetyIntake {
   knownAllergyOrReaction: SafetyAnswer;
   currentStrongActives: SafetyAnswer;
   avoidFragrance: boolean;
+  budgetPreference: BudgetPreference;
 }
 
 export interface BuiltRoutineStep {
@@ -126,7 +142,12 @@ export function buildSyntheticRoutine(
     intake.pregnancyOrNursing !== 'no' ||
     intake.recentProcedure !== 'no' ||
     intake.currentStrongActives !== 'no';
-  const ranked = rankEligibleProducts(catalog, buildSafetyProfile(intake), requestedTagsFor(analysis));
+  const ranked = rankEligibleProducts(
+    catalog,
+    buildSafetyProfile(intake),
+    requestedTagsFor(analysis),
+    budgetMaximumCents[intake.budgetPreference],
+  );
   const productBySlot = new Map<RoutineSlot, ProductCandidate>();
 
   if (!namedSamplesHidden) {
@@ -142,6 +163,8 @@ export function buildSyntheticRoutine(
     : ['cleanse', 'support', 'hydrate'];
   const amSlots: RoutineSlot[] = [...coreSlots, 'protect'];
   const notes: string[] = ['Patch test one new product at a time and stop if irritation occurs.'];
+
+  notes.push(`Budget applied: ${budgetPreferenceLabels[intake.budgetPreference]}. Price never increases a product's match score.`);
 
   if (holdTargetedSupport) {
     notes.push('Targeted active support is paused because one or more safety answers call for a conservative routine.');
