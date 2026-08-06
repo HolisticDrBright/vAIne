@@ -9,10 +9,15 @@ import {
  * Provider-independent analysis boundary.
  *
  * Implementations receive local photo references, but everything they return
- * or record is photo-free: `AnalysisRecord` deliberately has no field that can
- * hold a URI, image payload, or credential, so audit and log code built on it
- * cannot leak them. A failed live analysis must surface as `failed` or
- * `retake_required` — never as substituted synthetic content.
+ * or record is photo-free. The record types deliberately define no field for a
+ * URI, image payload, or credential — which guards against accidental
+ * inclusion, not against every possible bypass. Enforcement is layered on top:
+ * results and audit details are validated against strict versioned allow-list
+ * schemas before persistence, the backend deep-scans payloads for URI, path,
+ * base64, and data-URL patterns (any case or encoding), and normalized CHECK
+ * constraints in the database reject such content even from privileged code.
+ * A failed live analysis must surface as `failed` or `retake_required` —
+ * never as substituted synthetic content.
  */
 
 export interface AnalysisCaptureInput {

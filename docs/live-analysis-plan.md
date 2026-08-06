@@ -28,6 +28,17 @@ Status as of 2026-08-06:
   budget, a $5/day application ceiling, and the kill switch; the estimated
   $0.05/analysis must be benchmarked with real analyses before the beta
   expands. No key exists yet.
+- Hardening milestone (2026-08-06): the `delete-account` function was
+  rewritten fail-safe and idempotent (function source now lives in
+  `supabase/functions/delete-account/` with its orchestrator under test);
+  recent-sign-in proof now comes from `auth.sessions.created_at` via a
+  locked-down `session_created_at()` helper, not token `iat`; least-privilege
+  grants replaced the default full-table grants for client roles; photo-free
+  enforcement is layered (allow-list schemas + deep scanner + normalized
+  CHECK constraints); `beta_invites.email_hash` is specified as a
+  server-side keyed HMAC whose key lives only in Edge Function secrets.
+  `analysis_enabled` remains **false**; the project holds no objects and no
+  real user data.
 
 ## Environments
 
@@ -79,6 +90,7 @@ labeled.
 | Retention | Photos deleted immediately after analysis completes, success **and** failure (finally-style cleanup); orphan sweep every 15 minutes deletes objects older than one hour; 24 hours is an absolute emergency maximum, never routine retention |
 | User deletion | Delete-my-data endpoint removes remaining objects, derived rows, and audit rows; account deletion removes everything associated with the account |
 | Logging | No photo data, image URLs, base64, signed URLs, facial geometry, or user-identifying prompt content in any application, provider, analytics, crash, or audit log — only the photo-free `AnalysisAuditEntry` shape is loggable |
+| Photo-free enforcement | Three layers, none of them a mere blacklist claim: (1) strict versioned **allow-list** schemas — results against `skin_analysis_v1`, deletion audit details against the v1 allow-list in `supabase/functions/delete-account/auditDetail.ts` — validated before any insertion; (2) a server-side deep scanner (`photoFree.ts`) that rejects URI/URL values and keys, file and storage paths, signed URLs, base64 runs, `data:image` URLs, image bytes, EXIF/geometry-shaped keys, tokens, and emails in any case or percent-encoding; (3) normalized lowercase CHECK constraints on `analysis_results.result` and `analysis_audit.detail`, which apply even to service-role inserts. Clients cannot insert results at all (no INSERT grant, no INSERT policy) |
 | Validation | Structured results validated server-side and client-side against the versioned schema; malformed or out-of-policy responses rejected as typed failures |
 | Rate limiting & quotas | Per-user and per-IP caps on analysis starts; per-user daily/monthly quotas; org-level daily cap |
 | Cost caps & kill switch | Provider spend alarms; a feature flag that immediately disables new analysis uploads; clients then show an honest "analysis temporarily unavailable" state — never fiction |

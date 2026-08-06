@@ -57,9 +57,15 @@ Backend facts referenced below:
   mock service to the live Sign in with Apple flow (nonce-bound identity
   token exchange). Without configuration it stays fully local.
 - Account deletion calls the deployed `delete-account` Edge Function, which
-  requires a sign-in fresher than ten minutes (otherwise the app is told to
-  reauthenticate), deletes storage objects, results, and counters, then
-  deletes the auth user.
+  requires a sign-in fresher than ten minutes — proven by the creation time
+  of the caller's server-side session (`auth.sessions.created_at`, resolved
+  via the token's `session_id` claim), never by token issue timestamps,
+  which refresh without a new Apple ceremony. Otherwise the app is told to
+  reauthenticate. It then removes every storage object under the user's
+  prefix (paginated listing, checked removals, verified-empty re-listing),
+  deletes results, counters, and audit history with every step checked, and
+  only then deletes the auth user; any failure preserves the account so
+  deletion can be retried to convergence.
 
 ## Not yet configured anywhere (later phases)
 
