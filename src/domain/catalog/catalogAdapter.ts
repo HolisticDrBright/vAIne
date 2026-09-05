@@ -47,6 +47,7 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
     listPriceCents: entry.approximatePriceCents,
     currencyCode: entry.currencyCode,
     priceVerifiedAtIso: entry.priceVerifiedAtIso,
+    catalogState: entry.catalogState,
     whenToUse: entry.sourceNotes?.whenToUse ?? null,
     cautionNote: entry.sourceNotes?.caution ?? null,
     category: entry.category,

@@ -105,7 +105,7 @@ export default function ProductsScreen() {
       <Text style={styles.subtitle}>
         {fictional
           ? 'The reviewed product list is empty, so routines use these clearly labeled fictional samples. Once reviewed products are loaded, they replace the samples automatically.'
-          : 'Every product below passed identity, safety, pricing, and catalog review. Routines pick from this list only; nothing commercial affects the order.'}
+          : 'Products below come from your product list. Research preview items have an official product page but have not completed catalog approval yet. Routines pick from this list only; nothing commercial affects the order.'}
       </Text>
 
       <View style={styles.summary}>
@@ -124,7 +124,7 @@ export default function ProductsScreen() {
           return (
             <View key={product.id} style={styles.row}>
               <View style={styles.rowHeading}>
-                <Text style={styles.slot}>{slotLabels[product.routineSlot].toUpperCase()}</Text>
+                <Text style={styles.slot}>{slotLabels[product.routineSlot].toUpperCase()}{product.catalogState && product.catalogState !== 'catalog_approved' ? ' · RESEARCH PREVIEW' : ''}</Text>
                 <Text style={[styles.badge, badge.tone === 'green' && styles.badgeGreen, badge.tone === 'gold' && styles.badgeGold]}>{badge.label}</Text>
               </View>
               <Text style={styles.brand}>{product.brandName}</Text>
@@ -170,9 +170,12 @@ export default function ProductsScreen() {
       {catalog.blocked.length ? (
         <View style={styles.heldBack}>
           <Text style={styles.heldBackTitle}>Held back until verified</Text>
-          <Text style={styles.heldBackBody}>These products are on the list but need product-page verification before they can be offered.</Text>
+          <Text style={styles.heldBackBody}>These products are on the list but cannot be offered yet. Each shows the reviewer's reason.</Text>
           {catalog.blocked.map(({ entry, reasons }) => (
-            <Text key={entry.productId} style={styles.heldBackRow}>{entry.brand} {entry.productName}: {reasons.join(', ').replaceAll('_', ' ')}</Text>
+            <View key={entry.productId} style={styles.heldBackItem}>
+              <Text style={styles.heldBackRow}>{entry.brand} {entry.productName}{entry.approximatePriceCents !== null ? ` · ${formatPrice(entry.approximatePriceCents, entry.currencyCode)}` : ''}</Text>
+              <Text style={styles.heldBackReason}>{entry.blocker ?? reasons.join(', ').replaceAll('_', ' ')}</Text>
+            </View>
           ))}
         </View>
       ) : null}
@@ -218,6 +221,8 @@ const styles = StyleSheet.create({
   sectionTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 20, marginTop: 6 },
   sectionBody: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: -8 },
   heldBackBody: { color: colors.muted, fontSize: 11, lineHeight: 15, marginBottom: 4 },
+  heldBackItem: { marginTop: 4 },
+  heldBackReason: { color: colors.muted, fontSize: 10, lineHeight: 14 },
   heldBack: { backgroundColor: `${colors.gold}12`, borderWidth: 1, borderColor: `${colors.gold}44`, borderRadius: radius.medium, padding: 14, gap: 4 },
   heldBackTitle: { color: colors.gold, fontSize: 12, fontWeight: '700' },
   heldBackRow: { color: colors.muted, fontSize: 11, lineHeight: 15 },

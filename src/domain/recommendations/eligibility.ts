@@ -28,6 +28,8 @@ export interface ProductCandidate {
   listPriceCents: number | null;
   currencyCode: string;
   priceVerifiedAtIso: string | null;
+  /** Governance state of the source row; 'research_only' shows as a research preview. Never ranked on. */
+  catalogState?: 'research_only' | 'catalog_approved' | 'blocked' | 'out_of_scope';
   /** Optional editorial context shown with the product; never ranked on. */
   whenToUse?: string | null;
   cautionNote?: string | null;

@@ -32,7 +32,11 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
       <View style={styles.copy}>
         <View style={styles.nameLine}>
           <Text style={styles.name}>{step.title}</Text>
-          {step.product ? <Text style={styles.demoBadge}>{fictional ? 'FICTIONAL SAMPLE' : 'FROM YOUR LIST'}</Text> : null}
+          {step.product ? (
+            <Text style={styles.demoBadge}>
+              {fictional ? 'FICTIONAL SAMPLE' : step.product.catalogState === 'catalog_approved' ? 'FROM YOUR LIST' : 'RESEARCH PREVIEW'}
+            </Text>
+          ) : null}
         </View>
         <Text style={styles.purpose}>{step.purpose}</Text>
         <Text style={styles.instruction}>{step.instruction}</Text>
@@ -167,8 +171,8 @@ export default function RoutineScreen() {
         <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and links appear only once a reviewed product list is loaded." />
       ) : (
         <InfoCard title="Reviewed product list" body={routine.pricesUnverified
-          ? 'Products come from the reviewed list. Their prices have not been verified yet, so no price is shown and your budget ceiling cannot be applied to them. Nothing commercial influences which product is chosen.'
-          : 'Products come from the reviewed list. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen.'} tone="green" />
+          ? 'Products come from your product list. Items marked research preview have an official product page but have not completed catalog approval. Prices have not been verified yet, so no price is shown and your budget ceiling cannot be applied to them. Nothing commercial influences which product is chosen.'
+          : 'Products come from your product list. Items marked research preview have an official product page but have not completed catalog approval. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen.'} tone="green" />
       )}
       <PrimaryButton label="See progress" onPress={() => router.push('/compare')} />
       <SecondaryButton label="Change routine preferences" onPress={() => router.push('/routine-intake')} />

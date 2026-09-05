@@ -35,6 +35,10 @@ Budget is a user preference, not evidence of quality or effectiveness. The app a
 
 Prices can change. A future live catalog must retain currency and a recent verification timestamp, refresh stale prices, and show category-level guidance when it cannot confirm a product falls within the selected budget.
 
+## Beta research preview
+
+The product database's `Catalog State` column is the visibility authority. Nothing in it has reached `catalog_approved` yet, so during the beta the importer shows `research_only` rows that have an official product page and no blocker, labelled "Research preview" everywhere they appear. Blocked and out-of-scope rows are held back with the reviewer's reason. Before launch, re-run the importer with `--no-research-preview` so only `catalog_approved` rows are visible, as the eight-step progression above requires.
+
 ## From reviewed entry to routine
 
 Reviewed products reach the app as `CatalogEntry` rows (`src/domain/catalog/catalogEntry.ts`) in `src/data/consumerCatalog.ts`. `src/domain/catalog/catalogAdapter.ts` converts only the rows that pass the runtime visibility gate, maps every unreviewed safety fact to the cautious exclusion, and strips commercial fields before ranking. `src/domain/catalog/catalogResolver.ts` then hands the routine builder either the reviewed list (whenever any row is visible) or the labeled synthetic samples — never a mix. The full format and matching table are in `docs/consumer-catalog.md`.

@@ -37,9 +37,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 2,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -48,7 +50,9 @@
       "whenToUse": "PM or as directed",
       "caution": "Patch test; use cautiously with strong retinoids/acids if sensitive",
       "recommendationLogic": "If Skin Longevity Score low or collagen/texture markers present, prioritize YOUTH RESET",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -88,9 +92,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 3,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -99,7 +105,9 @@
       "whenToUse": "AM/PM",
       "caution": "May be too rich for very oily/acne-prone users",
       "recommendationLogic": "If hydration/barrier score is moderate-low and aging prevention is a goal, recommend YOUTH DAILY",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -141,9 +149,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 4,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -152,7 +162,9 @@
       "whenToUse": "AM/PM",
       "caution": "Avoid over-cleansing if very dry",
       "recommendationLogic": "If barrier stress or sensitivity is present, use as primary cleanser",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -195,9 +207,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 5,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -206,7 +220,9 @@
       "whenToUse": "AM/PM",
       "caution": "Avoid direct eye contact",
       "recommendationLogic": "If under-eye aging/darkness/fatigue is flagged, recommend EYEC.A.R.E.",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -247,10 +263,12 @@
     "availabilityStatus": "available",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "approved",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "BLOCKER (Phase 9F): publishes an OTC-style ingredient list with NO Drug Facts panel, no warnings, no broad-spectrum statement. US sunscreens are OTC drugs. Cannot be approved until resolved with the brand.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 6,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -259,7 +277,9 @@
       "whenToUse": "AM daily",
       "caution": "Reapply; patch test for reactive skin",
       "recommendationLogic": "If UV damage, pigmentation, or prevention priority is flagged, recommend daily BIO-SHIELD SPF 40",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "skip"
     }
   },
   {
@@ -297,9 +317,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 7,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -308,7 +330,9 @@
       "whenToUse": "Weekly / event prep",
       "caution": "Patch test if reactive",
       "recommendationLogic": "If radiance score is low or dullness is present, suggest weekly HYPERBARIC MASK",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -349,9 +373,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 8,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -360,7 +386,9 @@
       "whenToUse": "AM/PM, after cleanse",
       "caution": "Patch test; avoid over-layering with irritating actives",
       "recommendationLogic": "If skin fatigue or low recovery capacity appears, suggest BLUE PEPTIDE SPRAY",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -398,10 +426,12 @@
     "availabilityStatus": "available",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "approved",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "BLOCKER (Phase 9F): contains human platelet extract in a topical cosmetic. Practitioner and jurisdiction review required before any consumer recommendation.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 9,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -410,7 +440,9 @@
       "whenToUse": "PM / post-procedure under professional guidance",
       "caution": "Use professional guidance post-procedure; patch test",
       "recommendationLogic": "If advanced regenerative/post-treatment recommendation is needed, recommend VAMPIRE EXOSOMES",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "skip"
     }
   },
   {
@@ -434,7 +466,7 @@
       "balanced"
     ],
     "sensitivityCaution": false,
-    "pregnancyNursingStatus": "reviewed_avoid",
+    "pregnancyNursingStatus": "not_reviewed",
     "allergyCautions": [],
     "fragranceStatus": "unknown",
     "crueltyFreeStatus": "unknown",
@@ -449,9 +481,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 10,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -460,7 +494,9 @@
       "whenToUse": "PM",
       "caution": "Use cautiously with pregnancy unless cleared; avoid stacking with strong acids",
       "recommendationLogic": "If fine lines + texture but retinoid sensitivity exists, suggest BIO-RETINOL",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "AVOID (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -501,9 +537,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 11,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -512,7 +550,9 @@
       "whenToUse": "AM/PM with red light routine",
       "caution": "Patch test; do not claim device-level effects",
       "recommendationLogic": "If user uses red light or has oxidative stress markers, recommend L.A.D.R.",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -552,9 +592,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 12,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -563,7 +605,9 @@
       "whenToUse": "AM/PM",
       "caution": "Use SPF on neck/chest during day",
       "recommendationLogic": "If neck/chest aging or laxity is flagged, recommend this product",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -606,9 +650,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 13,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -617,7 +663,9 @@
       "whenToUse": "AM/PM / as needed",
       "caution": "Avoid if lip irritation/active dermatitis",
       "recommendationLogic": "If lip dryness or lip lines are visible, recommend ADAPTOGLOSS",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -660,9 +708,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 14,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -671,7 +721,9 @@
       "whenToUse": "AM/PM",
       "caution": "Patch test if reactive",
       "recommendationLogic": "If dehydration + tone support needed, recommend BIO-C PEPTIDE SPRAY",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -710,9 +762,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 15,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -721,7 +775,9 @@
       "whenToUse": "Daily body care",
       "caution": "Avoid broken/irritated skin",
       "recommendationLogic": "If body skin aging/dryness is a concern, recommend YOUTH FIRMING BODY CREAM",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -760,9 +816,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 16,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -771,7 +829,9 @@
       "whenToUse": "AM/PM after cleanse",
       "caution": "Patch test",
       "recommendationLogic": "If hydration score is low but user wants lightweight layers, recommend AMPLIFYING ESSENCE",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -809,9 +869,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 17,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -820,7 +882,9 @@
       "whenToUse": "AM/PM",
       "caution": "Patch test; avoid excess actives during flare",
       "recommendationLogic": "If inflammation/redness/barrier stress is high, recommend BIO-BARRIER",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -862,9 +926,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 18,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -873,7 +939,9 @@
       "whenToUse": "1–2x/week PM",
       "caution": "Avoid overuse; caution with sensitive/rosacea/barrier damage",
       "recommendationLogic": "If texture + dullness + pores are high and sensitivity is low, recommend NIAPOLISH",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -914,9 +982,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 19,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -925,7 +995,9 @@
       "whenToUse": "Travel / AM/PM",
       "caution": "Patch test",
       "recommendationLogic": "Recommend as travel-size version of BLUE PEPTIDE SPRAY",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -966,9 +1038,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 20,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -977,7 +1051,9 @@
       "whenToUse": "Travel / AM/PM",
       "caution": "Patch test",
       "recommendationLogic": "Recommend as travel-size version of BIO-C PEPTIDE SPRAY",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -1013,9 +1089,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 21,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1024,7 +1102,9 @@
       "whenToUse": "Per system directions",
       "caution": "Supplement cautions apply; check contraindications",
       "recommendationLogic": "If user wants advanced inside-out skin longevity, recommend Cellular Duo",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1064,9 +1144,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 22,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1075,7 +1157,9 @@
       "whenToUse": "System routine",
       "caution": "Avoid duplicate actives if already using strong treatments",
       "recommendationLogic": "If user wants simple anti-aging bundle, recommend Minimal Biohack Aging System",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1113,9 +1197,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 23,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1124,7 +1210,9 @@
       "whenToUse": "System routine",
       "caution": "Cost/high product load; introduce gradually",
       "recommendationLogic": "If multiple aging markers are present, recommend Standard Aging System",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1160,9 +1248,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 24,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1171,7 +1261,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually; not for highly reactive skin without guidance",
       "recommendationLogic": "If high budget + multiple aging markers + low sensitivity, recommend Advanced Biohack Aging System",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1209,9 +1301,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 25,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1220,7 +1314,9 @@
       "whenToUse": "System routine",
       "caution": "Avoid over-layering if acne-prone",
       "recommendationLogic": "If hydration score is low and routine should stay simple, recommend Minimal Hydration System",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1259,9 +1355,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 26,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1270,7 +1368,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually if sensitive",
       "recommendationLogic": "If hydration + barrier support are top priorities, recommend Standard Hydration System",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1311,9 +1411,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 27,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1322,7 +1424,9 @@
       "whenToUse": "PM or as directed",
       "caution": "Patch test; avoid excessive layering with strong acids/retinoids",
       "recommendationLogic": "If collagen support or redness/barrier repair is flagged, recommend 2% GHK-Cu serum",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1358,9 +1462,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 28,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1369,7 +1475,9 @@
       "whenToUse": "PM or as directed",
       "caution": "Use cautiously if reactive; start slowly",
       "recommendationLogic": "If advanced collagen/firmness support is needed and sensitivity is low, recommend 3% GHK-Cu serum",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1409,9 +1517,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 29,
       "priority": 1,
       "verificationLevel": "Official copper collection",
@@ -1420,7 +1530,9 @@
       "whenToUse": "AM/PM",
       "caution": "Patch test",
       "recommendationLogic": "If barrier strength/hydration is low, pair with Vitali serum",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1462,9 +1574,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 30,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1473,7 +1587,9 @@
       "whenToUse": "PM or as directed",
       "caution": "Avoid getting into eye",
       "recommendationLogic": "If under-eye/lash support is requested, recommend Advanced Eye & Lash Formula",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1512,9 +1628,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 31,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1523,7 +1641,9 @@
       "whenToUse": "Daily body care",
       "caution": "Avoid broken skin",
       "recommendationLogic": "If body skin aging/dryness is a concern, recommend Restorative Body Cream",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1560,9 +1680,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 32,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1571,7 +1693,9 @@
       "whenToUse": "PM or professional protocol",
       "caution": "Use professional guidance around procedures",
       "recommendationLogic": "If exosome/regenerative category is needed, recommend Vita Zero Age Exosome Complex",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -1610,9 +1734,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 33,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1621,7 +1747,9 @@
       "whenToUse": "PM",
       "caution": "Caution acne-prone/oily skin; patch test",
       "recommendationLogic": "If retinol alternative is needed with dryness, suggest Bakuchiol Facial Oil",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -1662,9 +1790,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 34,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1673,7 +1803,9 @@
       "whenToUse": "1–2x/week PM",
       "caution": "Avoid with barrier damage, active irritation, strong retinoids/acids",
       "recommendationLogic": "If texture and dullness are high but sensitivity low, recommend lactic formula",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -1713,9 +1845,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 35,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1724,7 +1858,9 @@
       "whenToUse": "AM/PM or as tolerated",
       "caution": "Avoid over-cleansing; caution sensitive skin",
       "recommendationLogic": "If oily T-zone + texture present, recommend Gentle Exfoliating Cleanser",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1763,9 +1899,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 36,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1774,7 +1912,9 @@
       "whenToUse": "AM/PM or pre-makeup",
       "caution": "Caution acne-prone/oily skin",
       "recommendationLogic": "If dryness/glow/makeup prep is desired, recommend Hydration Boost Oil & Primer",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -1810,9 +1950,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 37,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1821,7 +1963,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually",
       "recommendationLogic": "If user wants copper-peptide focused routine, recommend Trio",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1859,10 +2003,12 @@
     "availabilityStatus": "available",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "approved",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "DOES NOT EXIST AS NAMED (Phase 9F): absent from the live Vitali catalogue. Do not substitute a near neighbour — re-identify or drop the row.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 38,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1871,7 +2017,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually",
       "recommendationLogic": "If multiple Vitali copper products fit the analysis, recommend bundle",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "1"
     }
   },
   {
@@ -1907,9 +2055,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 39,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1918,7 +2068,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually",
       "recommendationLogic": "If collagen/firmness is a top priority, recommend trio bundle",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -1955,9 +2107,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 40,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -1966,7 +2120,9 @@
       "whenToUse": "System routine",
       "caution": "Patch test; introduce gradually",
       "recommendationLogic": "If overall renewal is the goal, recommend Cellular Renewal Set",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2003,9 +2159,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 41,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2014,7 +2172,9 @@
       "whenToUse": "System routine",
       "caution": "Patch test",
       "recommendationLogic": "If male client wants simplified routine, recommend Men's Set",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2055,9 +2215,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 42,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2066,7 +2228,9 @@
       "whenToUse": "AM/PM",
       "caution": "Patch test; caution if very acne-prone due to richer botanicals",
       "recommendationLogic": "If antioxidant + copper peptide support is needed, recommend Gold Serum",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2111,9 +2275,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 43,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2122,7 +2288,9 @@
       "whenToUse": "1–2x/week",
       "caution": "Caution sensitive/reactive skin due to vitamin C/clay; do not overuse",
       "recommendationLogic": "If congestion/oiliness/dullness present and sensitivity is low, recommend Clay Mask",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2165,9 +2333,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 44,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2176,7 +2346,9 @@
       "whenToUse": "1x/week PM",
       "caution": "Avoid if barrier is damaged, rosacea-prone, inflamed, or highly sensitive",
       "recommendationLogic": "If texture + dullness are present but redness/sensitivity low, recommend Meteorite Scrub",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "7"
     }
   },
   {
@@ -2215,9 +2387,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 45,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2226,7 +2400,9 @@
       "whenToUse": "AM/PM",
       "caution": "Patch test",
       "recommendationLogic": "If gentle daily cleanse and radiance support needed, recommend Pearl Cleanser",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2268,9 +2444,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 46,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2279,7 +2457,9 @@
       "whenToUse": "AM/PM",
       "caution": "Avoid bee products if allergy concern",
       "recommendationLogic": "If mild redness/barrier stress/dryness present, recommend Moisturizer",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2318,9 +2498,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 47,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2329,7 +2511,9 @@
       "whenToUse": "PM",
       "caution": "Patch test",
       "recommendationLogic": "If PM hydration and repair are priorities, recommend Night Cream",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2374,9 +2558,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 48,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2385,7 +2571,9 @@
       "whenToUse": "AM/PM after cleanse",
       "caution": "Patch test for botanical sensitivity",
       "recommendationLogic": "If user needs toner/mist with niacinamide support, recommend Angel’s Mist",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2427,9 +2615,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 49,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2438,7 +2628,9 @@
       "whenToUse": "Daily body care",
       "caution": "Caution fragrance sensitivity",
       "recommendationLogic": "If body dryness is flagged, recommend Body Lotion",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
     }
   },
   {
@@ -2480,9 +2672,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 50,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2491,7 +2685,9 @@
       "whenToUse": "As needed",
       "caution": "Caution fragrance/essential oil sensitivity",
       "recommendationLogic": "If body/hair oil requested and sensitivity low, recommend Santal Black",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -2527,10 +2723,12 @@
     "availabilityStatus": "available",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "approved",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "out_of_scope",
+    "blocker": "OUT OF SCOPE for the topical catalog: device/tool. Identity-only research.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 51,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2539,7 +2737,9 @@
       "whenToUse": "As directed, not daily",
       "caution": "Avoid active acne, inflamed skin, poor hygiene, keloid tendency",
       "recommendationLogic": "If user wants at-home treatment and skin is not inflamed, consider Derma Roller with caution",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "CAUTION (provisional)",
+      "fillPriority": "skip"
     }
   },
   {
@@ -2582,9 +2782,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 52,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2593,7 +2795,9 @@
       "whenToUse": "Travel / weekly",
       "caution": "Same caution as Clay Mask",
       "recommendationLogic": "Travel version of Clay Mask",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -2632,9 +2836,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 53,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2643,7 +2849,9 @@
       "whenToUse": "Travel AM/PM",
       "caution": "Patch test",
       "recommendationLogic": "Travel version of Gold Serum",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -2681,9 +2889,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 54,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2692,7 +2902,9 @@
       "whenToUse": "Travel PM",
       "caution": "Patch test",
       "recommendationLogic": "Travel version of Night Cream",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "5"
     }
   },
   {
@@ -2732,10 +2944,12 @@
     "availabilityStatus": "available",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "approved",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "DOES NOT EXIST AS NAMED (Phase 9F): absent from the live Alitura catalogue. Do not substitute a near neighbour — re-identify or drop the row.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 55,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2744,7 +2958,9 @@
       "whenToUse": "Travel daily",
       "caution": "Caution fragrance sensitivity",
       "recommendationLogic": "Travel version of Body Lotion",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "skip"
     }
   },
   {
@@ -2784,9 +3000,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 56,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2795,7 +3013,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce exfoliation gradually",
       "recommendationLogic": "If user wants a complete Alitura routine, recommend Four Step Facial",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2834,9 +3054,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 57,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2845,7 +3067,9 @@
       "whenToUse": "System routine",
       "caution": "Patch test",
       "recommendationLogic": "If cleanser/hydration are main needs, recommend Perfect Duo",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2885,9 +3109,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 58,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2896,7 +3122,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce one product at a time if sensitive",
       "recommendationLogic": "If new user wants core Alitura, recommend Ultimate Starter Set",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2934,9 +3162,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 59,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2945,7 +3175,9 @@
       "whenToUse": "Event / travel",
       "caution": "Patch test",
       "recommendationLogic": "If radiance/event prep is priority, recommend Instant Glow Kit",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -2985,9 +3217,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 60,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -2996,7 +3230,9 @@
       "whenToUse": "Weekly / as directed",
       "caution": "Caution sensitive/reactive skin",
       "recommendationLogic": "If user wants a full at-home treatment and sensitivity low, recommend At-Home Facial Kit",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3032,9 +3268,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 61,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -3043,7 +3281,9 @@
       "whenToUse": "System routine",
       "caution": "Introduce gradually",
       "recommendationLogic": "If user wants full brand trial, recommend Essential Discovery Set",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3079,9 +3319,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "approved",
+    "catalogState": "research_only",
+    "blocker": null,
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 62,
       "priority": 1,
       "verificationLevel": "Official collection page",
@@ -3090,7 +3332,9 @@
       "whenToUse": "As directed",
       "caution": "Patch test",
       "recommendationLogic": "If shaving irritation or men’s routine requested, recommend Shaving Kit",
-      "notes": null
+      "notes": null,
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "2"
     }
   },
   {
@@ -3127,9 +3371,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 63,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3138,7 +3384,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3175,9 +3423,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 64,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3186,7 +3436,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3223,9 +3475,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 65,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3234,7 +3488,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3271,9 +3527,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 66,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3282,7 +3540,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3319,9 +3579,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 67,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3330,7 +3592,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3368,9 +3632,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 68,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3379,7 +3645,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "AVOID (provisional)",
+      "fillPriority": "4"
     }
   },
   {
@@ -3416,10 +3684,12 @@
     "availabilityStatus": "unknown",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "pending",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "BLOCKER (Phase 9F): OTC sunscreen publishing no Drug Facts panel and no active percentages.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 69,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3428,7 +3698,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "skip"
     }
   },
   {
@@ -3467,9 +3739,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 70,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3478,7 +3752,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3519,9 +3795,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 71,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3530,7 +3808,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3566,9 +3846,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 72,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3577,7 +3859,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3614,9 +3898,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 73,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3625,7 +3911,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3661,9 +3949,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 74,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3672,7 +3962,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "4"
     }
   },
   {
@@ -3708,9 +4000,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 75,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3719,7 +4013,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "4"
     }
   },
   {
@@ -3755,9 +4051,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 76,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3766,7 +4064,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "4"
     }
   },
   {
@@ -3802,9 +4102,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 77,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3813,7 +4115,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "4"
     }
   },
   {
@@ -3850,9 +4154,11 @@
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
     "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Needs product-page verification before app launch.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 78,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3861,7 +4167,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "PRACTITIONER ONLY (provisional)",
+      "fillPriority": "4"
     }
   },
   {
@@ -3897,10 +4205,12 @@
     "availabilityStatus": "unknown",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "pending",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "out_of_scope",
+    "blocker": "OUT OF SCOPE for the topical catalog: device. Identity-only research; no label facts to capture.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 79,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3909,7 +4219,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "OUT OF SCOPE — device",
+      "fillPriority": "skip"
     }
   },
   {
@@ -3945,10 +4257,12 @@
     "availabilityStatus": "unknown",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "pending",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "out_of_scope",
+    "blocker": "OUT OF SCOPE for the topical catalog: device. Identity-only research; no label facts to capture.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 80,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -3957,7 +4271,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "OUT OF SCOPE — device",
+      "fillPriority": "skip"
     }
   },
   {
@@ -3990,10 +4306,12 @@
     "availabilityStatus": "unknown",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "pending",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "ROW MUST BE SPLIT (Phase 9F): one row covering two products with materially different panels — calcium present on one, absent on the other.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 81,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -4002,7 +4320,9 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "OUT OF SCOPE — ingestible",
+      "fillPriority": "skip"
     }
   },
   {
@@ -4038,10 +4358,12 @@
     "availabilityStatus": "unknown",
     "source": "reviewed_research",
     "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
-    "evidenceReviewStatus": "pending",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "out_of_scope",
+    "blocker": "OUT OF SCOPE: ingestible supplement. vAIne MVP excludes supplements.",
     "active": true,
     "sourceNotes": {
-      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
       "sourceRow": 82,
       "priority": 2,
       "verificationLevel": "Needs product-page verification before app launch",
@@ -4050,7 +4372,2106 @@
       "whenToUse": "Per label",
       "caution": "Verify contraindications and ingredient list before recommendation",
       "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
-      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production.",
+      "pregnancyProvisional": "OUT OF SCOPE — ingestible",
+      "fillPriority": "skip"
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-ordinary-niacinamide-10-pct-plus-zinc-1-pct",
+    "brand": "The Ordinary",
+    "productName": "Niacinamide 10% + Zinc 1%",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Niacinamide 10%"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high",
+      "appearance.oiliness_visible",
+      "appearance.texture_irregular"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 600,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 2,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Pores / oil, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Calms shine and makes pores look smaller. Niacinamide is one of the best-studied ingredients in skincare and suits almost everyone.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-ordinary-glycolic-acid-7-pct-toning-solution",
+    "brand": "The Ordinary",
+    "productName": "Glycolic Acid 7% Toning Solution",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Glycolic acid 7%"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1300,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 3,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Texture, radiance",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "A liquid exfoliant that loosens dull surface cells so skin looks brighter and smoother. Use at night; raises sun sensitivity.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-ordinary-retinal-0-2-pct-emulsion",
+    "brand": "The Ordinary",
+    "productName": "Retinal 0.2% Emulsion",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Retinaldehyde 0.2%"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1400,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 4,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Retinal works faster than retinol and is gentler than prescription tretinoin. Softens fine lines and evens texture over months, not days.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "naturium-azelaic-topical-acid-10-pct",
+    "brand": "Naturium",
+    "productName": "Azelaic Topical Acid 10%",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Azelaic acid 10%"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1600,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 5,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Tone / dark spots, redness",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Fades dark marks and calms redness. One of the few actives considered pregnancy-friendly, and a standout for post-blemish discolouration on deeper skin tones.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "naturium-niacinamide-serum-12-pct-plus-zinc",
+    "brand": "Naturium",
+    "productName": "Niacinamide Serum 12% Plus Zinc",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Niacinamide 12%"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high",
+      "appearance.oiliness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1600,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 6,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Pores / oil",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "A stronger niacinamide for oilier skin. Reduces shine and the look of pores.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "naturium-bha-liquid-exfoliant-2-pct",
+    "brand": "Naturium",
+    "productName": "BHA Liquid Exfoliant 2%",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Salicylic acid 2%"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high",
+      "appearance.oiliness_visible",
+      "appearance.texture_irregular"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1600,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 7,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Pores / oil, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Oil-soluble acid that gets inside the pore to clear congestion. The go-to for blackheads and bumpy texture.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-inkey-list-hyaluronic-acid-serum",
+    "brand": "The INKEY List",
+    "productName": "Hyaluronic Acid Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Hyaluronic acid",
+      "matrixyl"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1100,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 8,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Pulls water into the upper layers so skin looks plumper and less crepey. Apply to damp skin, then seal with moisturiser.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-inkey-list-retinol-serum",
+    "brand": "The INKEY List",
+    "productName": "Retinol Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Retinol",
+      "granactive retinoid"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1300,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 9,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "An entry-level retinol for people new to the ingredient. Start twice weekly and build up.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "the-inkey-list-polyglutamic-acid-daily-sunscreen-spf-30",
+    "brand": "The INKEY List",
+    "productName": "Polyglutamic Acid Daily Sunscreen SPF 30",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "SPF 30"
+    ],
+    "skinConcernTags": [
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 10,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Affordable everyday sun protection. Sunscreen is the single highest-impact anti-ageing step there is.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "good-molecules-discoloration-correcting-serum",
+    "brand": "Good Molecules",
+    "productName": "Discoloration Correcting Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Tranexamic acid",
+      "niacinamide"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1400,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 11,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Tone / dark spots",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Targets stubborn dark patches and melasma-type discolouration. Tranexamic acid is a favourite for pigmentation that acids alone do not shift.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "good-molecules-hyaluronic-acid-serum",
+    "brand": "Good Molecules",
+    "productName": "Hyaluronic Acid Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Hyaluronic acid"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 800,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 12,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Basic, effective hydration at the lowest price in the catalog.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "versed-guards-up-daily-mineral-sunscreen-spf-35",
+    "brand": "Versed",
+    "productName": "Guards Up Daily Mineral Sunscreen SPF 35",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Zinc oxide"
+    ],
+    "skinConcernTags": [
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 2200,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 13,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Mineral SPF that sits well under makeup. Clean-standard formula sold at Target.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "versed-press-restart-gentle-retinol-serum",
+    "brand": "Versed",
+    "productName": "Press Restart Gentle Retinol Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Encapsulated retinol"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 2200,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 14,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Slow-release retinol designed to cause less irritation than standard formulas.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "cocokind-ceramide-barrier-serum",
+    "brand": "Cocokind",
+    "productName": "Ceramide Barrier Serum",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Ceramides",
+      "fatty acids"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 1900,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 15,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Sensitive, hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Rebuilds a damaged moisture barrier - the fix when skin has become tight, flaky or reactive from over-exfoliating.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "cocokind-daily-spf",
+    "brand": "Cocokind",
+    "productName": "Daily SPF",
+    "category": "Budget tier",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Mineral SPF"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 2600,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 16,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Lightweight daily mineral sunscreen formulated for sensitive skin.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "paula-s-choice-skin-perfecting-2-pct-bha-liquid-exfoliant",
+    "brand": "Paula's Choice",
+    "productName": "Skin Perfecting 2% BHA Liquid Exfoliant",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Salicylic acid 2%"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high",
+      "appearance.oiliness_visible",
+      "appearance.texture_irregular"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 3500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 17,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Pores / oil, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "The most-cited exfoliant in skincare. Clears congestion and smooths texture, with a large published research base behind the formula.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "paula-s-choice-c15-super-booster",
+    "brand": "Paula's Choice",
+    "productName": "C15 Super Booster",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "15% vitamin C",
+      "E",
+      "ferulic"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 18,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Radiance, tone",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Antioxidant serum for morning use. Brightens over time and adds a layer of defence under sunscreen.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "paula-s-choice-clinical-1-pct-retinol-treatment",
+    "brand": "Paula's Choice",
+    "productName": "Clinical 1% Retinol Treatment",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "1% retinol",
+      "peptides"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 6400,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 19,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "A high-strength retinol for experienced users. Entire line is fragrance-free.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "maelove-glow-maker-vitamin-c-serum",
+    "brand": "Maelove",
+    "productName": "Glow Maker Vitamin C Serum",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "15% vitamin C",
+      "E",
+      "ferulic"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 3000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 20,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Radiance, tone",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "MIT-founded brand's take on the classic C+E+ferulic formula at a third of the usual price.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "maelove-moonlight-retinal-serum",
+    "brand": "Maelove",
+    "productName": "Moonlight Retinal Serum",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Retinaldehyde"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 3400,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 21,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Affordable retinal - the faster-acting, better-tolerated cousin of retinol.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "osea-ocean-cleanser",
+    "brand": "OSEA",
+    "productName": "Ocean Cleanser",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "cleanse",
+    "keyIngredients": [
+      "Seaweed",
+      "glycolic"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 4800,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 22,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Sensitive, hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Gentle daily cleanser that does not strip. Seaweed-based, Climate Neutral certified.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "osea-hyaluronic-sea-serum",
+    "brand": "OSEA",
+    "productName": "Hyaluronic Sea Serum",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Hyaluronic acid",
+      "algae"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 8800,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 23,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration, radiance",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Deep hydration with a clean, MADE SAFE-aligned formula. Best hydration option for people avoiding synthetics.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "ursa-major-golden-hour-recovery-cream",
+    "brand": "Ursa Major",
+    "productName": "Golden Hour Recovery Cream",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Niacinamide",
+      "botanicals"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5800,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 24,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Rich barrier-supporting night cream from a Vermont B Corp. The strongest men's fit in the catalog - unscented and unfussy.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "ursa-major-brighten-up-vitamin-c-serum",
+    "brand": "Ursa Major",
+    "productName": "Brighten Up Vitamin C Serum",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Vitamin C"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5800,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 25,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Radiance, tone",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Naturally derived vitamin C for tone and glow without synthetic fragrance.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "medik8-crystal-retinal-3",
+    "brand": "Medik8",
+    "productName": "Crystal Retinal 3",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Retinaldehyde 0.03%"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5900,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 26,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "The best-evidenced retinal on the market - Medik8 has published clinical work on retinaldehyde specifically. Ladder up through strengths 1-24.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "medik8-c-tetra-vitamin-c-serum",
+    "brand": "Medik8",
+    "productName": "C-Tetra Vitamin C Serum",
+    "category": "Mid tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Tetrahexyldecyl ascorbate"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.visible_redness",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 4900,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 27,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Radiance, tone, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "An oil-soluble, stable vitamin C that suits drier and more sensitive skin than traditional L-ascorbic formulas.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "sky-and-sol-face-and-body-sunscreen-spf-50",
+    "brand": "Sky and Sol",
+    "productName": "Face & Body Sunscreen SPF 50",
+    "category": "Mid tier",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "25% non-nano zinc",
+      "grass-fed tallow"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 2999,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 28,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF, sensitive, hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Mineral SPF 50 with no chemical UV filters, no fragrance and no silicones. Tallow base makes it moisturising rather than chalky, and the brand publishes heavy-metal test results.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "sky-and-sol-face-and-body-sunscreen-spf-30",
+    "brand": "Sky and Sol",
+    "productName": "Face & Body Sunscreen SPF 30",
+    "category": "Mid tier",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Non-nano zinc",
+      "tallow"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 2999,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 29,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Same formula philosophy at SPF 30 - thinner texture and less white cast than the SPF 50.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "sky-and-sol-xl-body-sunscreen-spf-50-7-05-oz",
+    "brand": "Sky and Sol",
+    "productName": "XL Body Sunscreen SPF 50 (7.05 oz)",
+    "category": "Mid tier",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Non-nano zinc",
+      "tallow"
+    ],
+    "skinConcernTags": [
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5999,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 30,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Body-size version. Better cost per ounce than the face size for full-body use.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "oneskin-os-01-shield-spf-30",
+    "brand": "OneSkin",
+    "productName": "OS-01 SHIELD SPF 30",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Mineral SPF",
+      "OS-01"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 33,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF, aging",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Sunscreen with the OS-01 peptide included. The premium rung of the SPF ladder.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-nad-plus-boosting-serum",
+    "brand": "Young Goose",
+    "productName": "NAD+ Boosting Serum",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "NAD",
+      "precursors"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 14500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 34,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, radiance",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Biohacking skincare aimed at cellular energy pathways. Strong ingredient-level rationale; less independent clinical data than OneSkin.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-bio-retinol-cream",
+    "brand": "Young Goose",
+    "productName": "Bio-Retinol Cream",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Bio-retinol",
+      "spermidine"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 12000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 35,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Retinoid alternative paired with spermidine for people who cannot tolerate conventional retinoids.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "true-botanicals-chebula-active-serum",
+    "brand": "True Botanicals",
+    "productName": "Chebula Active Serum",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Chebula (antioxidant)"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 9000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 38,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, pregnancy-safe",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "MADE SAFE certified with independent clinical testing behind it. Pregnancy-safe, which very few effective anti-ageing serums are.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "true-botanicals-pure-radiance-oil",
+    "brand": "True Botanicals",
+    "productName": "Pure Radiance Oil",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Botanical oil blend"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 11000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 39,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration, radiance",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Cult facial oil for dryness and dullness. Clean-certified throughout.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "marie-veronique-barrier-restore-serum",
+    "brand": "Marie Veronique",
+    "productName": "Barrier Restore Serum",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Ceramides",
+      "fatty acids"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 7000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 40,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Sensitive, barrier",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Chemist-founded, microbiome-focused. The serum to reach for when the skin barrier is genuinely compromised.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "marie-veronique-everyday-coverage-spf-30",
+    "brand": "Marie Veronique",
+    "productName": "Everyday Coverage SPF 30",
+    "category": "Premium tier",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Zinc oxide",
+      "tinted"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 5000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 41,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "SPF, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Tinted mineral SPF that works on a wider range of skin tones than most zinc formulas.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "augustinus-bader-the-rich-cream-50ml",
+    "brand": "Augustinus Bader",
+    "productName": "The Rich Cream (50ml)",
+    "category": "Luxury tier",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "TFC8 complex"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 29000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 42,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, hydration",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "The luxury benchmark, backed by a professor-founded research programme and large user trials. Rich texture for dry, mature skin.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "augustinus-bader-the-serum",
+    "brand": "Augustinus Bader",
+    "productName": "The Serum",
+    "category": "Luxury tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "TFC8 complex"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 39000,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 43,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Aging, radiance",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Lighter delivery of the same TFC8 technology, layered under the cream.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vintner-s-daughter-active-botanical-serum",
+    "brand": "Vintner's Daughter",
+    "productName": "Active Botanical Serum",
+    "category": "Luxury tier",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "22 botanicals"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 19500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 44,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Radiance, tone, texture",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Slow-made, cult-followed oil serum. Results are widely reported; published clinical evidence is thin.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "furtuna-skin-due-alberi-biphase-moisturizing-oil",
+    "brand": "Furtuna Skin",
+    "productName": "Due Alberi Biphase Moisturizing Oil",
+    "category": "Luxury tier",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Wild-farmed Sicilian olive",
+      "herbs"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "sensitive"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 22500,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-08-06T00:00:00.000Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": null,
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "catalogState": "research_only",
+    "blocker": "Research only: needs identity, safety, and catalog review before it can be offered.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "vaine-affiliate-catalog.xlsx",
+      "sourceRow": 45,
+      "priority": null,
+      "verificationLevel": "Affiliate research catalog (approximate US retail price, August 2026)",
+      "findings": "Hydration, sensitive",
+      "bestFor": null,
+      "whenToUse": null,
+      "caution": null,
+      "recommendationLogic": "Organic wild-farmed luxury oil. Suits sensitive skin better than most products at this price.",
+      "notes": null,
+      "pregnancyProvisional": null,
+      "fillPriority": null
     }
   }
 ]

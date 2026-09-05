@@ -52,7 +52,19 @@ export const catalogSourceNotesSchema = z.object({
   caution: z.string().nullable(),
   recommendationLogic: z.string().nullable(),
   notes: z.string().nullable(),
+  /** Provisional pregnancy class from the sheet; informational only, never trusted for eligibility. */
+  pregnancyProvisional: z.string().nullable().default(null),
+  fillPriority: z.string().nullable().default(null),
 }).strict();
+
+/**
+ * Governance state carried from the product database. `catalog_approved` is
+ * the launch rule for visibility; `research_only` rows may be shown as a
+ * labelled research preview during the beta; `blocked` and `out_of_scope`
+ * rows are always held back with their blocker shown.
+ */
+export const catalogStateSchema = z.enum(['research_only', 'catalog_approved', 'blocked', 'out_of_scope']);
+export type CatalogState = z.infer<typeof catalogStateSchema>;
 
 export type CatalogProductKind = 'single' | 'bundle' | 'travel_size' | 'body' | 'device' | 'supplement';
 
@@ -94,6 +106,9 @@ export const catalogEntrySchema = z
     source: z.enum(['reviewed_research', 'editorial']),
     lastReviewedAtIso: isoDateSchema,
     evidenceReviewStatus: z.enum(['approved', 'pending', 'rejected']),
+    catalogState: catalogStateSchema.default('research_only'),
+    /** Why the row cannot be offered yet, in the reviewer's words. */
+    blocker: z.string().nullable().default(null),
     active: z.boolean(),
     sourceNotes: catalogSourceNotesSchema.nullable().default(null),
   })
@@ -129,6 +144,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export type VisibilityBlockReason =
   | 'inactive'
+  | 'blocked_by_review'
+  | 'out_of_scope'
   | 'evidence_not_approved'
   | 'review_stale'
   | 'price_stale'
@@ -145,6 +162,8 @@ export function assessConsumerVisibility(entry: CatalogEntry, nowIso: string): V
   const now = Date.parse(nowIso);
 
   if (!entry.active) reasons.push('inactive');
+  if (entry.catalogState === 'blocked') reasons.push('blocked_by_review');
+  if (entry.catalogState === 'out_of_scope') reasons.push('out_of_scope');
   if (entry.evidenceReviewStatus !== 'approved') reasons.push('evidence_not_approved');
   if (entry.availabilityStatus === 'discontinued' || entry.availabilityStatus === 'unknown') {
     reasons.push('not_available');
@@ -165,4 +184,9 @@ export function assessConsumerVisibility(entry: CatalogEntry, nowIso: string): V
 
 export function isConsumerVisible(entry: CatalogEntry, nowIso: string): boolean {
   return assessConsumerVisibility(entry, nowIso).length === 0;
+}
+
+/** A visible row that has not yet reached `catalog_approved`. */
+export function isResearchPreview(entry: Pick<CatalogEntry, 'catalogState' | 'evidenceReviewStatus'>): boolean {
+  return entry.evidenceReviewStatus === 'approved' && entry.catalogState !== 'catalog_approved';
 }

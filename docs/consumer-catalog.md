@@ -18,13 +18,47 @@ guidance and says the list has no product for that step yet.
 ## Importing the product database
 
 The reviewed list is generated from the *Longevity Skincare AI Product
-Database* workbook kept in `data/product-database/`. To update it, edit the
-workbook's `Verified_Product_DB` sheet and re-run:
+Database* fill-template workbook kept in `data/product-database/`. To update
+it, edit the workbook's `Verified_Product_DB` sheet and re-run:
 
 ```sh
-python3 scripts/import_product_database.py data/product-database/Longevity_Skincare_AI_Product_Database_v2.xlsx
+python3 scripts/import_product_database.py \
+  data/product-database/Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx \
+  --affiliate-catalog /path/outside/the/repo/vAIne_Affiliate_Product_Catalog.xlsx
 npm test
 ```
+
+The affiliate research catalog is optional and is **not** kept in this public
+repository because it carries commercial terms (program rates, cookie windows,
+personal codes). The importer reads only its Products sheet — brand, product,
+tier, price, key ingredient, plain-language note, "best for" — and every row
+it contributes is `research_only`, so it is listed with its price under "Held
+back" and never offered until it is moved into the governed workbook and
+approved. Rows that already exist in the governed workbook are skipped.
+
+### Catalog State and the research preview
+
+The governed workbook's `Catalog State` column is the visibility authority:
+
+| Catalog State | In the app |
+| --- | --- |
+| `catalog_approved` | Offered in routines, badge "From your list". |
+| `research_only` | Beta default: rows with an official-page Verification Level and no blocker are offered with the badge "Research preview". Pass `--no-research-preview` to hide them, which is the launch rule. |
+| `blocked` | Held back; the `Blocker / Known Issue` text is shown as the reason. |
+| `out_of_scope` | Held back (devices, ingestibles). |
+
+### Fill columns
+
+The workbook's "How To Fill" sheet explains the four columns the app needs.
+A blank is a fact; the importer never infers a value:
+
+| Column | Effect once filled |
+| --- | --- |
+| Price (USD) + Price Verified (date) | Shows the price and enables the budget ceiling. A price without a date stays unverified. |
+| Fragrance-Free (Yes / No / Unknown) | Enables the "avoid fragrance" preference. Unknown still counts as fragranced. |
+| Full INCI | Replaces the listed actives for allergen matching and active-family detection. |
+| Pregnancy Flag | Only values beginning with `REVIEWED` are trusted (avoid / practitioner → `reviewed_avoid`; acceptable → `reviewed_acceptable`). Provisional classes stay `not_reviewed` and are shown as a note. |
+| Allergen Flags | Adds named allergens to the product's caution list. |
 
 The script needs only the Python standard library. It maps each row as
 follows:
@@ -37,19 +71,10 @@ follows:
 | Best Skin Types | `skinTypeCompatibility` |
 | Avoid / Caution Logic | `sensitivityCaution` (true when the text warns about sensitive or reactive skin; false when the product is listed for sensitive skin; otherwise null, which the app treats as a caution), `pregnancyNursingStatus` (`reviewed_avoid` only when pregnancy is mentioned, otherwise `not_reviewed`), `allergyCautions`, `fragranceStatus` |
 | Known/Listed Actives or Positioning | `keyIngredients` (also drives active-family detection) |
-| Verification Level | `evidenceReviewStatus` and `availabilityStatus`: "Official …" rows are approved and available; "Needs product-page verification" rows stay `pending` and are held back with their reason shown on the product-list screen |
+| Verification Level, Catalog State, Blocker | `evidenceReviewStatus`, `catalogState`, `blocker`: see "Catalog State and the research preview" above |
 | Source URL | `nonAffiliateFallbackUrl` |
 | When to Use, Avoid / Caution, Recommendation Logic, Priority, row number | `sourceNotes` (shown to the person as usage and caution notes; never used for ranking) |
 | Affiliate Potential | Not imported. Commercial data stays outside the app's eligibility and ranking. |
-
-Columns the workbook does not have yet, and what adding them unlocks:
-
-| Add this column | Unlocks |
-| --- | --- |
-| Price (USD) and price-verified date | A displayed price and the per-product budget ceiling. Until then products show "Price not yet verified" and are never assumed to fit a ceiling. |
-| Fragrance-free (yes/no) | The "avoid fragrance" preference. Unknown fragrance status currently excludes the product for people who avoid fragrance. |
-| Pregnancy/nursing reviewed (acceptable/avoid) | Routines for people who are pregnant, trying, or nursing. Unreviewed products are excluded for them today. |
-| Full ingredient (INCI) list | Precise allergen matching. Today only the listed actives and caution keywords are compared. |
 
 ## Entry format
 
@@ -85,6 +110,8 @@ no synthetic source value, so fictional products cannot enter this list.
   source: 'reviewed_research',               // reviewed_research | editorial
   lastReviewedAtIso: '2026-08-20T00:00:00.000Z',    // stale after 180 days
   evidenceReviewStatus: 'approved',
+  catalogState: 'catalog_approved',         // research_only | catalog_approved | blocked | out_of_scope
+  blocker: null,                             // reviewer's reason when held back
   active: true,
   sourceNotes: null,                         // or { whenToUse, caution, findings, … } from the sheet
 }
@@ -106,10 +133,11 @@ eligibility engine's `ProductCandidate`:
 | `approximatePriceCents` | Hard ceiling from the budget answer for verified prices; lower price only breaks ties. An unverified (null) price is never assumed to fit the ceiling and ranks after an equally matched verified one. |
 | `affiliate`, `nonAffiliateFallbackUrl` | Dropped before ranking. Links can only attach afterwards through the commercial-attachment boundary. |
 
-Entries that fail the visibility gate (inactive, evidence not approved,
-discontinued or unknown availability, stale review, stale price, affiliate
-link without a fallback) are listed under "Held back" on the product-list
-screen with their reasons and never offered.
+Entries that fail the visibility gate (blocked or out-of-scope catalog state,
+inactive, evidence not approved, discontinued or unknown availability, stale
+review, stale price, affiliate link without a fallback) are listed under
+"Held back" on the product-list screen with the reviewer's reason and never
+offered.
 
 ## Where the list is visible
 

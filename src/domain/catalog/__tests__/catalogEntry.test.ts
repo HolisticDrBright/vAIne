@@ -44,6 +44,14 @@ function validEntry(overrides: Partial<CatalogEntry> = {}): CatalogEntry {
   });
 }
 
+describe('catalog state gate', () => {
+  test('blocked and out-of-scope rows are never visible, whatever their evidence status', () => {
+    expect(assessConsumerVisibility(validEntry({ catalogState: 'blocked' }), NOW)).toContain('blocked_by_review');
+    expect(assessConsumerVisibility(validEntry({ catalogState: 'out_of_scope' }), NOW)).toContain('out_of_scope');
+    expect(isConsumerVisible(validEntry({ catalogState: 'catalog_approved' }), NOW)).toBe(true);
+  });
+});
+
 describe('catalog entry schema', () => {
   test('accepts a fully reviewed real entry', () => {
     expect(isConsumerVisible(validEntry(), NOW)).toBe(true);

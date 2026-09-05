@@ -9,14 +9,27 @@ not state stays ``null`` / ``unknown`` so the app treats it cautiously.
 
 Usage:
     python3 scripts/import_product_database.py \
-        data/product-database/Longevity_Skincare_AI_Product_Database_v2.xlsx
+        data/product-database/Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx \
+        [--affiliate-catalog /private/path/vAIne_Affiliate_Product_Catalog.xlsx] \
+        [--no-research-preview] [--output src/data/consumerCatalog.generated.json]
 
-Columns the sheet does not have yet, and what adding them would unlock:
-    Price (USD)            -> approximatePriceCents, enables the budget filter
-    Price verified (date)  -> priceVerifiedAtIso
-    Fragrance-free (Y/N)   -> fragranceStatus, enables the fragrance preference
-    Pregnancy reviewed     -> pregnancyNursingStatus
-    Full INCI list         -> keyIngredients, enables allergen matching
+Fill columns the workbook carries (blank = not known; never inferred):
+    Price (USD) + Price Verified (date)   -> approximatePriceCents / priceVerifiedAtIso
+    Fragrance-Free (Yes/No/Unknown)       -> fragranceStatus
+    Full INCI                             -> keyIngredients (replaces listed actives)
+    Pregnancy Flag: REVIEWED - ... values -> pregnancyNursingStatus (provisional values stay not_reviewed)
+    Allergen Flags                        -> allergyCautions
+    Catalog State / Blocker               -> catalogState / blocker (blocked and out_of_scope are held back)
+
+Research preview (default on for the beta): rows still in `research_only`
+state whose Verification Level is an official page are made visible and
+labelled "research preview" in the app. Pass --no-research-preview to show
+only rows whose Catalog State is `catalog_approved`, which is the launch rule.
+
+The optional affiliate catalog workbook (kept outside the repository because
+it carries commercial terms) contributes its Products sheet as research-only
+rows: names, prices, key ingredient, plain-language notes. Affiliate codes,
+rates, and commissions are never read.
 """
 from __future__ import annotations
 
@@ -33,8 +46,11 @@ NS = {
     'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
 }
 SHEET_NAME = 'Verified_Product_DB'
+AFFILIATE_SHEET_NAME = 'Products'
 SCHEMA_VERSION = 'catalog_entry_v1'
 REVIEW_DATE = date.today().isoformat() + 'T00:00:00.000Z'
+# The affiliate catalog states its prices are approximate US retail, August 2026.
+AFFILIATE_PRICE_DATE = '2026-08-06T00:00:00.000Z'
 
 EXPECTED_HEADER = [
     'Priority', 'Brand', 'Product', 'Product Type', 'Category',
@@ -42,6 +58,24 @@ EXPECTED_HEADER = [
     'Best Skin Types', 'When to Use', 'Avoid / Caution Logic', 'Recommendation Logic',
     'Routine Slot', 'Affiliate Potential', 'Verification Level', 'Source URL', 'Notes',
 ]
+# Optional fill columns added 2026-09-04; read by header name when present.
+FILL_COLUMNS = {
+    'price': 'Price (USD)',
+    'price_source': 'Price Source URL',
+    'price_verified': 'Price Verified (date)',
+    'fragrance_free': 'Fragrance-Free',
+    'fragrance_evidence': 'Fragrance Evidence',
+    'inci': 'Full INCI',
+    'inci_captured': 'INCI Captured (date)',
+    'pregnancy_flag': 'Pregnancy Flag (PROVISIONAL)',
+    'pregnancy_reviewed_by': 'Pregnancy Reviewed By',
+    'pregnancy_review_date': 'Pregnancy Review Date',
+    'allergen_flags': 'Allergen Flags',
+    'catalog_state': 'Catalog State',
+    'blocker': 'Blocker / Known Issue',
+    'fill_priority': 'Fill Priority',
+}
+CATALOG_STATES = {'research_only', 'catalog_approved', 'blocked', 'out_of_scope'}
 
 
 def read_sheet(path: Path, sheet_name: str) -> list[list[str | None]]:
@@ -222,8 +256,8 @@ def fragrance_status(caution: str, actives: str) -> str:
 
 
 def pregnancy_status(caution: str) -> str:
-    if re.search(r'pregnan', caution, re.I):
-        return 'reviewed_avoid'
+    # Caution text is not a signed review. Unreviewed products are already
+    # excluded for anyone pregnant, trying, or nursing, so no inference is needed.
     return 'not_reviewed'
 
 
@@ -241,6 +275,56 @@ def allergy_cautions(caution: str, actives: str) -> list[str]:
     return [name for name, pattern in ALLERGY_RULES if pattern.search(haystack)]
 
 
+def parse_price_cents(text: str) -> int | None:
+    match = re.search(r'\d+(?:\.\d+)?', text.replace(',', ''))
+    if not match:
+        return None
+    cents = round(float(match.group(0)) * 100)
+    return cents if cents > 0 else None
+
+
+def parse_iso_date(text: str) -> str | None:
+    text = text.strip()
+    if not text:
+        return None
+    # Excel serial dates arrive as plain numbers from the raw XML.
+    if re.fullmatch(r'\d{5}(?:\.\d+)?', text):
+        from datetime import datetime, timedelta
+        return (datetime(1899, 12, 30) + timedelta(days=float(text))).strftime('%Y-%m-%dT00:00:00.000Z')
+    match = re.match(r'(\d{4})-(\d{2})-(\d{2})', text)
+    if match:
+        return f'{match.group(1)}-{match.group(2)}-{match.group(3)}T00:00:00.000Z'
+    match = re.match(r'(\d{1,2})/(\d{1,2})/(\d{4})', text)
+    if match:
+        return f'{match.group(3)}-{int(match.group(1)):02d}-{int(match.group(2)):02d}T00:00:00.000Z'
+    return None
+
+
+def fragrance_from_fill(value: str) -> str | None:
+    lowered = value.strip().lower()
+    if lowered in {'yes', 'y', 'true', 'fragrance-free', 'fragrance free'}:
+        return 'fragrance_free'
+    if lowered in {'no', 'n', 'false', 'contains fragrance', 'fragranced'}:
+        return 'contains_fragrance'
+    return None
+
+
+def pregnancy_from_fill(value: str) -> str | None:
+    """Only signed REVIEWED values are trusted; provisional classes stay not_reviewed."""
+    lowered = value.strip().lower()
+    if not lowered.startswith('reviewed'):
+        return None
+    if 'avoid' in lowered or 'practitioner' in lowered or 'caution' in lowered:
+        return 'reviewed_avoid'
+    if 'acceptable' in lowered or 'ok' in lowered or 'safe' in lowered:
+        return 'reviewed_acceptable'
+    return None
+
+
+def split_list(text: str) -> list[str]:
+    return [clean(p) for p in re.split(r'[;,\n]', text) if clean(p)]
+
+
 def key_ingredients(actives: str, product_type: str) -> list[str]:
     parts = [clean(p) for p in re.split(r'[;+,]|\band\b|\bwith\b', actives)]
     parts = [p for p in parts if p and len(p) <= 80]
@@ -249,7 +333,7 @@ def key_ingredients(actives: str, product_type: str) -> list[str]:
 
 # --- Main -----------------------------------------------------------------
 
-def convert(rows: list[list[str | None]], source_file: str) -> list[dict]:
+def convert(rows: list[list[str | None]], source_file: str, research_preview: bool = True) -> list[dict]:
     header = [clean(c) for c in rows[0]]
     if header[: len(EXPECTED_HEADER)] != EXPECTED_HEADER:
         raise SystemExit(f'Unexpected header: {header}')
@@ -267,6 +351,24 @@ def convert(rows: list[list[str | None]], source_file: str) -> list[dict]:
             product_id = f'{product_id}-row{index}'
         seen_ids.add(product_id)
         types = skin_types(row['Best Skin Types'])
+        fill = {key: row.get(column, '') for key, column in FILL_COLUMNS.items()}
+        catalog_state = fill['catalog_state'].strip().lower() or 'research_only'
+        if catalog_state not in CATALOG_STATES:
+            catalog_state = 'research_only'
+        price_cents = parse_price_cents(fill['price'])
+        price_verified = parse_iso_date(fill['price_verified']) if price_cents else None
+        if price_cents and not price_verified:
+            # A price without a verification date is not trusted; keep it unverified.
+            price_cents = None
+        inci = split_list(fill['inci'])
+        if catalog_state == 'catalog_approved':
+            evidence = 'approved'
+        elif catalog_state in {'blocked', 'out_of_scope'}:
+            evidence = 'rejected'
+        elif research_preview and official and not fill['blocker'].strip():
+            evidence = 'approved'
+        else:
+            evidence = 'pending'
         entries.append({
             'schemaVersion': SCHEMA_VERSION,
             'productId': product_id,
@@ -275,25 +377,27 @@ def convert(rows: list[list[str | None]], source_file: str) -> list[dict]:
             'category': row['Category'] or row['Product Type'] or 'uncategorized',
             'productKind': kind,
             'routineSlot': routine_slot(kind, row['Routine Slot'], row['Product Type']),
-            'keyIngredients': key_ingredients(row['Known/Listed Actives or Positioning'], row['Product Type']),
+            'keyIngredients': inci or key_ingredients(row['Known/Listed Actives or Positioning'], row['Product Type']),
             'skinConcernTags': observation_tags(row['Best Skin Findings From AI Analysis']),
             'skinTypeCompatibility': types,
             'sensitivityCaution': sensitivity_caution(row['Avoid / Caution Logic'], types),
-            'pregnancyNursingStatus': pregnancy_status(row['Avoid / Caution Logic']),
-            'allergyCautions': allergy_cautions(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
-            'fragranceStatus': fragrance_status(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
+            'pregnancyNursingStatus': pregnancy_from_fill(fill['pregnancy_flag']) or pregnancy_status(row['Avoid / Caution Logic']),
+            'allergyCautions': split_list(fill['allergen_flags']) or allergy_cautions(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
+            'fragranceStatus': fragrance_from_fill(fill['fragrance_free']) or fragrance_status(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
             'crueltyFreeStatus': 'unknown',
             'veganStatus': 'unknown',
-            'approximatePriceCents': None,
+            'approximatePriceCents': price_cents,
             'currencyCode': 'USD',
-            'priceVerifiedAtIso': None,
+            'priceVerifiedAtIso': price_verified,
             'affiliate': None,
             'nonAffiliateFallbackUrl': row['Source URL'] or None,
             'market': 'US',
             'availabilityStatus': 'available' if official else 'unknown',
             'source': 'reviewed_research',
             'lastReviewedAtIso': REVIEW_DATE,
-            'evidenceReviewStatus': 'approved' if official else 'pending',
+            'evidenceReviewStatus': evidence,
+            'catalogState': catalog_state,
+            'blocker': fill['blocker'].strip() or None,
             'active': True,
             'sourceNotes': {
                 'sourceFile': source_file,
@@ -306,25 +410,137 @@ def convert(rows: list[list[str | None]], source_file: str) -> list[dict]:
                 'caution': row['Avoid / Caution Logic'] or None,
                 'recommendationLogic': row['Recommendation Logic'] or None,
                 'notes': row['Notes'] or None,
+                'pregnancyProvisional': fill['pregnancy_flag'].strip() or None,
+                'fillPriority': fill['fill_priority'].strip() or None,
+            },
+        })
+    return entries
+
+
+# --- Affiliate research catalog (optional second source) ------------------
+
+AFFILIATE_HEADER = ['Brand', 'Product', 'Tier', 'Price ($)', 'Key ingredient', 'What it does', 'Best for']
+
+BEST_FOR_TAGS = [
+    ('appearance.pore_visibility_high', re.compile(r'pore', re.I)),
+    ('appearance.oiliness_visible', re.compile(r'\boil\b', re.I)),
+    ('appearance.texture_irregular', re.compile(r'texture', re.I)),
+    ('appearance.tone_uneven', re.compile(r'tone|dark spot|redness', re.I)),
+    ('appearance.visible_redness', re.compile(r'redness|sensitive|barrier', re.I)),
+    ('appearance.dullness_visible', re.compile(r'radiance', re.I)),
+    ('appearance.hydration_look_low', re.compile(r'hydration|barrier', re.I)),
+    ('appearance.fine_lines_visible', re.compile(r'aging|eye area', re.I)),
+    ('appearance.sun_exposure_signs_visible', re.compile(r'\bspf\b', re.I)),
+]
+
+AFFILIATE_SLOT_RULES = [
+    (re.compile(r'cleanser', re.I), 'cleanse', 'single'),
+    (re.compile(r'body', re.I), None, 'body'),
+    (re.compile(r'spf|sunscreen', re.I), 'protect', 'single'),
+    (re.compile(r'mask|exfoliant|exfoliating|peel|toning solution', re.I), 'weekly', 'single'),
+    (re.compile(r'cream|moisturi|oil\b|essence|lotion', re.I), 'hydrate', 'single'),
+    (re.compile(r'serum|retin|treatment|booster|emulsion|complex', re.I), 'support', 'single'),
+]
+
+
+def normalized_name(brand: str, product: str) -> str:
+    text = f'{brand} {product}'.lower()
+    text = re.sub(r'\bthe\b', ' ', text)
+    return re.sub(r'[^a-z0-9]+', '', text)
+
+
+def convert_affiliate_catalog(rows: list[list[str | None]], source_file: str, existing: set[str]) -> list[dict]:
+    header = [clean(c) for c in rows[0]]
+    if header[: len(AFFILIATE_HEADER)] != AFFILIATE_HEADER:
+        raise SystemExit(f'Unexpected affiliate catalog header: {header}')
+    entries = []
+    for index, raw in enumerate(rows[1:], start=2):
+        row = {name: clean(raw[i]) if i < len(raw) else '' for i, name in enumerate(header)}
+        brand, product = row['Brand'], row['Product']
+        if not brand or not product or brand.upper() == 'NOTES':
+            continue
+        if normalized_name(brand, product) in existing:
+            continue  # the governed database already carries this product
+        slot, kind = None, 'single'
+        for pattern, matched_slot, matched_kind in AFFILIATE_SLOT_RULES:
+            if pattern.search(product):
+                slot, kind = matched_slot, matched_kind
+                break
+        price_cents = parse_price_cents(row['Price ($)'])
+        entries.append({
+            'schemaVersion': SCHEMA_VERSION,
+            'productId': slugify(brand, product),
+            'brand': brand,
+            'productName': product,
+            'category': f"{row['Tier']} tier" if row['Tier'] else 'uncategorized',
+            'productKind': kind,
+            'routineSlot': slot,
+            'keyIngredients': split_list(row['Key ingredient'].replace('+', ',')) or ['not listed'],
+            'skinConcernTags': [tag for tag, pattern in BEST_FOR_TAGS if pattern.search(row['Best for'])],
+            'skinTypeCompatibility': ['sensitive'] if re.search(r'sensitive', row['Best for'], re.I) else ['unknown'],
+            'sensitivityCaution': None,
+            'pregnancyNursingStatus': 'not_reviewed',
+            'allergyCautions': [],
+            'fragranceStatus': 'unknown',
+            'crueltyFreeStatus': 'unknown',
+            'veganStatus': 'unknown',
+            'approximatePriceCents': price_cents,
+            'currencyCode': 'USD',
+            'priceVerifiedAtIso': AFFILIATE_PRICE_DATE if price_cents else None,
+            'affiliate': None,
+            'nonAffiliateFallbackUrl': None,
+            'market': 'US',
+            'availabilityStatus': 'unknown',
+            'source': 'reviewed_research',
+            'lastReviewedAtIso': REVIEW_DATE,
+            'evidenceReviewStatus': 'pending',
+            'catalogState': 'research_only',
+            'blocker': 'Research only: needs identity, safety, and catalog review before it can be offered.',
+            'active': True,
+            'sourceNotes': {
+                'sourceFile': source_file,
+                'sourceRow': index,
+                'priority': None,
+                'verificationLevel': 'Affiliate research catalog (approximate US retail price, August 2026)',
+                'findings': row['Best for'] or None,
+                'bestFor': None,
+                'whenToUse': None,
+                'caution': None,
+                'recommendationLogic': row['What it does'] or None,
+                'notes': None,
+                'pregnancyProvisional': None,
+                'fillPriority': None,
             },
         })
     return entries
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) < 2:
-        print(__doc__)
-        return 2
-    source = Path(argv[1])
-    output = Path(argv[2]) if len(argv) > 2 else Path('src/data/consumerCatalog.generated.json')
-    entries = convert(read_sheet(source, SHEET_NAME), source.name)
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('workbook', help='governed product database workbook (.xlsx)')
+    parser.add_argument('--affiliate-catalog', help='optional affiliate research catalog workbook (kept outside the repo)')
+    parser.add_argument('--no-research-preview', action='store_true', help='show only catalog_approved rows (launch rule)')
+    parser.add_argument('--output', default='src/data/consumerCatalog.generated.json')
+    args = parser.parse_args(argv[1:])
+
+    source = Path(args.workbook)
+    entries = convert(read_sheet(source, SHEET_NAME), source.name, research_preview=not args.no_research_preview)
+    if args.affiliate_catalog:
+        affiliate = Path(args.affiliate_catalog)
+        existing = {normalized_name(e['brand'], e['productName']) for e in entries}
+        entries += convert_affiliate_catalog(read_sheet(affiliate, AFFILIATE_SHEET_NAME), affiliate.name, existing)
+    output = Path(args.output)
     output.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    slots = {}
-    for entry in entries:
-        slots[entry['routineSlot']] = slots.get(entry['routineSlot'], 0) + 1
+
+    def count(predicate):
+        return sum(1 for e in entries if predicate(e))
     print(f'Wrote {len(entries)} entries to {output}')
-    print('Routine slots:', slots)
-    print('Pending verification:', sum(1 for e in entries if e['evidenceReviewStatus'] != 'approved'))
+    print('Visible (evidence approved):', count(lambda e: e['evidenceReviewStatus'] == 'approved'))
+    print('Held back:', count(lambda e: e['evidenceReviewStatus'] != 'approved'),
+          '| blocked:', count(lambda e: e['catalogState'] == 'blocked'),
+          '| out of scope:', count(lambda e: e['catalogState'] == 'out_of_scope'))
+    print('Priced:', count(lambda e: e['approximatePriceCents'] is not None))
     return 0
 
 
