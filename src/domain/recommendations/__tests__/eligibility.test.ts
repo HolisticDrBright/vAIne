@@ -150,3 +150,12 @@ describe('unverified prices', () => {
     expect(tight.map((entry) => entry.product.id)).toEqual(['unpriced']);
   });
 });
+
+describe('ingredient name matching', () => {
+  test('matches a named allergen inside a full ingredient name, but not inside another word', () => {
+    const product = { ...baseProduct, ingredients: ['Aqua', 'Lavandula Angustifolia (Lavender) Oil', 'Rosmarinus Officinalis Leaf Extract'] };
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['lavender'] }, ['appearance.hydration_look_low']).reasons).toContain('allergy_match');
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['rose'] }, ['appearance.hydration_look_low']).reasons).not.toContain('allergy_match');
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['LAVENDER OIL'] }, ['appearance.hydration_look_low']).reasons).toContain('allergy_match');
+  });
+});

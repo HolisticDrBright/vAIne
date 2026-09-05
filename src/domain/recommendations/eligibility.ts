@@ -33,6 +33,8 @@ export interface ProductCandidate {
   /** Optional editorial context shown with the product; never ranked on. */
   whenToUse?: string | null;
   cautionNote?: string | null;
+  /** Reviewer's capture note (sizes, list quality, delisting) shown as-is. */
+  note?: string | null;
   category?: string | null;
   observationTags: readonly SkinObservationTag[];
   activeFamilies: readonly string[];
@@ -70,9 +72,19 @@ export interface EligibilityResult {
 
 const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
-function overlaps(left: readonly string[], right: readonly string[]): boolean {
-  const normalizedRight = new Set(right.map(normalize));
-  return left.some((value) => normalizedRight.has(normalize(value)));
+/**
+ * True when any name on the left appears in any name on the right as a whole
+ * word or word sequence: "lavender" matches "Lavandula (Lavender) Oil" and
+ * "lavender extract", while "rose" does not match "rosemary". Comparison is
+ * case- and punctuation-insensitive.
+ */
+export function overlaps(left: readonly string[], right: readonly string[]): boolean {
+  const rightWords = right.map((value) => ` ${normalize(value)} `).filter((value) => value.trim().length > 0);
+  return left.some((value) => {
+    const needle = normalize(value);
+    if (!needle) return false;
+    return rightWords.some((haystack) => haystack.includes(` ${needle} `));
+  });
 }
 
 export function evaluateProductEligibility(

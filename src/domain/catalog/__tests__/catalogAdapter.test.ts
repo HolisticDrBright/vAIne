@@ -119,3 +119,13 @@ describe('catalog adapter: unpriced and non-routine entries', () => {
     expect(conversion.outsideRoutine.map((item) => item.productId)).toEqual(['bundle-1']);
   });
 });
+
+describe('catalog adapter: essential oils', () => {
+  test('an essential-oils caution excludes the product for a sensitive preference only', () => {
+    const candidate = candidateOf(entry({ allergyCautions: ['Lavender Oil', 'essential oils'] }));
+    expect(candidate.exclusionFlags).toContain('contains_essential_oils');
+    expect(evaluateProductEligibility(candidate, profile, ['appearance.hydration_look_low']).eligible).toBe(true);
+    const sensitive = evaluateProductEligibility(candidate, { ...profile, sensitivityPreference: 'sensitive', avoidEssentialOils: true }, ['appearance.hydration_look_low']);
+    expect(sensitive.reasons).toContain('sensitivity_exclusion');
+  });
+});

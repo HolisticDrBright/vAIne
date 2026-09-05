@@ -136,6 +136,7 @@ export default function ProductsScreen() {
               <Text style={styles.tags}>Helps with: {product.observationTags.length ? product.observationTags.map(describeTag).join(', ') : 'no listed appearance goal'}</Text>
               {product.whenToUse ? <Text style={styles.note}>When: {product.whenToUse}</Text> : null}
               {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
+              {product.note ? <Text style={styles.note}>Note: {product.note}</Text> : null}
               <Text style={styles.statusBody}>{statusBody(status)}</Text>
             </View>
           );

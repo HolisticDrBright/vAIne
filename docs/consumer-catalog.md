@@ -55,10 +55,11 @@ A blank is a fact; the importer never infers a value:
 | Column | Effect once filled |
 | --- | --- |
 | Price (USD) + Price Verified (date) | Shows the price and enables the budget ceiling. A price without a date stays unverified. |
-| Fragrance-Free (Yes / No / Unknown) | Enables the "avoid fragrance" preference. Unknown still counts as fragranced. |
-| Full INCI | Replaces the listed actives for allergen matching and active-family detection. |
+| Fragrance-Free (Yes / No / Unknown) | Enables the "avoid fragrance" preference. The workbook's rule is strict: Yes means no Fragrance/Parfum/Aroma declared **and** no essential oils or fragrant botanicals in the list. Unknown still counts as fragranced. |
+| Full INCI | Replaces the listed actives for allergen matching and active-family detection. ACTIVE/INACTIVE labels are stripped. A named allergen matches anywhere inside an ingredient name ("lavender" matches "Lavandula Angustifolia (Lavender) Oil"). |
 | Pregnancy Flag | Only values beginning with `REVIEWED` are trusted (avoid / practitioner → `reviewed_avoid`; acceptable → `reviewed_acceptable`). Provisional classes stay `not_reviewed` and are shown as a note. |
-| Allergen Flags | Adds named allergens to the product's caution list. |
+| Allergen Flags | Adds named allergens to the product's caution list. Labels such as "Fragrant botanicals/EO:" are dropped, and any essential oil or fragrant botanical also marks the product as containing essential oils, which excludes it for a sensitive preference. |
+| Blocker / Known Issue | Text starting with BLOCKER, DOES NOT EXIST, ROW MUST BE SPLIT, OUT OF SCOPE, NOT FOUND, or "Needs product-page verification" holds the row back and is shown as the reason. Any other text (sizes, list quality, delisting) is shown as a note and does not affect visibility. |
 
 The script needs only the Python standard library. It maps each row as
 follows:

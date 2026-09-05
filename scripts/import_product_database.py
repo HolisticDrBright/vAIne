@@ -325,6 +325,55 @@ def split_list(text: str) -> list[str]:
     return [clean(p) for p in re.split(r'[;,\n]', text) if clean(p)]
 
 
+def split_inci(text: str) -> list[str]:
+    """Full INCI list: comma separated, with optional ACTIVE:/INACTIVE: labels."""
+    items = []
+    if re.match(r'^\s*(?:NOT[_ ]FOUND|N/?A|NONE|SITE UNREACHABLE|UNKNOWN)\b', text, re.I):
+        return []
+    for part in re.split(r'[,;\n]', text):
+        part = re.sub(r'^\s*(?:ACTIVE|INACTIVE)\s*(?:INGREDIENTS?)?\s*:\s*', '', clean(part), flags=re.I)
+        part = re.sub(r'\.\s*(?:ACTIVE|INACTIVE)\s*(?:INGREDIENTS?)?\s*:\s*.*$', '', part, flags=re.I).strip(' .')
+        if part and len(part) <= 120:
+            items.append(part)
+    return items
+
+
+def split_allergen_flags(text: str) -> list[str]:
+    """Allergen Flags cells read like
+    'Fragrant botanicals/EO: Lavender Oil; Rose Geranium Flower Oil | EU allergen: Bisabolol present (...)'.
+    Labels are dropped, parentheticals removed, and an 'essential oils' marker is
+    added whenever an essential oil or fragrant botanical is named."""
+    names = []
+    for group in text.split('|'):
+        group = clean(group)
+        if not group:
+            continue
+        label, _, rest = group.partition(':')
+        if _ and ',' not in label and len(label) <= 40:
+            group = rest
+        group = re.sub(r'\([^)]*\)', '', group)
+        for name in re.split(r'[;,+]', group):
+            name = clean(name)
+            name = re.sub(r'^(?:\d+ of \d+ ingredients aromatic|NINE essential oils|aromatic botanical extracts)\s*:?\s*', '', name, flags=re.I)
+            name = re.sub(r'\s+(?:present|declared)$', '', name, flags=re.I)
+            if name and len(name) <= 80 and not name.lower().startswith('but no '):
+                names.append(name)
+    if re.search(r'essential oil|\bEOs?\b|fragrant botanical|\boil\b', text, re.I) and 'essential oils' not in [n.lower() for n in names]:
+        names.append('essential oils')
+    seen = set(); unique = []
+    for name in names:
+        if name.lower() not in seen:
+            seen.add(name.lower()); unique.append(name)
+    return unique
+
+
+BLOCKING_PREFIXES = ('BLOCKER', 'DOES NOT EXIST', 'ROW MUST BE SPLIT', 'OUT OF SCOPE', 'NOT FOUND', 'NEEDS PRODUCT-PAGE VERIFICATION')
+
+
+def is_blocking_note(text: str) -> bool:
+    return text.strip().upper().startswith(BLOCKING_PREFIXES)
+
+
 def key_ingredients(actives: str, product_type: str) -> list[str]:
     parts = [clean(p) for p in re.split(r'[;+,]|\band\b|\bwith\b', actives)]
     parts = [p for p in parts if p and len(p) <= 80]
@@ -360,12 +409,20 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
         if price_cents and not price_verified:
             # A price without a verification date is not trusted; keep it unverified.
             price_cents = None
-        inci = split_list(fill['inci'])
+        inci = split_inci(fill['inci'])
+        blocker_text = fill['blocker'].strip()
+        # The Blocker column carries both real blockers and capture notes
+        # ("50ml $87 / 100ml $149"). Only recognised blocking prefixes, or a
+        # blocked/out-of-scope Catalog State, hold a row back; the rest is
+        # shown as a note.
+        blocking = catalog_state in {'blocked', 'out_of_scope'} or is_blocking_note(blocker_text)
+        not_found = blocker_text.upper().startswith('NOT FOUND') or blocker_text.upper().startswith('DOES NOT EXIST')
+        capture_note = None if blocking else (blocker_text or None)
         if catalog_state == 'catalog_approved':
             evidence = 'approved'
         elif catalog_state in {'blocked', 'out_of_scope'}:
             evidence = 'rejected'
-        elif research_preview and official and not fill['blocker'].strip():
+        elif research_preview and official and not blocking:
             evidence = 'approved'
         else:
             evidence = 'pending'
@@ -382,7 +439,7 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
             'skinTypeCompatibility': types,
             'sensitivityCaution': sensitivity_caution(row['Avoid / Caution Logic'], types),
             'pregnancyNursingStatus': pregnancy_from_fill(fill['pregnancy_flag']) or pregnancy_status(row['Avoid / Caution Logic']),
-            'allergyCautions': split_list(fill['allergen_flags']) or allergy_cautions(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
+            'allergyCautions': split_allergen_flags(fill['allergen_flags']) or allergy_cautions(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
             'fragranceStatus': fragrance_from_fill(fill['fragrance_free']) or fragrance_status(row['Avoid / Caution Logic'], row['Known/Listed Actives or Positioning']),
             'crueltyFreeStatus': 'unknown',
             'veganStatus': 'unknown',
@@ -392,12 +449,12 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
             'affiliate': None,
             'nonAffiliateFallbackUrl': row['Source URL'] or None,
             'market': 'US',
-            'availabilityStatus': 'available' if official else 'unknown',
+            'availabilityStatus': 'unknown' if not_found else ('available' if official else 'unknown'),
             'source': 'reviewed_research',
             'lastReviewedAtIso': REVIEW_DATE,
             'evidenceReviewStatus': evidence,
             'catalogState': catalog_state,
-            'blocker': fill['blocker'].strip() or None,
+            'blocker': blocker_text if blocking else None,
             'active': True,
             'sourceNotes': {
                 'sourceFile': source_file,
@@ -409,7 +466,7 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
                 'whenToUse': row['When to Use'] or None,
                 'caution': row['Avoid / Caution Logic'] or None,
                 'recommendationLogic': row['Recommendation Logic'] or None,
-                'notes': row['Notes'] or None,
+                'notes': ' '.join(part for part in [row['Notes'], capture_note] if part) or None,
                 'pregnancyProvisional': fill['pregnancy_flag'].strip() or None,
                 'fillPriority': fill['fill_priority'].strip() or None,
             },

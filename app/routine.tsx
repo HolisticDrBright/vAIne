@@ -52,6 +52,7 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             ) : null}
             {step.product.whenToUse ? <Text style={styles.productNote}>When: {step.product.whenToUse}</Text> : null}
             {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
+            {step.product.note ? <Text style={styles.productNote}>Note: {step.product.note}</Text> : null}
           </View>
         ) : (
           <View style={styles.categoryOnly}>

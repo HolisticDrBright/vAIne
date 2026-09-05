@@ -13,7 +13,9 @@ import { assessConsumerVisibility, catalogEntrySchema, type CatalogEntry } from 
  *   pregnancy status was not reviewed is excluded for anyone who may be
  *   pregnant or nursing; an unreviewed sensitivity caution counts as a caution.
  * - Allergy cautions and key ingredients both feed the ingredient list so a
- *   named allergen excludes the product whichever field it was recorded in.
+ *   named allergen excludes the product whichever field it was recorded in;
+ *   an "essential oils" caution also excludes the product for a sensitive
+ *   preference.
  * - Commercial fields (affiliate, fallback URL) are dropped here. They can
  *   only re-attach after ranking, through the commercial-attachment boundary.
  */
@@ -35,6 +37,7 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
   }
   if (entry.sensitivityCaution !== false) flags.add('sensitivity_exclude');
   if (entry.fragranceStatus !== 'fragrance_free') flags.add('contains_fragrance');
+  if (entry.allergyCautions.some((name) => /essential oil|\bEOs?\b/i.test(name))) flags.add('contains_essential_oils');
 
   return {
     id: entry.productId,
@@ -50,6 +53,7 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
     catalogState: entry.catalogState,
     whenToUse: entry.sourceNotes?.whenToUse ?? null,
     cautionNote: entry.sourceNotes?.caution ?? null,
+    note: entry.sourceNotes?.notes ?? null,
     category: entry.category,
     observationTags: entry.skinConcernTags,
     activeFamilies: deriveActiveFamilies(entry),

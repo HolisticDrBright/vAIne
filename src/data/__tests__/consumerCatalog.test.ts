@@ -59,9 +59,31 @@ describe('imported Longevity Skincare product database', () => {
     expect(routine.am.find((step) => step.slot === 'protect')?.product).toBeNull();
     expect(routine.am.find((step) => step.slot === 'protect')?.noProductReason).toBe('no_products_in_slot');
     expect(named.every((step) => step.product?.catalogState === 'research_only')).toBe(true);
-    // Unverified prices are never assumed to fit the $50 ceiling; they are shown as unverified instead.
-    expect(routine.pricesUnverified).toBe(true);
+    // Prices captured from the brand pages are verified, so the $50 ceiling applies and is shown.
+    expect(routine.pricesUnverified).toBe(false);
+    expect(named.every((step) => (step.product?.listPriceCents ?? 0) > 0 && (step.product?.listPriceCents ?? 0) <= 5000)).toBe(true);
     expect(JSON.stringify(routine)).not.toMatch(/affiliate|Affiliate Potential|commission/i);
+  });
+
+  test('avoiding fragrance keeps only products the sheet marks fragrance-free', () => {
+    const resolved = resolveRoutineCatalog(consumerCatalogEntries, approvedPrototypeCatalog, NOW);
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, avoidFragrance: true, budgetPreference: 'no_limit' }, resolved.products);
+    const named = [...routine.am, ...routine.pm].filter((step) => step.product);
+    expect(named.length).toBeGreaterThan(0);
+    expect(named.every((step) => !step.product?.exclusionFlags.includes('contains_fragrance'))).toBe(true);
+    // Alitura publishes no fragrance-free product, so none can appear here.
+    expect(named.some((step) => step.product?.brandName === 'Alitura')).toBe(false);
+  });
+
+  test('a named allergen excludes products whose full ingredient list contains it', () => {
+    const resolved = resolveRoutineCatalog(consumerCatalogEntries, approvedPrototypeCatalog, NOW);
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, knownAllergyOrReaction: 'yes', avoidIngredients: ['lavender', 'chamomile'], budgetPreference: 'no_limit' },
+      resolved.products,
+    );
+    const named = [...routine.am, ...routine.pm].filter((step) => step.product);
+    expect(named.some((step) => /ADAPTOGENIC CLEANSER|YOUTH DAILY|YOUTH RESET/.test(step.product?.productName ?? ''))).toBe(false);
   });
 
   test('pregnancy and sensitivity answers stay conservative until the sheet reviews them', () => {
