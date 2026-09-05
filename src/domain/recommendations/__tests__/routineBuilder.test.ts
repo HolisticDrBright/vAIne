@@ -80,3 +80,63 @@ describe('synthetic routine builder', () => {
     expect(premiumRoutine.am.find((step) => step.slot === 'hydrate')?.product?.id).toBe('synthetic-hydrate-03');
   });
 });
+
+describe('routine builder product matching', () => {
+  test('excludes only products containing a named allergen instead of hiding the list', () => {
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, knownAllergyOrReaction: 'yes', avoidIngredients: ['synthetic humectant'] },
+      approvedPrototypeCatalog,
+    );
+    expect(routine.namedSamplesHidden).toBe(false);
+    expect(routine.mode).toBe('cautious');
+    const hydrate = routine.am.find((step) => step.slot === 'hydrate');
+    expect(hydrate?.product).toBeNull();
+    expect(hydrate?.noProductReason).toBe('safety_excluded');
+    expect(routine.am.find((step) => step.slot === 'cleanse')?.product).not.toBeNull();
+  });
+
+  test('keeps targeted support when the active family in use is named, skipping duplicates', () => {
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, currentStrongActives: 'yes', currentActiveFamilies: ['synthetic-support-family'] },
+      approvedPrototypeCatalog,
+    );
+    const support = routine.am.find((step) => step.slot === 'support');
+    expect(support).toBeDefined();
+    expect(support?.product).toBeNull();
+    expect(support?.noProductReason).toBe('safety_excluded');
+    expect(routine.am.find((step) => step.slot === 'hydrate')?.product).not.toBeNull();
+  });
+
+  test('pauses support when actives are in use but unnamed', () => {
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, currentStrongActives: 'yes' },
+      approvedPrototypeCatalog,
+    );
+    expect(routine.am.some((step) => step.slot === 'support')).toBe(false);
+  });
+
+  test('explains why a step has no product', () => {
+    const noProtect = approvedPrototypeCatalog.filter((product) => product.routineSlot !== 'protect');
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, noProtect);
+    expect(routine.am.find((step) => step.slot === 'protect')?.noProductReason).toBe('no_products_in_slot');
+
+    const hidden = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, knownAllergyOrReaction: 'prefer_not_to_say' }, approvedPrototypeCatalog);
+    expect(hidden.am.every((step) => step.noProductReason === 'hidden_for_review')).toBe(true);
+
+    const pricey = approvedPrototypeCatalog.map((product) => ({ ...product, listPriceCents: 20_000 }));
+    const overBudget = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, budgetPreference: 'up_to_25' }, pricey);
+    expect(overBudget.am.find((step) => step.slot === 'cleanse')?.noProductReason).toBe('over_budget');
+    expect(overBudget.eligibleCount).toBe(0);
+  });
+
+  test('reports the tags each chosen product matched on', () => {
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog);
+    const hydrate = routine.am.find((step) => step.slot === 'hydrate');
+    expect(hydrate?.matchedTags).toContain('appearance.hydration_look_low');
+    expect(routine.consideredCount).toBe(approvedPrototypeCatalog.length);
+    expect(routine.eligibleCount).toBeGreaterThan(0);
+  });
+});

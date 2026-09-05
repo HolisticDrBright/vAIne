@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '@/theme';
 import { AuthProvider } from '@/state/AuthContext';
+import { LocalProfileProvider } from '@/state/LocalProfileContext';
 import { CaptureSessionProvider } from '@/state/CaptureSessionContext';
 import { AnalysisSessionProvider } from '@/state/AnalysisSessionContext';
 import { FaceDetectorProvider } from '@/state/FaceDetectorContext';
@@ -11,6 +12,7 @@ import { ProgressBaselineProvider } from '@/state/ProgressBaselineContext';
 export default function RootLayout() {
   return (
     <AuthProvider>
+    <LocalProfileProvider>
     <FaceDetectorProvider>
     <CaptureSessionProvider>
       <ProgressBaselineProvider>
@@ -23,6 +25,7 @@ export default function RootLayout() {
       </ProgressBaselineProvider>
     </CaptureSessionProvider>
     </FaceDetectorProvider>
+    </LocalProfileProvider>
     </AuthProvider>
   );
 }

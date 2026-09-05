@@ -1,6 +1,7 @@
 import type { SkinAnalysis } from '../analysis/skinAnalysisSchema';
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
 import {
+  evaluateProductEligibility,
   rankEligibleProducts,
   type ProductCandidate,
   type RoutineSlot,
@@ -26,6 +27,20 @@ export const budgetPreferenceLabels: Record<BudgetPreference, string> = {
   no_limit: 'No price limit',
 };
 
+/**
+ * Active families a person can say they already use. The vocabulary matches
+ * what the catalog adapter derives from reviewed key ingredients, so "I use a
+ * retinoid" excludes another retinoid rather than pausing every support step.
+ */
+export const ACTIVE_FAMILY_OPTIONS = [
+  { value: 'retinoid', label: 'Retinoid / retinol' },
+  { value: 'exfoliating-acid', label: 'Exfoliating acid (AHA/BHA/PHA)' },
+  { value: 'vitamin-c', label: 'Vitamin C' },
+  { value: 'niacinamide', label: 'Niacinamide' },
+  { value: 'peptide', label: 'Peptides' },
+  { value: 'hydroquinone', label: 'Hydroquinone' },
+] as const;
+
 export interface RoutineSafetyIntake {
   sensitivityPreference: 'standard' | 'sensitive';
   pregnancyOrNursing: SafetyAnswer;
@@ -34,7 +49,25 @@ export interface RoutineSafetyIntake {
   currentStrongActives: SafetyAnswer;
   avoidFragrance: boolean;
   budgetPreference: BudgetPreference;
+  /**
+   * Ingredients the person named as allergens. When present alongside a
+   * "yes" allergy answer, products containing them are excluded and the rest
+   * of the list stays available; with no names, every named product is
+   * hidden until product-specific review is possible.
+   */
+  avoidIngredients?: readonly string[];
+  /** Active families already in use; a matching family is excluded. */
+  currentActiveFamilies?: readonly string[];
 }
+
+/** Why a routine step shows category guidance instead of a listed product. */
+export type NoProductReason =
+  | 'hidden_for_review'
+  | 'support_paused'
+  | 'no_products_in_slot'
+  | 'no_goal_match'
+  | 'safety_excluded'
+  | 'over_budget';
 
 export interface BuiltRoutineStep {
   id: string;
@@ -43,6 +76,9 @@ export interface BuiltRoutineStep {
   purpose: string;
   instruction: string;
   product: ProductCandidate | null;
+  /** Observation tags that made this product a match; empty without a product. */
+  matchedTags: readonly SkinObservationTag[];
+  noProductReason: NoProductReason | null;
 }
 
 export interface BuiltRoutine {
@@ -51,6 +87,9 @@ export interface BuiltRoutine {
   pm: readonly BuiltRoutineStep[];
   notes: readonly string[];
   namedSamplesHidden: boolean;
+  /** How many listed products were considered and how many were eligible. */
+  consideredCount: number;
+  eligibleCount: number;
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -70,7 +109,7 @@ const stepCopy: Record<RoutineSlot, Pick<BuiltRoutineStep, 'title' | 'purpose' |
   },
   support: {
     title: 'Targeted support',
-    purpose: 'Support the appearance goals highlighted in this sample.',
+    purpose: 'Support the appearance goals highlighted in this check-in.',
     instruction: 'Introduce only one support step at a time and patch test first.',
   },
   hydrate: {
@@ -90,7 +129,30 @@ const stepCopy: Record<RoutineSlot, Pick<BuiltRoutineStep, 'title' | 'purpose' |
   },
 };
 
-function buildSafetyProfile(intake: RoutineSafetyIntake): SafetyProfile {
+export const noProductReasonCopy: Record<NoProductReason, string> = {
+  hidden_for_review: 'Named products are hidden until your allergy or reaction can be reviewed product by product.',
+  support_paused: 'Targeted support is paused for this routine because of a safety answer.',
+  no_products_in_slot: 'The product list has no product for this step yet.',
+  no_goal_match: 'No listed product for this step matches the appearance goals in this check-in.',
+  safety_excluded: 'Listed products for this step were excluded by your safety answers.',
+  over_budget: 'Matching products for this step are above your per-product budget.',
+};
+
+/** Splits a comma, semicolon, or newline separated list into trimmed, de-duplicated names. */
+export function parseIngredientList(text: string): string[] {
+  const seen = new Set<string>();
+  const names: string[] = [];
+  for (const raw of text.split(/[,\n;]+/)) {
+    const name = raw.trim().slice(0, 80);
+    const key = name.toLowerCase();
+    if (!name || seen.has(key)) continue;
+    seen.add(key);
+    names.push(name);
+  }
+  return names.slice(0, 20);
+}
+
+export function buildSafetyProfile(intake: RoutineSafetyIntake): SafetyProfile {
   const pregnancyUnknownOrYes = intake.pregnancyOrNursing !== 'no';
   return {
     pregnantOrTrying: pregnancyUnknownOrYes,
@@ -99,12 +161,12 @@ function buildSafetyProfile(intake: RoutineSafetyIntake): SafetyProfile {
     sensitivityPreference: intake.sensitivityPreference,
     avoidFragrance: intake.avoidFragrance,
     avoidEssentialOils: intake.sensitivityPreference === 'sensitive',
-    allergies: [],
-    currentActiveFamilies: [],
+    allergies: intake.knownAllergyOrReaction === 'yes' ? intake.avoidIngredients ?? [] : [],
+    currentActiveFamilies: intake.currentStrongActives === 'yes' ? intake.currentActiveFamilies ?? [] : [],
   };
 }
 
-function requestedTagsFor(analysis: SkinAnalysis): SkinObservationTag[] {
+export function requestedTagsFor(analysis: SkinAnalysis): SkinObservationTag[] {
   const tags = new Set<SkinObservationTag>(analysis.observationTags);
   for (const goal of analysis.routineGoals) {
     for (const tag of goalTags[goal]) tags.add(tag);
@@ -122,12 +184,49 @@ function routineModeFor(intake: RoutineSafetyIntake): RoutineMode {
   return intake.sensitivityPreference === 'sensitive' ? 'gentle' : 'standard';
 }
 
-function makeStep(slot: RoutineSlot, product: ProductCandidate | null, period: RoutinePeriod): BuiltRoutineStep {
+/** Allergy answered "yes" without naming anything, or kept private. */
+export function namedProductsHiddenFor(intake: RoutineSafetyIntake): boolean {
+  if (intake.knownAllergyOrReaction === 'prefer_not_to_say') return true;
+  return intake.knownAllergyOrReaction === 'yes' && (intake.avoidIngredients ?? []).length === 0;
+}
+
+/** Strong actives answered "yes" without naming a family, or kept private. */
+function activesUnspecifiedFor(intake: RoutineSafetyIntake): boolean {
+  if (intake.currentStrongActives === 'prefer_not_to_say') return true;
+  return intake.currentStrongActives === 'yes' && (intake.currentActiveFamilies ?? []).length === 0;
+}
+
+function explainMissingProduct(
+  slot: RoutineSlot,
+  catalog: readonly ProductCandidate[],
+  profile: SafetyProfile,
+  requestedTags: readonly SkinObservationTag[],
+  maxPriceCents: number | null,
+): NoProductReason {
+  const inSlot = catalog.filter((product) => product.routineSlot === slot);
+  if (!inSlot.length) return 'no_products_in_slot';
+  const evaluated = inSlot.map((product) => evaluateProductEligibility(product, profile, requestedTags));
+  const matching = evaluated.filter((result) => result.matchedTags.length > 0);
+  if (!matching.length) return 'no_goal_match';
+  const eligible = inSlot.filter((product, index) => evaluated[index].eligible && evaluated[index].matchedTags.length > 0);
+  if (!eligible.length) return 'safety_excluded';
+  return 'over_budget';
+}
+
+function makeStep(
+  slot: RoutineSlot,
+  period: RoutinePeriod,
+  product: ProductCandidate | null,
+  matchedTags: readonly SkinObservationTag[],
+  noProductReason: NoProductReason | null,
+): BuiltRoutineStep {
   return {
     id: `${period}-${slot}`,
     slot,
     ...stepCopy[slot],
     product,
+    matchedTags,
+    noProductReason,
   };
 }
 
@@ -137,24 +236,20 @@ export function buildSyntheticRoutine(
   catalog: readonly ProductCandidate[],
 ): BuiltRoutine {
   const mode = routineModeFor(intake);
-  const namedSamplesHidden = intake.knownAllergyOrReaction !== 'no';
+  const namedSamplesHidden = namedProductsHiddenFor(intake);
   const holdTargetedSupport =
     intake.pregnancyOrNursing !== 'no' ||
     intake.recentProcedure !== 'no' ||
-    intake.currentStrongActives !== 'no';
-  const ranked = rankEligibleProducts(
-    catalog,
-    buildSafetyProfile(intake),
-    requestedTagsFor(analysis),
-    budgetMaximumCents[intake.budgetPreference],
-  );
-  const productBySlot = new Map<RoutineSlot, ProductCandidate>();
+    activesUnspecifiedFor(intake);
+  const profile = buildSafetyProfile(intake);
+  const requestedTags = requestedTagsFor(analysis);
+  const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
+  const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents);
+  const chosen = new Map<RoutineSlot, (typeof ranked)[number]>();
 
   if (!namedSamplesHidden) {
     for (const entry of ranked) {
-      if (!productBySlot.has(entry.product.routineSlot)) {
-        productBySlot.set(entry.product.routineSlot, entry.product);
-      }
+      if (!chosen.has(entry.product.routineSlot)) chosen.set(entry.product.routineSlot, entry);
     }
   }
 
@@ -168,19 +263,34 @@ export function buildSyntheticRoutine(
 
   if (holdTargetedSupport) {
     notes.push('Targeted active support is paused because one or more safety answers call for a conservative routine.');
+  } else if (intake.currentStrongActives === 'yes') {
+    notes.push('Products in the active families you already use are excluded so nothing is doubled up.');
   }
   if (namedSamplesHidden) {
-    notes.push('Named samples are hidden because an allergy or prior reaction needs product-specific review.');
+    notes.push('Named products are hidden because an allergy or prior reaction needs product-specific review.');
+  } else if (intake.knownAllergyOrReaction === 'yes') {
+    notes.push(`Products listing ${(intake.avoidIngredients ?? []).join(', ')} are excluded from this routine.`);
   }
   if (intake.recentProcedure !== 'no') {
     notes.push('Follow the aftercare instructions from the professional who performed the recent procedure.');
   }
 
+  const stepFor = (slot: RoutineSlot, period: RoutinePeriod): BuiltRoutineStep => {
+    const pick = chosen.get(slot);
+    if (pick) return makeStep(slot, period, pick.product, pick.eligibility.matchedTags, null);
+    const reason: NoProductReason = namedSamplesHidden
+      ? 'hidden_for_review'
+      : explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
+    return makeStep(slot, period, null, [], reason);
+  };
+
   return {
     mode,
-    am: amSlots.map((slot) => makeStep(slot, productBySlot.get(slot) ?? null, 'am')),
-    pm: coreSlots.map((slot) => makeStep(slot, productBySlot.get(slot) ?? null, 'pm')),
+    am: amSlots.map((slot) => stepFor(slot, 'am')),
+    pm: coreSlots.map((slot) => stepFor(slot, 'pm')),
     notes,
     namedSamplesHidden,
+    consideredCount: catalog.length,
+    eligibleCount: ranked.length,
   };
 }

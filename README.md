@@ -16,10 +16,12 @@ The interface uses a warm premium clinical-spa direction with ivory surfaces, bo
 6. An interactive facial-zone explorer that uses the local front capture when available: when on-device face detection succeeds, zone markers and magnified crops align to the user's actual face (labeled "aligned on-device"); otherwise a clearly labeled fixed guide or illustration fallback is shown
 6b. On-device ML Kit face detection (local Expo module wrapping the official SDKs) used only for face bounds, landmarks, capture framing checks, and crop alignment — accurate still-image mode with contours, classification, and tracking disabled; no identity recognition or embeddings; geometry stays in memory and never leaves the device
 6c. An optional close-up stage that suggests at most three guided detail photos when zone crops lack real pixel detail, with honest reasons and a skip path
-7. A minimal in-memory routine safety intake with a conservative “prefer not to say” path and a per-product budget ceiling
-8. Deterministic, budget-aware AM/PM routines derived from synthetic goals and conspicuously labeled fictional catalog samples and prices
+7. A routine safety intake with a conservative “prefer not to say” path, named allergen and active-family exclusions, and a per-product budget ceiling — remembered on the device so it is not repeated every check-in
+8. Deterministic, budget-aware AM/PM routines drawn from one product list: the reviewed consumer list when it has visible products, otherwise conspicuously labeled fictional samples (`docs/consumer-catalog.md`). Each step names the product it matched and why, or explains why it stayed category-level
+8b. A product-list screen showing every listed product and how it matches the current check-in and safety answers
 9. An optional, consent-controlled local baseline with real-photo comparison and no invented progress score
-10. Working privacy status and deletion for temporary photos, saved baseline photos, results, and routine answers
+10. A remembered, photo-free local profile: the last validated result and the routine answers survive relaunch, the home screen welcomes the person back with shortcuts, and privacy controls show and delete everything remembered
+11. Working privacy status and deletion for temporary photos, saved baseline photos, the remembered result, and routine answers
 
 All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed for skin characteristics in this beta, and nothing is uploaded. The only image processing that occurs is optional on-device face detection for capture framing and zone alignment. The synthetic preparation service accepts no image input and makes no network request.
 
@@ -33,7 +35,7 @@ All displayed analysis results, people, scores, observations, dates, and routine
 
 ## Privacy boundaries
 
-This prototype has no backend, accounts, analytics, advertising trackers, app uploads, or AI analysis. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache unless the user separately opts into progress tracking and confirms that the three photos should be copied into one longer-term local baseline. The app discloses that operating-system backups may include app data. Temporary photos and the saved baseline can be deleted independently, and the privacy screen deletes both. Routine safety answers remain in memory only and are cleared with the check-in.
+This prototype has no analytics, advertising trackers, app uploads, or AI analysis. Optional Sign in with Apple exists only to attach future live analyses to an account; it stores nothing about the person beyond an opaque identifier. Camera access is optional and requested only after consent. Captures remain in the app's temporary device cache unless the user separately opts into progress tracking and confirms that the three photos should be copied into one longer-term local baseline. The app discloses that operating-system backups may include app data. Temporary photos and the saved baseline can be deleted independently, and the privacy screen deletes both. Routine safety answers and the last validated, photo-free result are stored in the app's private on-device storage so the app remembers the person between launches; they are never uploaded, are not tied to an account, and are deleted from the privacy screen.
 
 Future implementation must keep separate consent for analysis, storage, progress tracking, and research. Before a secure beta, saved progress photos need a documented encryption, backup-exclusion, retention, and migration policy.
 

@@ -8,11 +8,19 @@ import { ScoreRing } from '@/components/ScoreRing';
 import { getConfidenceBand } from '@/domain/analysis/analysisExperience';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
+import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
+
+function formatDate(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'SAVED';
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(date).toUpperCase();
+}
 
 export default function OverviewScreen() {
   const { analysis } = useAnalysisSession();
   const { session, clearCaptures } = useCaptureSession();
+  const { routineProfile } = useRoutineProfile();
   const [deletingPhotos, setDeletingPhotos] = useState(false);
 
   if (analysis.status !== 'ready' || !analysis.result) {
@@ -27,6 +35,7 @@ export default function OverviewScreen() {
   }
 
   const result = analysis.result;
+  const remembered = analysis.source === 'remembered';
   const confidenceBand = getConfidenceBand(result.overallConfidence);
   const metrics = [
     { label: 'Hydration look', value: result.appearanceScores.hydrationLook },
@@ -47,14 +56,16 @@ export default function OverviewScreen() {
     <Screen title="Skin snapshot" back>
       <View style={styles.prototypeNotice}>
         <View style={styles.noticeHeading}>
-          <Text style={styles.prototypeNoticeTitle}>SYNTHETIC SAMPLE</Text>
-          <Text style={styles.localBadge}>{session.captures.length} LOCAL PHOTOS</Text>
+          <Text style={styles.prototypeNoticeTitle}>{remembered ? 'REMEMBERED CHECK-IN' : 'SYNTHETIC SAMPLE'}</Text>
+          <Text style={styles.localBadge}>{remembered ? formatDate(analysis.record?.completedAtIso ?? '') : `${session.captures.length} LOCAL PHOTOS`}</Text>
         </View>
-        <Text style={styles.prototypeNoticeBody}>The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.</Text>
+        <Text style={styles.prototypeNoticeBody}>{remembered
+          ? 'This is the fictional sample report from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
+          : 'The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.'}</Text>
       </View>
 
-      <LocalCaptureStrip captures={session.captures} />
-      {session.captures.length ? (
+      {remembered ? null : <LocalCaptureStrip captures={session.captures} />}
+      {remembered ? null : session.captures.length ? (
         <SecondaryButton
           label={deletingPhotos ? 'Deleting local photos…' : 'Delete these local photos now'}
           onPress={() => { if (!deletingPhotos) void deletePhotos(); }}
@@ -100,7 +111,7 @@ export default function OverviewScreen() {
 
       <InfoCard title="What can change this view" body={result.limitations[0]} tone="lilac" />
       <PrimaryButton label="Explore facial zones" onPress={() => router.push('/zones')} />
-      <SecondaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
+      <SecondaryButton label={routineProfile ? 'Open today’s routine' : 'Build today’s routine'} onPress={() => router.push(routineProfile ? '/routine' : '/routine-intake')} />
       <LegalNote />
     </Screen>
   );

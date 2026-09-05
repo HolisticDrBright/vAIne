@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import type { AnalysisRecord } from '../analysisService';
+import { syntheticSkinAnalysis } from '../../../data/syntheticAnalysis';
 import {
   getConfidenceBand,
   initialAnalysisExperienceState,
@@ -30,6 +31,7 @@ describe('analysis experience state', () => {
 
     expect(failed).toEqual({
       status: 'error',
+      source: null,
       record: null,
       result: null,
       retakeInstruction: null,
@@ -37,6 +39,7 @@ describe('analysis experience state', () => {
     });
     expect(retrying).toEqual({
       status: 'processing',
+      source: null,
       record: null,
       result: null,
       retakeInstruction: null,
@@ -77,5 +80,32 @@ describe('confidence presentation', () => {
     [0.59, 'Limited'],
   ] as const)('maps %s to %s', (confidence, expected) => {
     expect(getConfidenceBand(confidence)).toBe(expected);
+  });
+});
+
+describe('remembered check-in restoration', () => {
+  test('restores a remembered record only while idle and marks its source', () => {
+    const record = {
+      analysisId: 'analysis-remembered',
+      mode: 'synthetic_demo' as const,
+      providerId: 'synthetic-prototype',
+      modelVersion: 'synthetic-prototype',
+      promptVersion: syntheticSkinAnalysis.promptVersion,
+      schemaVersion: 'consumer_skin_schema_v1',
+      requestedAtIso: '2026-09-01T00:00:00.000Z',
+      completedAtIso: '2026-09-01T00:00:01.000Z',
+      captures: [],
+      qualityDecision: 'accepted' as const,
+      result: syntheticSkinAnalysis,
+    };
+    const restored = reduceAnalysisExperience(initialAnalysisExperienceState, { type: 'RESTORE', record });
+    expect(restored.status).toBe('ready');
+    expect(restored.source).toBe('remembered');
+    expect(restored.result).toBe(syntheticSkinAnalysis);
+
+    const processing = reduceAnalysisExperience(initialAnalysisExperienceState, { type: 'START' });
+    expect(reduceAnalysisExperience(processing, { type: 'RESTORE', record })).toBe(processing);
+    expect(reduceAnalysisExperience(restored, { type: 'RESTORE', record })).toBe(restored);
+    expect(reduceAnalysisExperience(restored, { type: 'RESET' })).toBe(initialAnalysisExperienceState);
   });
 });

@@ -1,0 +1,178 @@
+import { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
+import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
+import { evaluateProductEligibility, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
+import {
+  budgetMaximumCents,
+  buildSafetyProfile,
+  namedProductsHiddenFor,
+  requestedTagsFor,
+} from '@/domain/recommendations/routineBuilder';
+import { useAnalysisSession } from '@/state/AnalysisSessionContext';
+import { useRoutineProfile } from '@/state/RoutineProfileContext';
+import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
+import { colors, fonts, radius, shadows } from '@/theme';
+
+const slotLabels = {
+  cleanse: 'Cleanse',
+  support: 'Support',
+  hydrate: 'Hydrate',
+  protect: 'Protect',
+  weekly: 'Weekly',
+} as const;
+
+const reasonCopy: Record<IneligibilityReason, string> = {
+  not_verified: 'Not yet verified',
+  catalog_not_approved: 'Catalog review incomplete',
+  prescription_only: 'Prescription only',
+  pregnancy_exclusion: 'Excluded for pregnancy or trying to conceive',
+  nursing_exclusion: 'Excluded while nursing',
+  recent_procedure_exclusion: 'Excluded after a recent procedure',
+  sensitivity_exclusion: 'Excluded by your sensitivity or fragrance preference',
+  allergy_match: 'Contains an ingredient you avoid',
+  duplicate_active_family: 'Same active family you already use',
+};
+
+type MatchStatus =
+  | { kind: 'no_profile' }
+  | { kind: 'hidden' }
+  | { kind: 'match'; tags: readonly string[] }
+  | { kind: 'over_budget'; tags: readonly string[] }
+  | { kind: 'no_goal_match' }
+  | { kind: 'excluded'; reasons: readonly IneligibilityReason[] };
+
+function statusLabel(status: MatchStatus): { label: string; tone: 'green' | 'gold' | 'muted' } {
+  switch (status.kind) {
+    case 'no_profile': return { label: 'LISTED', tone: 'muted' };
+    case 'hidden': return { label: 'HIDDEN FOR REVIEW', tone: 'gold' };
+    case 'match': return { label: 'MATCHES YOU', tone: 'green' };
+    case 'over_budget': return { label: 'OVER BUDGET', tone: 'gold' };
+    case 'no_goal_match': return { label: 'NOT A GOAL MATCH', tone: 'muted' };
+    case 'excluded': return { label: 'EXCLUDED', tone: 'gold' };
+  }
+}
+
+function statusBody(status: MatchStatus): string {
+  switch (status.kind) {
+    case 'no_profile': return 'Complete a check-in and the safety questions to see how this product matches you.';
+    case 'hidden': return 'Named products are hidden until your allergy or reaction can be reviewed product by product.';
+    case 'match': return `Matched on: ${status.tags.map(describeTag).join(', ')}.`;
+    case 'over_budget': return `Would match on ${status.tags.map(describeTag).join(', ')}, but is above your per-product budget.`;
+    case 'no_goal_match': return 'Does not address an appearance goal from this check-in.';
+    case 'excluded': return status.reasons.map((reason) => reasonCopy[reason]).join(' · ');
+  }
+}
+
+export default function ProductsScreen() {
+  const { analysis } = useAnalysisSession();
+  const { routineProfile } = useRoutineProfile();
+  const catalog = useMemo(() => getRoutineCatalog(), []);
+  const fictional = catalog.source === 'synthetic_samples';
+
+  const evaluate = (product: ProductCandidate): MatchStatus => {
+    if (!routineProfile || analysis.status !== 'ready' || !analysis.result) return { kind: 'no_profile' };
+    if (namedProductsHiddenFor(routineProfile)) return { kind: 'hidden' };
+    const result = evaluateProductEligibility(product, buildSafetyProfile(routineProfile), requestedTagsFor(analysis.result));
+    if (!result.eligible) return { kind: 'excluded', reasons: result.reasons };
+    if (!result.matchedTags.length) return { kind: 'no_goal_match' };
+    const ceiling = budgetMaximumCents[routineProfile.budgetPreference];
+    if (ceiling !== null && product.listPriceCents > ceiling) return { kind: 'over_budget', tags: result.matchedTags };
+    return { kind: 'match', tags: result.matchedTags };
+  };
+
+  const evaluated = catalog.products.map((product) => ({ product, status: evaluate(product) }));
+  const matchCount = evaluated.filter((entry) => entry.status.kind === 'match').length;
+
+  return (
+    <Screen title="Product list" back>
+      <Text style={styles.eyebrow}>{catalogSourceLabels[catalog.source].toUpperCase()}</Text>
+      <Text style={styles.title}>{fictional ? 'Fictional samples stand in for now' : 'Products your routine draws from'}</Text>
+      <Text style={styles.subtitle}>
+        {fictional
+          ? 'The reviewed product list is empty, so routines use these clearly labeled fictional samples. Once reviewed products are loaded, they replace the samples automatically.'
+          : 'Every product below passed identity, safety, pricing, and catalog review. Routines pick from this list only; nothing commercial affects the order.'}
+      </Text>
+
+      <View style={styles.summary}>
+        <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{catalog.products.length}</Text><Text style={styles.summaryLabel}>LISTED</Text></View>
+        <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{routineProfile && analysis.result ? matchCount : '–'}</Text><Text style={styles.summaryLabel}>MATCH YOU</Text></View>
+        <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{catalog.blocked.length + catalog.invalid.length}</Text><Text style={styles.summaryLabel}>HELD BACK</Text></View>
+      </View>
+
+      {!routineProfile || analysis.status !== 'ready' ? (
+        <InfoCard title="See your matches" body="Complete a check-in and the short safety questions; each product then shows whether it matches your goals, budget, and safety answers." tone="lilac" />
+      ) : null}
+
+      <View style={styles.list}>
+        {evaluated.map(({ product, status }) => {
+          const badge = statusLabel(status);
+          return (
+            <View key={product.id} style={styles.row}>
+              <View style={styles.rowHeading}>
+                <Text style={styles.slot}>{slotLabels[product.routineSlot].toUpperCase()}</Text>
+                <Text style={[styles.badge, badge.tone === 'green' && styles.badgeGreen, badge.tone === 'gold' && styles.badgeGold]}>{badge.label}</Text>
+              </View>
+              <Text style={styles.brand}>{product.brandName}</Text>
+              <Text style={styles.name}>{product.productName}</Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.price}>{formatPrice(product.listPriceCents, product.currencyCode)}</Text>
+                <Text style={styles.meta}>{fictional ? 'Fictional price' : 'Approximate list price'}</Text>
+              </View>
+              <Text style={styles.tags}>Helps with: {product.observationTags.map(describeTag).join(', ')}</Text>
+              <Text style={styles.statusBody}>{statusBody(status)}</Text>
+            </View>
+          );
+        })}
+      </View>
+
+      {catalog.blocked.length ? (
+        <View style={styles.heldBack}>
+          <Text style={styles.heldBackTitle}>Held back from the list</Text>
+          {catalog.blocked.map(({ entry, reasons }) => (
+            <Text key={entry.productId} style={styles.heldBackRow}>{entry.brand} {entry.productName}: {reasons.join(', ').replaceAll('_', ' ')}</Text>
+          ))}
+        </View>
+      ) : null}
+      {catalog.invalid.length ? (
+        <InfoCard title="Rows that could not be read" body={`${catalog.invalid.length} catalog row${catalog.invalid.length === 1 ? '' : 's'} did not match the product schema and were ignored.`} tone="gold" />
+      ) : null}
+
+      {analysis.status === 'ready' && routineProfile ? (
+        <PrimaryButton label="Open today’s routine" onPress={() => router.push('/routine')} />
+      ) : (
+        <PrimaryButton label="Start a check-in" onPress={() => router.push('/consent')} />
+      )}
+      <SecondaryButton label="Back to home" onPress={() => router.replace('/')} />
+      <LegalNote />
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  eyebrow: { color: colors.green, fontSize: 9, fontWeight: '800', letterSpacing: 1.1 },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -4 },
+  subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -6 },
+  summary: { flexDirection: 'row', gap: 10 },
+  summaryItem: { flex: 1, backgroundColor: colors.panel, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, padding: 12, alignItems: 'center', ...shadows.card },
+  summaryNumber: { color: colors.text, fontSize: 22, fontWeight: '800' },
+  summaryLabel: { color: colors.muted, fontSize: 7, fontWeight: '800', letterSpacing: 0.8, marginTop: 3 },
+  list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
+  row: { padding: 15, borderBottomWidth: 1, borderBottomColor: colors.line, gap: 3 },
+  rowHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
+  slot: { color: colors.blue, fontSize: 8, fontWeight: '800', letterSpacing: 0.8 },
+  badge: { color: colors.muted, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  badgeGreen: { color: colors.green, borderColor: `${colors.green}66`, backgroundColor: `${colors.green}12` },
+  badgeGold: { color: colors.gold, borderColor: `${colors.gold}66`, backgroundColor: `${colors.gold}12` },
+  brand: { color: colors.muted, fontSize: 9, fontWeight: '700', letterSpacing: 0.4, marginTop: 5 },
+  name: { color: colors.text, fontSize: 15, fontWeight: '700' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
+  price: { color: colors.green, fontSize: 11, fontWeight: '800' },
+  meta: { color: colors.muted, fontSize: 9 },
+  tags: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 4, textTransform: 'capitalize' },
+  statusBody: { color: colors.text, fontSize: 10, lineHeight: 14, marginTop: 4 },
+  heldBack: { backgroundColor: `${colors.gold}12`, borderWidth: 1, borderColor: `${colors.gold}44`, borderRadius: radius.medium, padding: 14, gap: 4 },
+  heldBackTitle: { color: colors.gold, fontSize: 12, fontWeight: '700' },
+  heldBackRow: { color: colors.muted, fontSize: 11, lineHeight: 15 },
+});

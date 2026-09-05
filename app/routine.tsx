@@ -1,36 +1,27 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
-import { approvedPrototypeCatalog } from '@/data/prototypeCatalog';
+import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import {
   buildSyntheticRoutine,
   budgetPreferenceLabels,
+  noProductReasonCopy,
   type BuiltRoutineStep,
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
+import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 const modeDescriptions = {
-  standard: 'A simple routine aligned with the fictional appearance goals.',
+  standard: 'A simple routine matched to the appearance goals in this check-in.',
   gentle: 'A gentler version with fewer assumptions and easy-to-pause steps.',
   cautious: 'A conservative routine that pauses targeted active support.',
 } as const;
 
-const priceFormatters = new Map<string, Intl.NumberFormat>();
-
-function formatPrice(amountCents: number, currencyCode: string): string {
-  let formatter = priceFormatters.get(currencyCode);
-  if (!formatter) {
-    formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode });
-    priceFormatters.set(currencyCode, formatter);
-  }
-  return formatter.format(amountCents / 100);
-}
-
-function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: number }) {
+function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; index: number; fictional: boolean }) {
   const formattedPrice = step.product
     ? formatPrice(step.product.listPriceCents, step.product.currencyCode)
     : null;
@@ -41,7 +32,7 @@ function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: numbe
       <View style={styles.copy}>
         <View style={styles.nameLine}>
           <Text style={styles.name}>{step.title}</Text>
-          {step.product ? <Text style={styles.demoBadge}>FICTIONAL SAMPLE</Text> : null}
+          {step.product ? <Text style={styles.demoBadge}>{fictional ? 'FICTIONAL SAMPLE' : 'FROM YOUR LIST'}</Text> : null}
         </View>
         <Text style={styles.purpose}>{step.purpose}</Text>
         <Text style={styles.instruction}>{step.instruction}</Text>
@@ -52,9 +43,15 @@ function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: numbe
               <Text style={styles.productPrice}>{formattedPrice}</Text>
             </View>
             <Text style={styles.productName}>{step.product.productName}</Text>
+            {step.matchedTags.length ? (
+              <Text style={styles.matchReason}>Matched on: {step.matchedTags.map(describeTag).join(', ')}</Text>
+            ) : null}
           </View>
         ) : (
-          <Text style={styles.categoryOnly}>Category guidance only—no sample selected</Text>
+          <View style={styles.categoryOnly}>
+            <Text style={styles.categoryOnlyTitle}>Category guidance only</Text>
+            <Text style={styles.categoryOnlyBody}>{step.noProductReason ? noProductReasonCopy[step.noProductReason] : 'No listed product was selected for this step.'}</Text>
+          </View>
         )}
       </View>
     </View>
@@ -64,13 +61,25 @@ function RoutineStepCard({ step, index }: { step: BuiltRoutineStep; index: numbe
 export default function RoutineScreen() {
   const [period, setPeriod] = useState<RoutinePeriod>('am');
   const { analysis } = useAnalysisSession();
-  const { routineProfile } = useRoutineProfile();
+  const { routineProfile, loading } = useRoutineProfile();
+  const catalog = useMemo(() => getRoutineCatalog(), []);
 
   if (analysis.status !== 'ready' || !analysis.result) {
     return (
       <Screen title="Today’s routine" back>
-        <Text style={styles.title}>No sample snapshot is ready</Text>
-        <PrimaryButton label="Prepare synthetic results" onPress={() => router.replace('/processing')} />
+        <Text style={styles.title}>No snapshot is ready</Text>
+        <Text style={styles.subtitle}>Complete a check-in first; the routine is built from its appearance goals and the product list.</Text>
+        <PrimaryButton label="Start a check-in" onPress={() => router.replace('/consent')} />
+        <SecondaryButton label="Browse the product list" onPress={() => router.push('/products')} />
+        <LegalNote />
+      </Screen>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Screen title="Today’s routine" back>
+        <Text style={styles.title}>Loading your saved answers…</Text>
       </Screen>
     );
   }
@@ -79,16 +88,18 @@ export default function RoutineScreen() {
     return (
       <Screen title="Today’s routine" back>
         <Text style={styles.title}>Set your routine preferences</Text>
-        <Text style={styles.subtitle}>A short safety check helps determine whether the demo should remain category-level and conservative.</Text>
+        <Text style={styles.subtitle}>A short safety check decides which products from the list can be offered. Your answers are saved on this device for next time.</Text>
         <PrimaryButton label="Review routine preferences" onPress={() => router.replace('/routine-intake')} />
         <LegalNote />
       </Screen>
     );
   }
 
-  const routine = buildSyntheticRoutine(analysis.result, routineProfile, approvedPrototypeCatalog);
+  const routine = buildSyntheticRoutine(analysis.result, routineProfile, catalog.products);
   const steps = routine[period];
   const modeCopy = modeDescriptions[routine.mode];
+  const fictional = catalog.source === 'synthetic_samples';
+  const productsOffered = new Set([...routine.am, ...routine.pm].flatMap((step) => (step.product ? [step.product.id] : []))).size;
 
   return (
     <Screen title="Routine" back>
@@ -111,7 +122,7 @@ export default function RoutineScreen() {
 
       <View style={styles.headingRow}>
         <View style={styles.headingCopy}>
-          <Text style={styles.eyebrow}>{routine.mode.toUpperCase()} MODE</Text>
+          <Text style={styles.eyebrow}>{routine.mode.toUpperCase()} MODE{analysis.source === 'remembered' ? ' · REMEMBERED CHECK-IN' : ''}</Text>
           <Text style={styles.title}>{period === 'am' ? 'Start protected' : 'Reset gently'}</Text>
           <Text style={styles.subtitle}>{modeCopy}</Text>
         </View>
@@ -126,6 +137,17 @@ export default function RoutineScreen() {
         ))}
       </View>
 
+      <Pressable accessibilityRole="button" onPress={() => router.push('/products')} style={({ pressed }) => [styles.catalogCard, pressed && styles.pressed]}>
+        <View style={styles.catalogHeading}>
+          <Text style={styles.catalogEyebrow}>{catalogSourceLabels[catalog.source].toUpperCase()}</Text>
+          <Text style={styles.catalogLink}>View list →</Text>
+        </View>
+        <Text style={styles.catalogBody}>
+          {routine.consideredCount} products considered · {routine.eligibleCount} eligible for you · {productsOffered} in this routine.
+          {fictional ? ' The reviewed product list is empty, so fictional samples stand in.' : ''}
+        </Text>
+      </Pressable>
+
       <InfoCard
         title="Your price preference"
         body={`${budgetPreferenceLabels[routineProfile.budgetPreference]}. Safety and appearance-goal fit are applied before price, and equally matched options favor the lower list price.`}
@@ -133,13 +155,17 @@ export default function RoutineScreen() {
       />
 
       <View style={styles.list}>
-        {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} />)}
+        {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} />)}
       </View>
 
       {routine.notes.map((note, index) => (
-        <InfoCard key={note} title={index === 0 ? 'Routine safety' : 'Why this routine changed'} body={note} tone={index === 0 ? 'lilac' : 'gold'} />
+        <InfoCard key={note} title={index === 0 ? 'Routine safety' : 'Why this routine looks this way'} body={note} tone={index === 0 ? 'lilac' : 'gold'} />
       ))}
-      <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and affiliate links remain hidden until identity, safety, pricing, catalog, and commercial reviews are complete." />
+      {fictional ? (
+        <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and links appear only once a reviewed product list is loaded." />
+      ) : (
+        <InfoCard title="Reviewed product list" body="Products come from the reviewed list. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen." tone="green" />
+      )}
       <PrimaryButton label="See progress" onPress={() => router.push('/compare')} />
       <SecondaryButton label="Change routine preferences" onPress={() => router.push('/routine-intake')} />
       <LegalNote />
@@ -164,6 +190,12 @@ const styles = StyleSheet.create({
   goalRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   goalPill: { backgroundColor: `${colors.lilac}14`, borderRadius: radius.pill, borderWidth: 1, borderColor: `${colors.lilac}3A`, paddingHorizontal: 9, paddingVertical: 6 },
   goalText: { color: colors.lilac, fontSize: 8, fontWeight: '700', textTransform: 'capitalize' },
+  catalogCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 5, ...shadows.card },
+  catalogHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
+  catalogEyebrow: { color: colors.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
+  catalogLink: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
+  catalogBody: { color: colors.muted, fontSize: 11, lineHeight: 16 },
+  pressed: { opacity: 0.78 },
   list: { backgroundColor: colors.panel, borderRadius: radius.large, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
   row: { minHeight: 126, padding: 15, flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: 1, borderBottomColor: colors.line },
   number: { height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: colors.gold },
@@ -178,6 +210,9 @@ const styles = StyleSheet.create({
   productMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   productBrand: { color: colors.blue, fontSize: 8, fontWeight: '800', letterSpacing: 0.6 },
   productPrice: { color: colors.green, fontSize: 10, fontWeight: '800' },
-  productName: { color: colors.muted, fontSize: 10, marginTop: 2 },
-  categoryOnly: { color: colors.green, fontSize: 9, fontWeight: '700', marginTop: 8 },
+  productName: { color: colors.text, fontSize: 11, fontWeight: '600', marginTop: 2 },
+  matchReason: { color: colors.muted, fontSize: 9, marginTop: 4, textTransform: 'capitalize' },
+  categoryOnly: { marginTop: 9, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line },
+  categoryOnlyTitle: { color: colors.green, fontSize: 9, fontWeight: '700' },
+  categoryOnlyBody: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 3 },
 });

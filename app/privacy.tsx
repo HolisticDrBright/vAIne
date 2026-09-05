@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, Screen, SecondaryButton } from '@/components/AppChrome';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
+import { useLocalProfile } from '@/state/LocalProfileContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
 import { colors, fonts, radius, shadows } from '@/theme';
@@ -10,27 +11,31 @@ import { colors, fonts, radius, shadows } from '@/theme';
 export default function PrivacyScreen() {
   const { analysis, resetAnalysis } = useAnalysisSession();
   const { session, clearSession } = useCaptureSession();
-  const { clearRoutineProfile, routineProfile } = useRoutineProfile();
+  const { routineProfile } = useRoutineProfile();
+  const { profile, forgetProfile } = useLocalProfile();
   const { baseline, clearBaseline } = useProgressBaseline();
+  const hasLocalData = Boolean(session.captures.length || baseline || analysis.result || routineProfile || profile.lastCheckIn || profile.consentDefaults);
   const controls = [
     ['Analysis consent', session.consent?.analysis ? 'ON' : 'OFF', 'Required before starting a local capture session.'],
     ['Temporary device storage', session.consent?.temporaryDeviceStorage ? 'ON' : 'OFF', `${session.captures.length} temporary photo${session.captures.length === 1 ? '' : 's'} currently referenced by this session.`],
     ['Progress tracking', baseline ? 'SAVED' : session.consent?.progressTracking ? 'ON' : 'OFF', baseline ? 'One three-photo baseline is stored in this app until you delete or replace it.' : 'No longer-term progress baseline is stored.'],
     ['Research use', 'OFF', 'Unavailable in this beta and always separate.'],
+    ['Routine answers', routineProfile ? 'SAVED' : 'OFF', routineProfile ? 'Your safety and budget answers are saved on this device so you do not repeat them each check-in.' : 'No routine answers are saved on this device.'],
+    ['Last check-in', profile.lastCheckIn ? 'SAVED' : 'OFF', profile.lastCheckIn ? 'The last validated, photo-free result (scores and observations only) is saved on this device.' : 'No check-in result is saved on this device.'],
   ] as const;
 
   const deleteSession = async () => {
     await clearSession();
     await clearBaseline();
     resetAnalysis();
-    clearRoutineProfile();
+    await forgetProfile();
     router.replace('/');
   };
 
   return (
     <Screen title="Privacy controls" back>
       <Text style={styles.title}>Your image is personal.</Text>
-      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. On-device face detection may run to align facial-zone views: it does not identify you, its geometry stays in memory only, and it is deleted with the check-in. The beta has no app upload, account, AI skin analysis, analytics, advertising, or research pipeline.</Text>
+      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. On-device face detection may run to align facial-zone views: it does not identify you, its geometry stays in memory only, and it is deleted with the check-in. Routine answers and the last photo-free result are remembered on this device only, never uploaded, and deleted below. The beta has no app upload, AI skin analysis, analytics, advertising, or research pipeline.</Text>
       <View style={styles.list}>
         {controls.map(([title, status, body]) => (
           <View key={title} style={styles.row}>
@@ -39,10 +44,10 @@ export default function PrivacyScreen() {
           </View>
         ))}
       </View>
-      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos (including optional close-ups), any saved baseline photos, in-memory face-alignment geometry, and the in-memory synthetic result and routine answers." tone="green" />
+      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos (including optional close-ups), any saved baseline photos, in-memory face-alignment geometry, the remembered check-in result, and your saved routine answers. An account, if you have one, is separate and is deleted from the account screen." tone="green" />
       <SecondaryButton
-        label={session.captures.length || baseline || analysis.result || routineProfile ? 'Delete all local vAIne data' : 'No local vAIne data to delete'}
-        onPress={() => { if (session.captures.length || baseline || analysis.result || routineProfile) void deleteSession(); }}
+        label={hasLocalData ? 'Delete all local vAIne data' : 'No local vAIne data to delete'}
+        onPress={() => { if (hasLocalData) void deleteSession(); }}
       />
       <LegalNote />
     </Screen>

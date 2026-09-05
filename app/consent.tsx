@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
-import { useRoutineProfile } from '@/state/RoutineProfileContext';
+import { useLocalProfile } from '@/state/LocalProfileContext';
+import { withConsentDefaults } from '@/domain/profile/localProfile';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 interface ConsentRowProps {
@@ -46,14 +47,22 @@ export default function ConsentScreen() {
   const [starting, setStarting] = useState(false);
   const { resetAnalysis } = useAnalysisSession();
   const { startSession } = useCaptureSession();
-  const { clearRoutineProfile } = useRoutineProfile();
+  const { profile, status: profileStatus, updateProfile } = useLocalProfile();
   const canContinue = analysis && temporaryStorage && !starting;
+
+  // Only the optional progress choice is remembered as a default. The two
+  // required choices are re-confirmed for every check-in.
+  useEffect(() => {
+    if (profileStatus === 'ready' && profile.consentDefaults) {
+      setProgressTracking(profile.consentDefaults.progressTracking);
+    }
+  }, [profile.consentDefaults, profileStatus]);
 
   const beginCapture = async () => {
     if (!canContinue) return;
     setStarting(true);
     resetAnalysis();
-    clearRoutineProfile();
+    void updateProfile((current, nowIso) => withConsentDefaults(current, { progressTracking }, nowIso));
     await startSession({
       analysis,
       temporaryDeviceStorage: temporaryStorage,
@@ -98,7 +107,7 @@ export default function ConsentScreen() {
         />
       </View>
 
-      <InfoCard title="Local capture beta" body="Check-in photos stay in temporary device cache unless you separately save a progress baseline. This build has no app upload, analysis, account, advertising, or research pipeline." tone="green" />
+      <InfoCard title="Local capture beta" body="Check-in photos stay in temporary device cache unless you separately save a progress baseline. Your routine answers from earlier check-ins stay saved on this device; you can change them before building a routine." tone="green" />
       <PrimaryButton label={starting ? 'Preparing camera…' : 'Continue to camera'} onPress={beginCapture} disabled={!canContinue} />
       <LegalNote />
     </Screen>
