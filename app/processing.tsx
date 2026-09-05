@@ -6,16 +6,23 @@ import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
-const preparationSteps = [
+const demoSteps = [
   'Validate the consumer-safe result format',
   'Assemble the appearance snapshot',
   'Prepare the facial-zone explorer',
+] as const;
+
+const liveSteps = [
+  'Re-encode photos on this phone (metadata removed)',
+  'Send once to the analysis service',
+  'Validate the result and delete the photos there',
 ] as const;
 
 export default function ProcessingScreen() {
   const { analysis, serviceDescriptor, startAnalysis, resetAnalysis } = useAnalysisSession();
   const { session, clearCaptures } = useCaptureSession();
   const isDemo = serviceDescriptor.mode === 'synthetic_demo';
+  const preparationSteps = isDemo ? demoSteps : liveSteps;
 
   useEffect(() => {
     if (analysis.status === 'idle') void startAnalysis(session.captures);
@@ -40,7 +47,7 @@ export default function ProcessingScreen() {
         <Text style={styles.eyebrow}>{isDemo ? 'SYNTHETIC DEMONSTRATION' : 'ANALYSIS IN PROGRESS'}</Text>
         <Text style={styles.title}>
           {analysis.status === 'ready'
-            ? 'Your sample view is ready'
+            ? isDemo ? 'Your sample view is ready' : 'Your analysis is ready'
             : analysis.status === 'error'
               ? 'The sample could not be prepared'
               : analysis.status === 'retake'
@@ -50,7 +57,7 @@ export default function ProcessingScreen() {
         <Text style={styles.subtitle}>
           {isDemo
             ? 'This milestone validates and presents fictional demonstration data. It does not inspect, transmit, or analyze your photos.'
-            : 'Your photos are being reviewed for visible appearance characteristics only.'}
+            : 'Your photos are being reviewed for visible appearance characteristics only. They are held in memory for this one request and are not stored by vAIne.'}
         </Text>
       </View>
 
@@ -74,10 +81,16 @@ export default function ProcessingScreen() {
           body="The synthetic preparation service accepts no image input and makes no network request."
           tone="green"
         />
-      ) : null}
+      ) : (
+        <InfoCard
+          title={`${session.captures.length} photo${session.captures.length === 1 ? '' : 's'} sent once`}
+          body="No synthetic result is ever substituted: if the analysis fails you will see the failure, not a sample."
+          tone="green"
+        />
+      )}
 
       {analysis.status === 'ready' ? (
-        <PrimaryButton label="View Your Skin Today" onPress={() => router.replace('/overview')} />
+        <PrimaryButton label={isDemo ? 'View the sample snapshot' : 'View Your Skin Today'} onPress={() => router.replace('/overview')} />
       ) : null}
       {analysis.status === 'retake' ? (
         <>
@@ -93,7 +106,8 @@ export default function ProcessingScreen() {
       {analysis.status === 'error' ? (
         <>
           <InfoCard title="Preparation error" body={analysis.errorMessage ?? 'Please retry the demonstration.'} />
-          <PrimaryButton label={isDemo ? 'Retry demonstration' : 'Retry'} onPress={retry} />
+          <PrimaryButton label={isDemo ? 'Retry demonstration' : 'Try again'} onPress={retry} />
+          {!isDemo ? <SecondaryButton label="Retake photos" onPress={() => { void retakePhotos(); }} /> : null}
           <SecondaryButton label="Return home" onPress={() => router.replace('/')} />
         </>
       ) : null}

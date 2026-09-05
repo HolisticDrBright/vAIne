@@ -56,7 +56,7 @@ export default function ScanSelectionScreen() {
           </Text>
           <Text style={styles.memoryBody}>
             {lastCheckIn
-              ? `${lastCheckIn.mode === 'synthetic_demo' ? 'Fictional sample snapshot' : 'Snapshot'} scored ${lastCheckIn.result.appearanceScores.overall}/100. ${routineProfile ? 'Your routine answers are saved, so today’s routine is one tap away.' : 'Answer a short safety check to build today’s routine.'}`
+              ? `${lastCheckIn.mode === 'synthetic_demo' ? 'Fictional sample snapshot' : 'Your analysis'} scored ${lastCheckIn.result.appearanceScores.overall}/100. ${routineProfile ? 'Your routine answers are saved, so today’s routine is one tap away.' : 'Answer a short safety check to build today’s routine.'}`
               : 'Your routine answers are saved. Start a check-in to build today’s routine from the product list.'}
           </Text>
           {canOpenResults ? <ShortcutButton label="View last snapshot" onPress={() => router.push('/overview')} /> : null}

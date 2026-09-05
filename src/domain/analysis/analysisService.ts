@@ -65,7 +65,12 @@ export interface AnalysisRecord {
 export type AnalysisFailureKind =
   | 'service_unavailable'
   | 'invalid_result'
-  | 'unexpected_error';
+  | 'unexpected_error'
+  | 'sign_in_required'
+  | 'analysis_unavailable'
+  | 'quota_exceeded'
+  | 'photos_rejected'
+  | 'provider_refused';
 
 export type AnalysisOutcome =
   | { kind: 'completed'; record: AnalysisRecord }
@@ -216,6 +221,16 @@ const FAILURE_MESSAGES: Record<AnalysisFailureKind, string> = {
     'The analysis response did not pass validation and was discarded. No substitute result was shown.',
   unexpected_error:
     'The analysis could not be completed. Your photos stay on this device; please try again.',
+  sign_in_required:
+    'Sign in to run a live analysis. Your photos stay on this device until then.',
+  analysis_unavailable:
+    'Live analysis is switched off right now. Your photos stay on this device; please try again later.',
+  quota_exceeded:
+    'You have reached the beta limit for analyses for now. Your photos stay on this device; please try again later.',
+  photos_rejected:
+    'These photos could not be accepted for analysis. Please retake them and try again.',
+  provider_refused:
+    'The analysis service declined to describe these photos. No result was produced; please try again with clear, well-lit photos of your face.',
 };
 
 export function describeAnalysisFailure(kind: AnalysisFailureKind): string {

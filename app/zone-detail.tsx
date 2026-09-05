@@ -30,7 +30,7 @@ export default function ZoneDetailScreen() {
   if (analysis.status !== 'ready' || !analysis.result || !observation) {
     return (
       <Screen title="Zone detail" back>
-        <Text style={styles.title}>This sample zone is not ready</Text>
+        <Text style={styles.title}>This zone is not ready</Text>
         <PrimaryButton label="Return to zone explorer" onPress={() => router.replace('/zones')} />
       </Screen>
     );
@@ -46,7 +46,7 @@ export default function ZoneDetailScreen() {
       <Text style={styles.heading}>{presentation.focus}</Text>
       <Text style={styles.subtitle}>{frontPhoto
         ? `A magnified crop of the ${presentation.label.toLowerCase()} area from your front check-in photo.`
-        : 'A closer presentation of the selected fictional facial zone.'}</Text>
+        : analysis.record?.mode === 'live' ? 'A closer presentation of the selected facial zone.' : 'A closer presentation of the selected fictional facial zone.'}</Text>
 
       <ZoneZoomIllustration
         zone={zone}
@@ -75,7 +75,7 @@ export default function ZoneDetailScreen() {
       </View>
 
       <View style={styles.signals}>
-        <Text style={styles.signalHeading}>What this sample view considers</Text>
+        <Text style={styles.signalHeading}>{analysis.record?.mode === 'live' ? 'What this view considers' : 'What this sample view considers'}</Text>
         {presentation.signals.map((signal, index) => (
           <View key={signal} style={styles.signalRow}>
             <Text style={styles.signalNumber}>0{index + 1}</Text>

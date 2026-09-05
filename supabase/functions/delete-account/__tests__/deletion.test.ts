@@ -8,7 +8,7 @@ import {
   type DeletionDeps,
 } from '../deletion.ts';
 import { validateDeletionAuditDetail, type DeletionAuditDetail } from '../auditDetail.ts';
-import { findPhotoDataViolations } from '../photoFree.ts';
+import { findPhotoDataViolations } from '../../_shared/photoFree.ts';
 
 const USER = '11111111-2222-3333-4444-555555555555';
 const SESSION = '99999999-8888-7777-6666-555555555555';

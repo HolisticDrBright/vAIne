@@ -5,6 +5,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChro
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useLocalProfile } from '@/state/LocalProfileContext';
+import { useAnalysisRuntime } from '@/state/AnalysisRuntime';
 import { withConsentDefaults } from '@/domain/profile/localProfile';
 import { colors, fonts, radius, shadows } from '@/theme';
 
@@ -48,6 +49,8 @@ export default function ConsentScreen() {
   const { resetAnalysis } = useAnalysisSession();
   const { startSession } = useCaptureSession();
   const { profile, status: profileStatus, updateProfile } = useLocalProfile();
+  const { route, demoReason } = useAnalysisRuntime();
+  const live = route === 'live';
   const canContinue = analysis && temporaryStorage && !starting;
 
   // Only the optional progress choice is remembered as a default. The two
@@ -76,12 +79,16 @@ export default function ConsentScreen() {
     <Screen title="Before your check-in" back>
       <Text style={styles.eyebrow}>YOUR IMAGE, YOUR CHOICE</Text>
       <Text style={styles.title}>Choose what happens to your photos</Text>
-      <Text style={styles.subtitle}>Camera access is requested only after these choices. This beta does not upload a photo or send it to an AI service.</Text>
+      <Text style={styles.subtitle}>{live
+        ? 'Camera access is requested only after these choices. Because you are signed in, this check-in sends your photos once to vAIne’s analysis service for a real visible-appearance analysis.'
+        : 'Camera access is requested only after these choices. This check-in does not upload a photo or send it to an AI service; the result shown is a labelled sample.'}</Text>
 
       <View style={styles.list}>
         <ConsentRow
-          title="Use photos in this check-in"
-          body="Allows vAIne to hold the captures in memory while you move between local app screens, and to run on-device face detection that only aligns the facial-zone views. It does not identify you, and nothing is uploaded."
+          title={live ? 'Analyze these photos' : 'Use photos in this check-in'}
+          body={live
+            ? 'Sends your three photos, over an encrypted connection, to vAIne’s analysis service, which passes them once to an AI vision provider for visible-appearance observations only. The photos are held in memory during that single request and are not stored by vAIne; only the photo-free result (scores and observations) is kept in your account. On-device face detection still aligns the facial-zone views.'
+            : 'Allows vAIne to hold the captures in memory while you move between local app screens, and to run on-device face detection that only aligns the facial-zone views. It does not identify you, and nothing is uploaded.'}
           selected={analysis}
           required
           onPress={() => setAnalysis((value) => !value)}
@@ -107,7 +114,19 @@ export default function ConsentScreen() {
         />
       </View>
 
-      <InfoCard title="Local capture beta" body="Check-in photos stay in temporary device cache unless you separately save a progress baseline. Your routine answers from earlier check-ins stay saved on this device; you can change them before building a routine." tone="green" />
+      {live ? (
+        <InfoCard title="Live analysis" body="The analysis describes visible appearance only: it is not a diagnosis and does not identify you. Photos stay in temporary device cache afterwards unless you separately save a progress baseline. Your routine answers from earlier check-ins stay saved on this device." tone="gold" />
+      ) : (
+        <InfoCard
+          title={demoReason === 'signed_out' ? 'Sign in for a live analysis' : 'Sample check-in'}
+          body={demoReason === 'signed_out'
+            ? 'You are not signed in, so this check-in shows the labelled sample result and uploads nothing. Sign in from the home screen to analyze your own photos.'
+            : demoReason === 'analysis_disabled'
+              ? 'Live analysis is switched off at the moment, so this check-in shows the labelled sample result and uploads nothing.'
+              : 'This build runs fully on the device: the check-in shows the labelled sample result and uploads nothing.'}
+          tone="green"
+        />
+      )}
       <PrimaryButton label={starting ? 'Preparing camera…' : 'Continue to camera'} onPress={beginCapture} disabled={!canContinue} />
       <LegalNote />
     </Screen>

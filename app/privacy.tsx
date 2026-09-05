@@ -35,7 +35,7 @@ export default function PrivacyScreen() {
   return (
     <Screen title="Privacy controls" back>
       <Text style={styles.title}>Your image is personal.</Text>
-      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. On-device face detection may run to align facial-zone views: it does not identify you, its geometry stays in memory only, and it is deleted with the check-in. Routine answers and the last photo-free result are remembered on this device only, never uploaded, and deleted below. The beta has no app upload, AI skin analysis, analytics, advertising, or research pipeline.</Text>
+      <Text style={styles.subtitle}>This beta keeps check-in photos in temporary app cache. A progress baseline is copied into longer-term app storage only after optional consent and a second confirmation. On-device face detection may run to align facial-zone views: it does not identify you, its geometry stays in memory only, and it is deleted with the check-in. Routine answers and the last photo-free result are remembered on this device and deleted below. When you are signed in, a check-in sends its photos once to the analysis service, which holds them in memory only for that request; the photo-free result is kept in your account and removed with account deletion. The beta has no analytics, advertising, or research pipeline.</Text>
       <View style={styles.list}>
         {controls.map(([title, status, body]) => (
           <View key={title} style={styles.row}>

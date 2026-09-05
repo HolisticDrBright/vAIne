@@ -19,12 +19,13 @@ export default function ZonesScreen() {
   if (analysis.status !== 'ready' || !analysis.result) {
     return (
       <Screen title="Zone explorer" back>
-        <Text style={styles.title}>No validated sample is ready</Text>
-        <PrimaryButton label="Prepare synthetic results" onPress={() => router.replace('/processing')} />
+        <Text style={styles.title}>No validated result is ready</Text>
+        <PrimaryButton label="Start a check-in" onPress={() => router.replace('/consent')} />
       </Screen>
     );
   }
 
+  const live = analysis.record?.mode === 'live';
   const presentation = zonePresentation[selectedZone];
   const observation = analysis.result.facialZones[selectedZone];
   const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
@@ -34,12 +35,12 @@ export default function ZonesScreen() {
   return (
     <Screen title="Facial-zone view" back>
       <Text style={styles.eyebrow}>VISIBLE APPEARANCE ONLY</Text>
-      <Text style={styles.heading}>{frontPhoto ? 'Explore your check-in by zone' : 'Explore the sample by zone'}</Text>
+      <Text style={styles.heading}>{frontPhoto || live ? 'Explore your check-in by zone' : 'Explore the sample by zone'}</Text>
       <Text style={styles.subtitle}>{frontPhoto
         ? alignedZones
           ? 'Tap your front photo or a label. Markers are aligned to your face by on-device detection.'
           : 'Tap your front photo or a label. The overlays use the clearly labeled fixed positioning guide.'
-        : 'Tap the face or a label to move through the fictional observation areas.'}</Text>
+        : live ? 'Tap the face or a label to move through the observation areas.' : 'Tap the face or a label to move through the fictional observation areas.'}</Text>
 
       <View style={styles.tabs}>
         {zoneOrder.map((zone) => {
@@ -70,7 +71,7 @@ export default function ZonesScreen() {
         <View style={styles.summaryCopy}>
           <Text style={styles.summaryEyebrow}>{frontPhoto ? 'FICTIONAL SAMPLE · NOT CALCULATED FROM PHOTO' : presentation.focus.toUpperCase()}</Text>
           <Text style={styles.title}>{presentation.label}</Text>
-          <Text style={styles.body}>{observation?.observation ?? 'No sample observation is available for this zone.'}</Text>
+          <Text style={styles.body}>{observation?.observation ?? (live ? 'No observation was recorded for this zone.' : 'No sample observation is available for this zone.')}</Text>
           <Text style={styles.confidence}>Presentation confidence {Math.round((observation?.confidence ?? 0) * 100)}%</Text>
         </View>
         <ScoreRing score={observation?.appearanceScore ?? 0} compact />
@@ -80,9 +81,15 @@ export default function ZonesScreen() {
         title={frontPhoto ? 'Your photo, demonstration observations' : 'How to read this'}
         body={frontPhoto
           ? alignedZones
-            ? 'The background is your local front capture with markers aligned to your face by on-device detection. The scores and observations remain fictional demonstration data, not an analysis of your skin.'
-            : 'The background is your local front capture. Marker placement uses a fixed guide—face alignment was not available for this photo—and the score and observation remain fictional demonstration data.'
-          : 'Zone markers describe what is visible in fictional sample data—not underlying health, identity, age, or a diagnosis.'}
+            ? live
+              ? 'The background is your local front capture with markers aligned to your face by on-device detection. Scores and observations describe visible appearance in your photos, not underlying health.'
+              : 'The background is your local front capture with markers aligned to your face by on-device detection. The scores and observations remain fictional demonstration data, not an analysis of your skin.'
+            : live
+              ? 'The background is your local front capture. Marker placement uses a fixed guide—face alignment was not available for this photo. Scores and observations describe visible appearance, not underlying health.'
+              : 'The background is your local front capture. Marker placement uses a fixed guide—face alignment was not available for this photo—and the score and observation remain fictional demonstration data.'
+          : live
+            ? 'Zone markers describe what is visible in your photos—not underlying health, identity, age, or a diagnosis.'
+            : 'Zone markers describe what is visible in fictional sample data—not underlying health, identity, age, or a diagnosis.'}
         tone="lilac"
       />
       <PrimaryButton

@@ -4,7 +4,7 @@ import { colors } from '@/theme';
 import { AuthProvider } from '@/state/AuthContext';
 import { LocalProfileProvider } from '@/state/LocalProfileContext';
 import { CaptureSessionProvider } from '@/state/CaptureSessionContext';
-import { AnalysisSessionProvider } from '@/state/AnalysisSessionContext';
+import { AnalysisRuntime } from '@/state/AnalysisRuntime';
 import { FaceDetectorProvider } from '@/state/FaceDetectorContext';
 import { RoutineProfileProvider } from '@/state/RoutineProfileContext';
 import { ProgressBaselineProvider } from '@/state/ProgressBaselineContext';
@@ -16,12 +16,12 @@ export default function RootLayout() {
     <FaceDetectorProvider>
     <CaptureSessionProvider>
       <ProgressBaselineProvider>
-        <AnalysisSessionProvider>
+        <AnalysisRuntime>
           <RoutineProfileProvider>
             <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.ink }, animation: 'slide_from_right' }} />
           </RoutineProfileProvider>
-        </AnalysisSessionProvider>
+        </AnalysisRuntime>
       </ProgressBaselineProvider>
     </CaptureSessionProvider>
     </FaceDetectorProvider>

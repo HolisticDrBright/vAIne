@@ -36,6 +36,7 @@ export default function OverviewScreen() {
 
   const result = analysis.result;
   const remembered = analysis.source === 'remembered';
+  const live = analysis.record?.mode === 'live';
   const confidenceBand = getConfidenceBand(result.overallConfidence);
   const metrics = [
     { label: 'Hydration look', value: result.appearanceScores.hydrationLook },
@@ -56,12 +57,16 @@ export default function OverviewScreen() {
     <Screen title="Skin snapshot" back>
       <View style={styles.prototypeNotice}>
         <View style={styles.noticeHeading}>
-          <Text style={styles.prototypeNoticeTitle}>{remembered ? 'REMEMBERED CHECK-IN' : 'SYNTHETIC SAMPLE'}</Text>
+          <Text style={styles.prototypeNoticeTitle}>{remembered ? (live ? 'YOUR LAST ANALYSIS' : 'REMEMBERED SAMPLE') : live ? 'YOUR ANALYSIS' : 'SYNTHETIC SAMPLE'}</Text>
           <Text style={styles.localBadge}>{remembered ? formatDate(analysis.record?.completedAtIso ?? '') : `${session.captures.length} LOCAL PHOTOS`}</Text>
         </View>
-        <Text style={styles.prototypeNoticeBody}>{remembered
-          ? 'This is the fictional sample report from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
-          : 'The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.'}</Text>
+        <Text style={styles.prototypeNoticeBody}>{live
+          ? remembered
+            ? 'This is the visible-appearance analysis from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
+            : 'This report describes visible appearance in your photos. It is not a diagnosis, and the photos were deleted from the analysis service as soon as it finished.'
+          : remembered
+            ? 'This is the fictional sample report from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
+            : 'The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.'}</Text>
       </View>
 
       {remembered ? null : <LocalCaptureStrip captures={session.captures} />}
@@ -75,14 +80,14 @@ export default function OverviewScreen() {
       )}
 
       <View style={styles.demoDivider}>
-        <Text style={styles.demoDividerText}>DEMONSTRATION REPORT · NOT PHOTO ANALYSIS</Text>
+        <Text style={styles.demoDividerText}>{live ? 'VISIBLE APPEARANCE · NOT A DIAGNOSIS' : 'DEMONSTRATION REPORT · NOT PHOTO ANALYSIS'}</Text>
       </View>
 
       <View style={styles.lead}>
         <ScoreRing score={result.appearanceScores.overall} />
         <View style={styles.copy}>
           <Text style={styles.eyebrow}>APPEARANCE SNAPSHOT</Text>
-          <Text style={styles.snapshotTitle}>Balanced, with two support opportunities</Text>
+          <Text style={styles.snapshotTitle}>{live ? 'Your snapshot' : 'Balanced, with two support opportunities'}</Text>
           <Text style={styles.body}>{result.summary}</Text>
           <View style={styles.confidence}>
             <Text style={styles.confidenceText}>● {confidenceBand.toUpperCase()} PRESENTATION CONFIDENCE</Text>
@@ -104,11 +109,14 @@ export default function OverviewScreen() {
       <View style={styles.metrics}>
         <View style={styles.cardHeading}>
           <Text style={styles.cardTitle}>Visible appearance areas</Text>
-          <Text style={styles.cardCaption}>SAMPLE INDICES</Text>
+          <Text style={styles.cardCaption}>{live ? 'APPEARANCE INDICES' : 'SAMPLE INDICES'}</Text>
         </View>
         {metrics.map((metric) => <MetricBar key={metric.label} {...metric} />)}
       </View>
 
+      {result.professionalReview.recommended ? (
+        <InfoCard title="Consider a professional look" body={result.professionalReview.reason ?? 'Consider having this area reviewed by a qualified healthcare professional.'} tone="gold" />
+      ) : null}
       <InfoCard title="What can change this view" body={result.limitations[0]} tone="lilac" />
       <PrimaryButton label="Explore facial zones" onPress={() => router.push('/zones')} />
       <SecondaryButton label={routineProfile ? 'Open today’s routine' : 'Build today’s routine'} onPress={() => router.push(routineProfile ? '/routine' : '/routine-intake')} />

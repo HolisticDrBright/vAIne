@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { InfoCard, LegalNote, Screen, SecondaryButton } from '@/components/AppChrome';
+import { useAnalysisRuntime } from '@/state/AnalysisRuntime';
 import { useAuth } from '@/state/AuthContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
@@ -59,6 +60,7 @@ function AppleButton({ variant, onPress }: { variant: 'sign_in' | 'continue'; on
 
 export default function AccountScreen() {
   const { auth, backendConfigured, signIn, signOut, deleteAccount, confirmIdentityAndDelete } = useAuth();
+  const runtime = useAnalysisRuntime();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [reauthDismissed, setReauthDismissed] = useState(false);
   const [deletedNotice, setDeletedNotice] = useState(false);
@@ -107,7 +109,7 @@ export default function AccountScreen() {
         <>
           <InfoCard
             title="Why sign in?"
-            body="An account exists only to attach future live analyses to you and to let you erase them. It is optional: every current feature — capture, facial zones, and the labeled synthetic demonstration — runs entirely on this device without one."
+            body="Signing in turns on live analysis: your check-in photos are analyzed for visible appearance and the photo-free results are kept in your account so you can erase them. Without an account the app runs fully on this device with the labeled sample result."
           />
           {backendConfigured ? (
             <AppleButton variant="sign_in" onPress={() => void signIn()} />
@@ -172,8 +174,12 @@ export default function AccountScreen() {
 
       <InfoCard
         tone="gold"
-        title="Live analysis is not enabled yet"
-        body="Cloud analysis stays switched off during this phase of the beta. Signing in does not upload anything; the demonstration content remains local and clearly labeled."
+        title={runtime.route === 'live' ? 'Live analysis is on' : 'Live analysis is off for you right now'}
+        body={runtime.route === 'live'
+          ? 'Your next check-in sends its photos once to the analysis service and shows a real visible-appearance result. Photos are not stored by vAIne; only the photo-free result is kept in your account.'
+          : runtime.demoReason === 'signed_out'
+            ? 'Sign in to analyze your own photos. Until then check-ins show the labeled sample result and upload nothing.'
+            : 'Live analysis is switched off at the moment. Check-ins show the labeled sample result and upload nothing.'}
       />
       <LegalNote />
     </Screen>

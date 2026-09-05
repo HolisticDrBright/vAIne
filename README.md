@@ -23,7 +23,7 @@ The interface uses a warm premium clinical-spa direction with ivory surfaces, bo
 10. A remembered, photo-free local profile: the last validated result and the routine answers survive relaunch, the home screen welcomes the person back with shortcuts, and privacy controls show and delete everything remembered
 11. Working privacy status and deletion for temporary photos, saved baseline photos, the remembered result, and routine answers
 
-All displayed analysis results, people, scores, observations, dates, and routines are fictional demonstration content. Locally captured photos are never analyzed for skin characteristics in this beta, and nothing is uploaded. The only image processing that occurs is optional on-device face detection for capture framing and zone alignment. The synthetic preparation service accepts no image input and makes no network request.
+Signed-in beta testers get a real visible-appearance analysis: the phone re-encodes the three check-in photos, sends them once to the `analyze-skin` Edge Function, which validates them, calls the vision provider with structured output, discards the photos, and returns a schema-validated, photo-free result (`docs/live-analysis-runbook.md`). Without an account, or while the `analysis_enabled` flag is off, the app shows the labelled synthetic sample and uploads nothing; every screen keeps its "sample" labels unless a validated live result is present.
 
 ## Safety boundaries
 
@@ -43,7 +43,7 @@ Future implementation must keep separate consent for analysis, storage, progress
 
 The project now includes consumer-safe, provider-independent contracts for visible skin observations, structured output validation, deterministic product eligibility, quarantined Phase 9F staging, commercial-link approval, and recommendation-copy validation. Their selective provenance and exclusions are documented in `docs/selective-extraction.md` and `docs/product-catalog-governance.md`.
 
-Analysis now flows through a provider-independent service boundary (`src/domain/analysis/analysisService.ts`): every outcome is a validated completed record, an explicit retake request, or an explicit failure — never a silent substitute. Records and audit entries are structurally photo-free. The only wired implementation remains the synthetic demonstration service; the live path and its privacy architecture are planned in `docs/live-analysis-plan.md` and require separate approval before any external resource is created.
+Analysis now flows through a provider-independent service boundary (`src/domain/analysis/analysisService.ts`): every outcome is a validated completed record, an explicit retake request, or an explicit failure — never a silent substitute. Records and audit entries are structurally photo-free. Two implementations are wired: the synthetic demonstration service and the live service backed by the `analyze-skin` Edge Function (`docs/live-analysis-runbook.md`, `docs/live-analysis-plan.md`).
 
 ## Local development
 

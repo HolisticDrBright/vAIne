@@ -8,7 +8,7 @@
  * database sits beneath both.
  */
 
-import { findPhotoDataViolations } from './photoFree.ts';
+import { findPhotoDataViolations } from '../_shared/photoFree.ts';
 
 export const DELETION_AUDIT_DETAIL_VERSION = 1;
 

@@ -6,6 +6,16 @@ mocks, and tests are implemented ahead of approval. Every item marked
 **requires approval** must receive explicit user sign-off before any external
 resource, provider account, paid service, or dependency is created.
 
+Status as of 2026-09-05: the live path is **built and deployed** — see
+`docs/live-analysis-runbook.md`. The `analyze-skin` Edge Function receives
+photos in the request body (never storage), calls the vision provider once
+with structured output against the strict schema, stores the photo-free
+result, and audits every outcome. The client re-encodes photos on the phone,
+routes live only for signed-in users while `analysis_enabled` is on, and
+drops the synthetic labels only for a validated `mode: 'live'` record. The
+storage-bucket/signed-URL lifecycle below was superseded by the in-request
+transfer, which leaves nothing at rest to sweep.
+
 Status as of 2026-08-06:
 
 - On-device ML Kit face detection: **approved and shipped** in TestFlight
