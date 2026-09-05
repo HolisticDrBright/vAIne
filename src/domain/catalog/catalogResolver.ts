@@ -6,6 +6,8 @@ export type RoutineCatalogSource = 'reviewed_catalog' | 'synthetic_samples';
 export interface ResolvedRoutineCatalog {
   source: RoutineCatalogSource;
   products: readonly ProductCandidate[];
+  /** Visible reviewed products that never enter a routine step (bundles, body, devices…). */
+  outsideRoutine: CatalogConversion['outsideRoutine'];
   /** Reviewed rows that failed the visibility gate, for the catalog screen. */
   blocked: CatalogConversion['blocked'];
   /** Rows that did not match the catalog schema at all. */
@@ -24,8 +26,9 @@ export function resolveRoutineCatalog(
   nowIso: string,
 ): ResolvedRoutineCatalog {
   const conversion = convertCatalogEntries(reviewedRows, nowIso);
+  const shared = { outsideRoutine: conversion.outsideRoutine, blocked: conversion.blocked, invalid: conversion.invalid };
   if (conversion.candidates.length) {
-    return { source: 'reviewed_catalog', products: conversion.candidates, blocked: conversion.blocked, invalid: conversion.invalid };
+    return { source: 'reviewed_catalog', products: conversion.candidates, ...shared };
   }
-  return { source: 'synthetic_samples', products: syntheticSamples, blocked: conversion.blocked, invalid: conversion.invalid };
+  return { source: 'synthetic_samples', products: syntheticSamples, ...shared };
 }

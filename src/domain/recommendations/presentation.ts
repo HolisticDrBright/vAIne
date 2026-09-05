@@ -2,7 +2,10 @@
 
 const priceFormatters = new Map<string, Intl.NumberFormat>();
 
-export function formatPrice(amountCents: number, currencyCode: string): string {
+export const PRICE_NOT_VERIFIED = 'Price not yet verified';
+
+export function formatPrice(amountCents: number | null, currencyCode: string): string {
+  if (amountCents === null) return PRICE_NOT_VERIFIED;
   let formatter = priceFormatters.get(currencyCode);
   if (!formatter) {
     try {

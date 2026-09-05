@@ -1,0 +1,4056 @@
+[
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-youth-reset",
+    "brand": "Young Goose",
+    "productName": "YOUTH RESET",
+    "category": "Serum / Longevity",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Skin longevity serum",
+      "product page positions as anti-aging serum"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 2,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Fine lines, dullness, texture irregularity, biological aging appearance",
+      "bestFor": "Normal, dry, combination, mature",
+      "whenToUse": "PM or as directed",
+      "caution": "Patch test; use cautiously with strong retinoids/acids if sensitive",
+      "recommendationLogic": "If Skin Longevity Score low or collagen/texture markers present, prioritize YOUTH RESET",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-youth-daily",
+    "brand": "Young Goose",
+    "productName": "YOUTH DAILY",
+    "category": "Moisturizer / Longevity",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Skin longevity moisturizer"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 3,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Barrier stress, mild dehydration, early aging, dullness",
+      "bestFor": "Normal, dry, combination, mature",
+      "whenToUse": "AM/PM",
+      "caution": "May be too rich for very oily/acne-prone users",
+      "recommendationLogic": "If hydration/barrier score is moderate-low and aging prevention is a goal, recommend YOUTH DAILY",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-adaptogenic-cleanser",
+    "brand": "Young Goose",
+    "productName": "ADAPTOGENIC CLEANSER",
+    "category": "Cleanser",
+    "productKind": "single",
+    "routineSlot": "cleanse",
+    "keyIngredients": [
+      "Gentle longevity face wash"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness",
+      "appearance.pore_visibility_high"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 4,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Mild congestion, sensitive cleanser need, barrier-safe cleanse",
+      "bestFor": "All, especially sensitive/combination",
+      "whenToUse": "AM/PM",
+      "caution": "Avoid over-cleansing if very dry",
+      "recommendationLogic": "If barrier stress or sensitivity is present, use as primary cleanser",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-eyec-a-r-e",
+    "brand": "Young Goose",
+    "productName": "EYEC.A.R.E.",
+    "category": "Eye Care",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "NAD",
+      "boosting eye cream"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 5,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Under-eye fine lines, fatigue appearance, crepiness",
+      "bestFor": "All",
+      "whenToUse": "AM/PM",
+      "caution": "Avoid direct eye contact",
+      "recommendationLogic": "If under-eye aging/darkness/fatigue is flagged, recommend EYEC.A.R.E.",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-bio-shield-spf-40",
+    "brand": "Young Goose",
+    "productName": "BIO-SHIELD SPF 40",
+    "category": "Sunscreen",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Defense against UV",
+      "blue light & EMFs"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 6,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Sun exposure, pigmentation risk, prevention, skin longevity",
+      "bestFor": "All",
+      "whenToUse": "AM daily",
+      "caution": "Reapply; patch test for reactive skin",
+      "recommendationLogic": "If UV damage, pigmentation, or prevention priority is flagged, recommend daily BIO-SHIELD SPF 40",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-hyperbaric-mask",
+    "brand": "Young Goose",
+    "productName": "HYPERBARIC MASK",
+    "category": "Mask / Treatment",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Lifting oxygen therapy"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 7,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dullness, tired skin, event prep, low radiance",
+      "bestFor": "Normal, dry, combination",
+      "whenToUse": "Weekly / event prep",
+      "caution": "Patch test if reactive",
+      "recommendationLogic": "If radiance score is low or dullness is present, suggest weekly HYPERBARIC MASK",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-blue-peptide-spray",
+    "brand": "Young Goose",
+    "productName": "BLUE PEPTIDE SPRAY",
+    "category": "Mist / Peptide Support",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Mitochondrial upgrade mist"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 8,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dullness, dryness, skin fatigue, barrier support",
+      "bestFor": "All",
+      "whenToUse": "AM/PM, after cleanse",
+      "caution": "Patch test; avoid over-layering with irritating actives",
+      "recommendationLogic": "If skin fatigue or low recovery capacity appears, suggest BLUE PEPTIDE SPRAY",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-vampire-exosomes",
+    "brand": "Young Goose",
+    "productName": "VAMPIRE EXOSOMES",
+    "category": "Advanced Regenerative Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Professional exosome serum for regeneration",
+      "post-treatment recovery"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 9,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Post-treatment recovery, inflammation, texture, advanced aging support",
+      "bestFor": "Mature, post-procedure, resilient skin",
+      "whenToUse": "PM / post-procedure under professional guidance",
+      "caution": "Use professional guidance post-procedure; patch test",
+      "recommendationLogic": "If advanced regenerative/post-treatment recommendation is needed, recommend VAMPIRE EXOSOMES",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-bio-retinol",
+    "brand": "Young Goose",
+    "productName": "BIO-RETINOL",
+    "category": "Retinol Alternative / Treatment",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Wrinkle correcting serum"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "reviewed_avoid",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 10,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Fine lines, wrinkles, texture, aging prevention",
+      "bestFor": "Normal, combo, mature; retinol-sensitive users",
+      "whenToUse": "PM",
+      "caution": "Use cautiously with pregnancy unless cleared; avoid stacking with strong acids",
+      "recommendationLogic": "If fine lines + texture but retinoid sensitivity exists, suggest BIO-RETINOL",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-l-a-d-r",
+    "brand": "Young Goose",
+    "productName": "L.A.D.R.",
+    "category": "Antioxidant Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Red light-activated antioxidant serum"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 11,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Oxidative stress, inflammation, red light users, dullness",
+      "bestFor": "All",
+      "whenToUse": "AM/PM with red light routine",
+      "caution": "Patch test; do not claim device-level effects",
+      "recommendationLogic": "If user uses red light or has oxidative stress markers, recommend L.A.D.R.",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-youth-firming-neck-and-chest",
+    "brand": "Young Goose",
+    "productName": "YOUTH FIRMING NECK & CHEST",
+    "category": "Neck / Body Treatment",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Focused neck",
+      "décolleté restoration"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 12,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Neck lines, crepey skin, laxity, sun damage neck/chest",
+      "bestFor": "Mature, dry, normal",
+      "whenToUse": "AM/PM",
+      "caution": "Use SPF on neck/chest during day",
+      "recommendationLogic": "If neck/chest aging or laxity is flagged, recommend this product",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-adaptogloss",
+    "brand": "Young Goose",
+    "productName": "ADAPTOGLOSS",
+    "category": "Lip Treatment",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Lip plumper for volume",
+      "smoothness"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible",
+      "appearance.lip_dryness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 13,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dry lips, lip lines, low lip hydration",
+      "bestFor": "All",
+      "whenToUse": "AM/PM / as needed",
+      "caution": "Avoid if lip irritation/active dermatitis",
+      "recommendationLogic": "If lip dryness or lip lines are visible, recommend ADAPTOGLOSS",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-bio-c-peptide-spray",
+    "brand": "Young Goose",
+    "productName": "BIO-C PEPTIDE SPRAY",
+    "category": "Mist / Peptide Support",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Hydrating",
+      "toning peptide mist"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 14,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dehydration, dullness, tone support",
+      "bestFor": "All",
+      "whenToUse": "AM/PM",
+      "caution": "Patch test if reactive",
+      "recommendationLogic": "If dehydration + tone support needed, recommend BIO-C PEPTIDE SPRAY",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-youth-firming-body-cream",
+    "brand": "Young Goose",
+    "productName": "YOUTH FIRMING BODY CREAM",
+    "category": "Body Cream",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "NAD",
+      "powered body renewal"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 15,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Body crepiness, dryness, aging skin on body",
+      "bestFor": "Dry, mature, normal",
+      "whenToUse": "Daily body care",
+      "caution": "Avoid broken/irritated skin",
+      "recommendationLogic": "If body skin aging/dryness is a concern, recommend YOUTH FIRMING BODY CREAM",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-amplifying-essence",
+    "brand": "Young Goose",
+    "productName": "AMPLIFYING ESSENCE",
+    "category": "Essence",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Hydration-enhancing essence"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 16,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dehydration, dullness, product absorption support",
+      "bestFor": "Dry, normal, combination",
+      "whenToUse": "AM/PM after cleanse",
+      "caution": "Patch test",
+      "recommendationLogic": "If hydration score is low but user wants lightweight layers, recommend AMPLIFYING ESSENCE",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-bio-barrier",
+    "brand": "Young Goose",
+    "productName": "BIO-BARRIER",
+    "category": "Barrier Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Redness-reducing repair serum"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "sensitive"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 17,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Redness, reactivity, barrier stress, inflammation",
+      "bestFor": "Sensitive, reactive, dry",
+      "whenToUse": "AM/PM",
+      "caution": "Patch test; avoid excess actives during flare",
+      "recommendationLogic": "If inflammation/redness/barrier stress is high, recommend BIO-BARRIER",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-niapolish",
+    "brand": "Young Goose",
+    "productName": "NIAPOLISH",
+    "category": "Exfoliant",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Brightening",
+      "smoothing exfoliator"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.texture_irregular",
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 18,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Texture, dullness, pigmentation, clogged pores",
+      "bestFor": "Normal, oily, combination",
+      "whenToUse": "1–2x/week PM",
+      "caution": "Avoid overuse; caution with sensitive/rosacea/barrier damage",
+      "recommendationLogic": "If texture + dullness + pores are high and sensitivity is low, recommend NIAPOLISH",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-blue-peptide-spray-15-ml",
+    "brand": "Young Goose",
+    "productName": "BLUE PEPTIDE SPRAY 15 mL",
+    "category": "Mist / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Travel size blue peptide spray"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 19,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel dryness, skin fatigue",
+      "bestFor": "All",
+      "whenToUse": "Travel / AM/PM",
+      "caution": "Patch test",
+      "recommendationLogic": "Recommend as travel-size version of BLUE PEPTIDE SPRAY",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-travel-size-bio-c-peptide-spray",
+    "brand": "Young Goose",
+    "productName": "TRAVEL SIZE BIO-C PEPTIDE SPRAY",
+    "category": "Mist / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Travel size hydrating peptide mist"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 20,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel dehydration, dullness",
+      "bestFor": "All",
+      "whenToUse": "Travel / AM/PM",
+      "caution": "Patch test",
+      "recommendationLogic": "Recommend as travel-size version of BIO-C PEPTIDE SPRAY",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-cellular-duo-nad-plus-spermidine-skin-and-supplement-system",
+    "brand": "Young Goose",
+    "productName": "CELLULAR DUO: NAD+ SPERMIDINE SKIN & SUPPLEMENT SYSTEM",
+    "category": "Longevity System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "NAD",
+      "spermidine skin",
+      "supplement system"
+    ],
+    "skinConcernTags": [],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 21,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Advanced longevity, skin age optimization, whole-system support",
+      "bestFor": "Mature, longevity-focused",
+      "whenToUse": "Per system directions",
+      "caution": "Supplement cautions apply; check contraindications",
+      "recommendationLogic": "If user wants advanced inside-out skin longevity, recommend Cellular Duo",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-minimal-biohack-aging-system",
+    "brand": "Young Goose",
+    "productName": "MINIMAL BIOHACK AGING SYSTEM",
+    "category": "Aging System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Minimal aging protocol system"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 22,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Early aging, prevention, simplified routine",
+      "bestFor": "All",
+      "whenToUse": "System routine",
+      "caution": "Avoid duplicate actives if already using strong treatments",
+      "recommendationLogic": "If user wants simple anti-aging bundle, recommend Minimal Biohack Aging System",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-standard-aging-system",
+    "brand": "Young Goose",
+    "productName": "STANDARD AGING SYSTEM",
+    "category": "Aging System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Targets skin biological age"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 23,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Moderate aging markers, fine lines, dullness",
+      "bestFor": "Normal, dry, mature",
+      "whenToUse": "System routine",
+      "caution": "Cost/high product load; introduce gradually",
+      "recommendationLogic": "If multiple aging markers are present, recommend Standard Aging System",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-advanced-biohack-aging-system",
+    "brand": "Young Goose",
+    "productName": "ADVANCED BIOHACK AGING SYSTEM",
+    "category": "Advanced Aging System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Advanced aging protocol system"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 24,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Advanced aging, collagen loss, multiple skin concerns",
+      "bestFor": "Mature, resilient",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually; not for highly reactive skin without guidance",
+      "recommendationLogic": "If high budget + multiple aging markers + low sensitivity, recommend Advanced Biohack Aging System",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-minimal-biohack-hydration-system",
+    "brand": "Young Goose",
+    "productName": "MINIMAL BIOHACK HYDRATION SYSTEM",
+    "category": "Hydration System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Minimal hydration protocol system"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 25,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Mild dehydration, barrier stress",
+      "bestFor": "Dry, normal, combination",
+      "whenToUse": "System routine",
+      "caution": "Avoid over-layering if acne-prone",
+      "recommendationLogic": "If hydration score is low and routine should stay simple, recommend Minimal Hydration System",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "young-goose-standard-biohack-hydration-system",
+    "brand": "Young Goose",
+    "productName": "STANDARD BIOHACK HYDRATION SYSTEM",
+    "category": "Hydration System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Standard hydration protocol system"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.younggoose.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 26,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Moderate dehydration, dullness, barrier stress",
+      "bestFor": "Dry, normal, combination",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually if sensitive",
+      "recommendationLogic": "If hydration + barrier support are top priorities, recommend Standard Hydration System",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-2-pct-ghk-cu-skin-cell-restorative-serum",
+    "brand": "Vitali",
+    "productName": "2% GHK-Cu Skin Cell Restorative Serum",
+    "category": "Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "2% GHK-Cu copper peptide"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness",
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 27,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Fine lines, loss of firmness, redness, texture, barrier repair",
+      "bestFor": "Aging, dry, sensitive, normal",
+      "whenToUse": "PM or as directed",
+      "caution": "Patch test; avoid excessive layering with strong acids/retinoids",
+      "recommendationLogic": "If collagen support or redness/barrier repair is flagged, recommend 2% GHK-Cu serum",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-3-pct-ghk-cu-skin-cell-restorative-serum-50-pct-more-ghk-cu",
+    "brand": "Vitali",
+    "productName": "3% GHK-Cu Skin Cell Restorative Serum (50% More GHK-Cu)",
+    "category": "Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "3% GHK-Cu copper peptide"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 28,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Advanced aging, loss of firmness, post-treatment support",
+      "bestFor": "Mature, resilient, experienced users",
+      "whenToUse": "PM or as directed",
+      "caution": "Use cautiously if reactive; start slowly",
+      "recommendationLogic": "If advanced collagen/firmness support is needed and sensitivity is low, recommend 3% GHK-Cu serum",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-skin-awakening-moisturizer",
+    "brand": "Vitali",
+    "productName": "Skin Awakening Moisturizer",
+    "category": "Moisturizer",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "GHK-Cu copper peptides",
+      "skin awakening moisturizer"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/copper-peptide-collection",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 29,
+      "priority": 1,
+      "verificationLevel": "Official copper collection",
+      "findings": "Barrier stress, dryness, redness, hydration support",
+      "bestFor": "Dry, normal, sensitive",
+      "whenToUse": "AM/PM",
+      "caution": "Patch test",
+      "recommendationLogic": "If barrier strength/hydration is low, pair with Vitali serum",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-advanced-eye-and-lash-formula",
+    "brand": "Vitali",
+    "productName": "Advanced Eye & Lash Formula",
+    "category": "Eye Care",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Vitali eye",
+      "lash formula",
+      "copper peptide collection product"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 30,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Eye fine lines, lash support, eye-area aging",
+      "bestFor": "All",
+      "whenToUse": "PM or as directed",
+      "caution": "Avoid getting into eye",
+      "recommendationLogic": "If under-eye/lash support is requested, recommend Advanced Eye & Lash Formula",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-restorative-body-cream",
+    "brand": "Vitali",
+    "productName": "Restorative Body Cream",
+    "category": "Body Cream",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Restorative body cream",
+      "copper peptide collection product"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 31,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Body crepiness, dryness, body aging",
+      "bestFor": "Dry, mature, normal",
+      "whenToUse": "Daily body care",
+      "caution": "Avoid broken skin",
+      "recommendationLogic": "If body skin aging/dryness is a concern, recommend Restorative Body Cream",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-vita-zero-age-exosome-complex",
+    "brand": "Vitali",
+    "productName": "Vita | Zero Age Exosome Complex",
+    "category": "Advanced Regenerative Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Exosome complex"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 32,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Advanced regenerative support, aging, texture, post-procedure care",
+      "bestFor": "Mature, resilient, post-treatment",
+      "whenToUse": "PM or professional protocol",
+      "caution": "Use professional guidance around procedures",
+      "recommendationLogic": "If exosome/regenerative category is needed, recommend Vita Zero Age Exosome Complex",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-2-pct-bakuchiol-facial-oil",
+    "brand": "Vitali",
+    "productName": "2% Bakuchiol Facial Oil",
+    "category": "Retinol Alternative / Oil",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "2% bakuchiol facial oil"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 33,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Fine lines, texture, retinol alternative, dryness",
+      "bestFor": "Dry, normal, mature",
+      "whenToUse": "PM",
+      "caution": "Caution acne-prone/oily skin; patch test",
+      "recommendationLogic": "If retinol alternative is needed with dryness, suggest Bakuchiol Facial Oil",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-advanced-resurfacing-10-pct-lactic-formula",
+    "brand": "Vitali",
+    "productName": "Advanced Resurfacing 10% Lactic Formula",
+    "category": "Exfoliant",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "10% lactic formula"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.texture_irregular",
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 34,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Texture, dullness, uneven tone, clogged pores",
+      "bestFor": "Normal, oily, combination, resilient",
+      "whenToUse": "1–2x/week PM",
+      "caution": "Avoid with barrier damage, active irritation, strong retinoids/acids",
+      "recommendationLogic": "If texture and dullness are high but sensitivity low, recommend lactic formula",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-gentle-exfoliating-cleanser",
+    "brand": "Vitali",
+    "productName": "Gentle Exfoliating Cleanser",
+    "category": "Cleanser",
+    "productKind": "single",
+    "routineSlot": "cleanse",
+    "keyIngredients": [
+      "Gentle exfoliating cleanser"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 35,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Mild congestion, dullness, texture",
+      "bestFor": "Normal, oily, combination",
+      "whenToUse": "AM/PM or as tolerated",
+      "caution": "Avoid over-cleansing; caution sensitive skin",
+      "recommendationLogic": "If oily T-zone + texture present, recommend Gentle Exfoliating Cleanser",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-hydration-boost-facial-oil-and-primer",
+    "brand": "Vitali",
+    "productName": "Hydration Boost Facial Oil & Primer",
+    "category": "Oil / Makeup Prep",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Hydration boost facial oil",
+      "primer"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 36,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dryness, makeup prep, glow, barrier support",
+      "bestFor": "Dry, normal",
+      "whenToUse": "AM/PM or pre-makeup",
+      "caution": "Caution acne-prone/oily skin",
+      "recommendationLogic": "If dryness/glow/makeup prep is desired, recommend Hydration Boost Oil & Primer",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-advanced-copper-peptide-trio",
+    "brand": "Vitali",
+    "productName": "Advanced Copper Peptide Trio",
+    "category": "Copper Peptide System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Copper peptide trio bundle"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 37,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Collagen support, firming, routine simplicity",
+      "bestFor": "Aging, dry, mature",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually",
+      "recommendationLogic": "If user wants copper-peptide focused routine, recommend Trio",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-copper-peptide-bundle-best-seller",
+    "brand": "Vitali",
+    "productName": "Copper Peptide Bundle (Best Seller)",
+    "category": "Copper Peptide System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Copper peptide bundle"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "sensitive"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 38,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Aging, barrier support, redness, firmness",
+      "bestFor": "Aging, dry, sensitive",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually",
+      "recommendationLogic": "If multiple Vitali copper products fit the analysis, recommend bundle",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-copper-peptide-trio-best-seller",
+    "brand": "Vitali",
+    "productName": "Copper Peptide Trio (Best Seller)",
+    "category": "Copper Peptide System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Copper peptide trio"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 39,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Aging, firmness, collagen support",
+      "bestFor": "Aging, mature",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually",
+      "recommendationLogic": "If collagen/firmness is a top priority, recommend trio bundle",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-cellular-renewal-set",
+    "brand": "Vitali",
+    "productName": "Cellular Renewal Set",
+    "category": "Renewal System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Cellular renewal set"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 40,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Texture, aging, renewal",
+      "bestFor": "Normal, mature",
+      "whenToUse": "System routine",
+      "caution": "Patch test; introduce gradually",
+      "recommendationLogic": "If overall renewal is the goal, recommend Cellular Renewal Set",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "vitali-men-s-set",
+    "brand": "Vitali",
+    "productName": "Men's Set",
+    "category": "Men's Routine",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Men’s set"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.vitaliskincare.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 41,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Simplified men’s skincare, aging support",
+      "bestFor": "Men, normal, dry, mature",
+      "whenToUse": "System routine",
+      "caution": "Patch test",
+      "recommendationLogic": "If male client wants simplified routine, recommend Men's Set",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-gold-serum",
+    "brand": "Alitura",
+    "productName": "The Gold Serum",
+    "category": "Antioxidant / Copper Peptide Serum",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "95% organic",
+      "GHK-Cu",
+      "astaxanthin"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.fine_lines_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 42,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Dullness, oxidative stress, fine lines, tone support",
+      "bestFor": "Normal, dry, mature",
+      "whenToUse": "AM/PM",
+      "caution": "Patch test; caution if very acne-prone due to richer botanicals",
+      "recommendationLogic": "If antioxidant + copper peptide support is needed, recommend Gold Serum",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-clay-mask",
+    "brand": "Alitura",
+    "productName": "The Clay Mask",
+    "category": "Detox / Brightening Mask",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "4-hour grass-fed colostrum",
+      "10% ascorbic acid"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.pore_visibility_high",
+      "appearance.oiliness_visible",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "colostrum (dairy)",
+      "vitamin C (ascorbic acid)"
+    ],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 43,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Congestion, dullness, oily T-zone, uneven tone",
+      "bestFor": "Oily, combination, normal",
+      "whenToUse": "1–2x/week",
+      "caution": "Caution sensitive/reactive skin due to vitamin C/clay; do not overuse",
+      "recommendationLogic": "If congestion/oiliness/dullness present and sensitivity is low, recommend Clay Mask",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-meteorite-facial-scrub",
+    "brand": "Alitura",
+    "productName": "The Meteorite Facial Scrub",
+    "category": "Physical/Chemical Exfoliant",
+    "productKind": "single",
+    "routineSlot": "weekly",
+    "keyIngredients": [
+      "Bamboo stem cells",
+      "mandelic acid",
+      "niacinamide"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.texture_irregular",
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 44,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Texture, dullness, clogged pores, uneven tone",
+      "bestFor": "Normal, oily, combination",
+      "whenToUse": "1x/week PM",
+      "caution": "Avoid if barrier is damaged, rosacea-prone, inflamed, or highly sensitive",
+      "recommendationLogic": "If texture + dullness are present but redness/sensitivity low, recommend Meteorite Scrub",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-pearl-cleanser",
+    "brand": "Alitura",
+    "productName": "The Pearl Cleanser",
+    "category": "Cleanser",
+    "productKind": "single",
+    "routineSlot": "cleanse",
+    "keyIngredients": [
+      "Freshwater pearl powder",
+      "tremella mushroom"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 45,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Daily cleansing, glow, gentle cleanse",
+      "bestFor": "Normal, dry, combination",
+      "whenToUse": "AM/PM",
+      "caution": "Patch test",
+      "recommendationLogic": "If gentle daily cleanse and radiance support needed, recommend Pearl Cleanser",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-moisturizer",
+    "brand": "Alitura",
+    "productName": "The Moisturizer",
+    "category": "Moisturizer",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "German blue chamomile",
+      "bee propolis extract"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "bee products (propolis)"
+    ],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 46,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Barrier support, dryness, redness, daily moisture",
+      "bestFor": "Dry, normal, sensitive",
+      "whenToUse": "AM/PM",
+      "caution": "Avoid bee products if allergy concern",
+      "recommendationLogic": "If mild redness/barrier stress/dryness present, recommend Moisturizer",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-night-cream",
+    "brand": "Alitura",
+    "productName": "The Night Cream",
+    "category": "Moisturizer / Repair",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Edelweiss & gardenia stem cells",
+      "hyaluronic acid"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.texture_irregular"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 47,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Night repair, dehydration, texture, mature skin",
+      "bestFor": "Dry, normal, mature",
+      "whenToUse": "PM",
+      "caution": "Patch test",
+      "recommendationLogic": "If PM hydration and repair are priorities, recommend Night Cream",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-angel-s-mist-facial-toner",
+    "brand": "Alitura",
+    "productName": "Angel's Mist Facial Toner",
+    "category": "Toner",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Organic rose",
+      "organic myrrh",
+      "niacinamide"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness",
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "oily",
+      "combination",
+      "sensitive",
+      "balanced"
+    ],
+    "sensitivityCaution": false,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 48,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Tone support, light hydration, redness/dullness",
+      "bestFor": "All, especially normal/dry",
+      "whenToUse": "AM/PM after cleanse",
+      "caution": "Patch test for botanical sensitivity",
+      "recommendationLogic": "If user needs toner/mist with niacinamide support, recommend Angel’s Mist",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-body-lotion",
+    "brand": "Alitura",
+    "productName": "The Body Lotion",
+    "category": "Body Moisturizer",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Organic Brazilian acai butter",
+      "organic ylang-ylang"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "fragrance",
+      "essential oils"
+    ],
+    "fragranceStatus": "contains_fragrance",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 49,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Body dryness, glow, body skin support",
+      "bestFor": "Dry, normal",
+      "whenToUse": "Daily body care",
+      "caution": "Caution fragrance sensitivity",
+      "recommendationLogic": "If body dryness is flagged, recommend Body Lotion",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-santal-black-hair-and-body-oil",
+    "brand": "Alitura",
+    "productName": "Santal Black Hair & Body Oil",
+    "category": "Oil",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Indian & Australian sandalwood",
+      "bergamot"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "fragrance",
+      "essential oils"
+    ],
+    "fragranceStatus": "contains_fragrance",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 50,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Body dryness, hair/body glow",
+      "bestFor": "Dry skin, normal skin",
+      "whenToUse": "As needed",
+      "caution": "Caution fragrance/essential oil sensitivity",
+      "recommendationLogic": "If body/hair oil requested and sensitivity low, recommend Santal Black",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-microneedle-derma-roller",
+    "brand": "Alitura",
+    "productName": "The Microneedle Derma Roller",
+    "category": "Device / Tool",
+    "productKind": "device",
+    "routineSlot": null,
+    "keyIngredients": [
+      "600 titanium microneedles"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 51,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Texture, product penetration, collagen support",
+      "bestFor": "Resilient, non-inflamed skin",
+      "whenToUse": "As directed, not daily",
+      "caution": "Avoid active acne, inflamed skin, poor hygiene, keloid tendency",
+      "recommendationLogic": "If user wants at-home treatment and skin is not inflamed, consider Derma Roller with caution",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-clay-mask-travel-pack",
+    "brand": "Alitura",
+    "productName": "The Clay Mask Travel Pack",
+    "category": "Mask / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "4-hour grass-fed colostrum",
+      "10% ascorbic acid"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "colostrum (dairy)",
+      "vitamin C (ascorbic acid)"
+    ],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 52,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel/event prep, dullness, congestion",
+      "bestFor": "Normal, oily, combination",
+      "whenToUse": "Travel / weekly",
+      "caution": "Same caution as Clay Mask",
+      "recommendationLogic": "Travel version of Clay Mask",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-gold-serum-travel-pack",
+    "brand": "Alitura",
+    "productName": "The Gold Serum Travel Pack",
+    "category": "Serum / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "95% organic",
+      "GHK-Cu",
+      "astaxanthin"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 53,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel antioxidant support, glow",
+      "bestFor": "Normal, dry, mature",
+      "whenToUse": "Travel AM/PM",
+      "caution": "Patch test",
+      "recommendationLogic": "Travel version of Gold Serum",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-night-cream-travel-pack",
+    "brand": "Alitura",
+    "productName": "The Night Cream Travel Pack",
+    "category": "Moisturizer / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Edelweiss & gardenia stem cells",
+      "hyaluronic acid"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 54,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel dryness, PM repair",
+      "bestFor": "Dry, normal, mature",
+      "whenToUse": "Travel PM",
+      "caution": "Patch test",
+      "recommendationLogic": "Travel version of Night Cream",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-body-lotion-travel-pack",
+    "brand": "Alitura",
+    "productName": "The Body Lotion Travel Pack",
+    "category": "Body / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Organic Brazilian acai butter",
+      "organic ylang-ylang"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "fragrance",
+      "essential oils"
+    ],
+    "fragranceStatus": "contains_fragrance",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 55,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Travel body dryness",
+      "bestFor": "Dry, normal",
+      "whenToUse": "Travel daily",
+      "caution": "Caution fragrance sensitivity",
+      "recommendationLogic": "Travel version of Body Lotion",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-four-step-facial",
+    "brand": "Alitura",
+    "productName": "The Four Step Facial",
+    "category": "Cleanse, Exfoliate, Hydrate, Repair",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Four-step facial system"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.texture_irregular",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 56,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Simple full-face routine, dullness, texture, hydration",
+      "bestFor": "Normal, combination, dry",
+      "whenToUse": "System routine",
+      "caution": "Introduce exfoliation gradually",
+      "recommendationLogic": "If user wants a complete Alitura routine, recommend Four Step Facial",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-perfect-duo",
+    "brand": "Alitura",
+    "productName": "The Perfect Duo",
+    "category": "Purify, Cleanse & Hydrate",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Deeply purify",
+      "cleanse",
+      "hydrate"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 57,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Starter routine, cleanser + hydration",
+      "bestFor": "Normal, combination",
+      "whenToUse": "System routine",
+      "caution": "Patch test",
+      "recommendationLogic": "If cleanser/hydration are main needs, recommend Perfect Duo",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-ultimate-starter-set",
+    "brand": "Alitura",
+    "productName": "The Ultimate Starter Set",
+    "category": "Starter System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Plant-powered trifecta of award-winning formulas"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.texture_irregular",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 58,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Starter protocol, glow, hydration, texture",
+      "bestFor": "Normal, dry, combination",
+      "whenToUse": "System routine",
+      "caution": "Introduce one product at a time if sensitive",
+      "recommendationLogic": "If new user wants core Alitura, recommend Ultimate Starter Set",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-instant-glow-kit",
+    "brand": "Alitura",
+    "productName": "The Instant Glow Kit",
+    "category": "Glow / Travel",
+    "productKind": "travel_size",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Glow on the go"
+    ],
+    "skinConcernTags": [
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 59,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Event prep, dullness, radiance",
+      "bestFor": "Normal, dry, combination",
+      "whenToUse": "Event / travel",
+      "caution": "Patch test",
+      "recommendationLogic": "If radiance/event prep is priority, recommend Instant Glow Kit",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-at-home-facial-kit",
+    "brand": "Alitura",
+    "productName": "The At-Home Facial Kit",
+    "category": "At-Home Facial",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Professional back-bar treatment at home"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.pore_visibility_high",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "oily",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 60,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "At-home facial, dullness, texture, congestion",
+      "bestFor": "Normal, combination, oily",
+      "whenToUse": "Weekly / as directed",
+      "caution": "Caution sensitive/reactive skin",
+      "recommendationLogic": "If user wants a full at-home treatment and sensitivity low, recommend At-Home Facial Kit",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-the-essential-discovery-set",
+    "brand": "Alitura",
+    "productName": "The Essential Discovery Set",
+    "category": "Complete System",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Complete skincare system"
+    ],
+    "skinConcernTags": [],
+    "skinTypeCompatibility": [
+      "dry",
+      "combination",
+      "balanced"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 61,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Full routine discovery, multiple concerns",
+      "bestFor": "Normal, dry, combination",
+      "whenToUse": "System routine",
+      "caution": "Introduce gradually",
+      "recommendationLogic": "If user wants full brand trial, recommend Essential Discovery Set",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "alitura-andy-hnilo-signature-shaving-kit",
+    "brand": "Alitura",
+    "productName": "Andy Hnilo Signature Shaving Kit",
+    "category": "Men’s / Shaving",
+    "productKind": "bundle",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Shaving kit"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://alitura.com/collections/all",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "approved",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 62,
+      "priority": 1,
+      "verificationLevel": "Official collection page",
+      "findings": "Men’s skincare, shaving irritation",
+      "bestFor": "Men, shaving skin",
+      "whenToUse": "As directed",
+      "caution": "Patch test",
+      "recommendationLogic": "If shaving irritation or men’s routine requested, recommend Shaving Kit",
+      "notes": null
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "oneskin-os-01-face",
+    "brand": "OneSkin",
+    "productName": "OS-01 FACE",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "OS-01 peptide positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.oneskin.co",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 63,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Skin aging, barrier, hydration",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "oneskin-os-01-eye",
+    "brand": "OneSkin",
+    "productName": "OS-01 EYE",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "OS-01 peptide positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.oneskin.co",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 64,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Eye lines, crepiness, under-eye aging",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "oneskin-os-01-body",
+    "brand": "OneSkin",
+    "productName": "OS-01 BODY",
+    "category": "Other Verified / To Expand",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "OS-01 peptide positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.oneskin.co",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 65,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Body aging, crepey skin",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "oneskin-os-01-body-spf",
+    "brand": "OneSkin",
+    "productName": "OS-01 BODY SPF",
+    "category": "Other Verified / To Expand",
+    "productKind": "body",
+    "routineSlot": null,
+    "keyIngredients": [
+      "OS-01",
+      "SPF positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.oneskin.co",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 66,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Daily body sun protection",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "skinbetter-science-alto-advanced-defense-and-repair-serum",
+    "brand": "SkinBetter Science",
+    "productName": "Alto Advanced Defense and Repair Serum",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Antioxidant defense positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.tone_uneven"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.skinbetter.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 67,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Oxidative stress, redness, pigmentation",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "skinbetter-science-alpharet-overnight-cream",
+    "brand": "SkinBetter Science",
+    "productName": "AlphaRet Overnight Cream",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "AlphaRet technology positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.skinbetter.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 68,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Texture, wrinkles, photoaging",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "revision-skincare-intellishade-truphysical-spf-45",
+    "brand": "Revision Skincare",
+    "productName": "Intellishade TruPhysical SPF 45",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "protect",
+    "keyIngredients": [
+      "Mineral SPF",
+      "anti-aging positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.sun_exposure_signs_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.revisionskincare.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 69,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Pigmentation prevention, daily UV defense",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "revision-skincare-c-plus-correcting-complex-30-pct",
+    "brand": "Revision Skincare",
+    "productName": "C+ Correcting Complex 30%",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Vitamin C complex positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.dullness_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "vitamin C (ascorbic acid)"
+    ],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.revisionskincare.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 70,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Dullness, oxidative stress, tone",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "is-clinical-super-serum-advance-plus",
+    "brand": "iS Clinical",
+    "productName": "Super Serum Advance+",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Vitamin C",
+      "copper tripeptide positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "vitamin C (ascorbic acid)"
+    ],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.isclinical.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 71,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Pigmentation, fine lines, texture",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "is-clinical-cleansing-complex",
+    "brand": "iS Clinical",
+    "productName": "Cleansing Complex",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "cleanse",
+    "keyIngredients": [
+      "Gel cleanser positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.pore_visibility_high"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.isclinical.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 72,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "All-purpose cleanser, congestion",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "epicutis-lipid-serum",
+    "brand": "Epicutis",
+    "productName": "Lipid Serum",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "TSC positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.epicutis.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 73,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Redness, barrier, inflammation",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "epicutis-hyvia-cr-me",
+    "brand": "Epicutis",
+    "productName": "Hyvia Crème",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Hydration cream positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.epicutis.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 74,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Dryness, barrier support",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "calecim-professional-serum",
+    "brand": "Calecim",
+    "productName": "Professional Serum",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "PTT-6 stem cell protein positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.calecimprofessional.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 75,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Post-procedure, aging, repair",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "calecim-multi-action-cream",
+    "brand": "Calecim",
+    "productName": "Multi-Action Cream",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "hydrate",
+    "keyIngredients": [
+      "Stem cell protein positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.calecimprofessional.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 76,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Barrier, rejuvenation, mature skin",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "plated-skin-science-intense-serum",
+    "brand": "Plated Skin Science",
+    "productName": "Intense Serum",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Platelet-derived exosome positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.platedskinscience.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 77,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Post-treatment, aging, recovery",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "defenage-8-in-1-bioserum",
+    "brand": "DefenAge",
+    "productName": "8-in-1 BioSerum",
+    "category": "Other Verified / To Expand",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "Defensin positioning"
+    ],
+    "skinConcernTags": [
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.defenage.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 78,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Texture, aging, renewal",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "higherdose-red-light-face-mask",
+    "brand": "HigherDOSE",
+    "productName": "Red Light Face Mask",
+    "category": "Other Verified / To Expand",
+    "productKind": "device",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Red/NIR light device"
+    ],
+    "skinConcernTags": [
+      "appearance.visible_redness",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.higherdose.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 79,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Inflammation, collagen support, recovery",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "ziip-halo",
+    "brand": "ZIIP",
+    "productName": "Halo",
+    "category": "Other Verified / To Expand",
+    "productKind": "device",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Microcurrent / nanocurrent device"
+    ],
+    "skinConcernTags": [
+      "appearance.tone_uneven",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.ziipbeauty.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 80,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Firmness, lifting, tone",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "nutrafol-women-men-hair-growth-nutraceutical",
+    "brand": "Nutrafol",
+    "productName": "Women / Men Hair Growth Nutraceutical",
+    "category": "Other Verified / To Expand",
+    "productKind": "supplement",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Hair growth nutraceutical positioning"
+    ],
+    "skinConcernTags": [],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://nutrafol.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 81,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Hair thinning support",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "nordic-naturals-proomega-2000",
+    "brand": "Nordic Naturals",
+    "productName": "ProOmega 2000",
+    "category": "Other Verified / To Expand",
+    "productKind": "supplement",
+    "routineSlot": null,
+    "keyIngredients": [
+      "Omega-3 EPA/DHA"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.visible_redness"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": null,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [],
+    "fragranceStatus": "unknown",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": null,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": null,
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://www.nordic.com",
+    "market": "US",
+    "availabilityStatus": "unknown",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-05T00:00:00.000Z",
+    "evidenceReviewStatus": "pending",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2.xlsx",
+      "sourceRow": 82,
+      "priority": 2,
+      "verificationLevel": "Needs product-page verification before app launch",
+      "findings": "Inflammation, skin barrier, dryness support",
+      "bestFor": "Depends on product",
+      "whenToUse": "Per label",
+      "caution": "Verify contraindications and ingredient list before recommendation",
+      "recommendationLogic": "Use only when category matches skin finding and product is in verified DB",
+      "notes": "Added as secondary expansion brand/product; confirm exact ingredient panel before using in production."
+    }
+  }
+]

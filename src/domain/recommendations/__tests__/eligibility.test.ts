@@ -139,3 +139,14 @@ describe('product eligibility', () => {
     expect(attachCommercialLinks(products, [{ ...baseLink, disclosure: null }])[0].commercialLink).toBeNull();
   });
 });
+
+describe('unverified prices', () => {
+  test('an unpriced product passes the ceiling but ranks after an equally matched priced one', () => {
+    const priced = { ...baseProduct, id: 'priced', productName: 'Priced', listPriceCents: 4000 };
+    const unpriced = { ...baseProduct, id: 'unpriced', productName: 'Unpriced', listPriceCents: null, priceVerifiedAtIso: null };
+    const ranked = rankEligibleProducts([unpriced, priced], baseProfile, ['appearance.hydration_look_low'], 5000);
+    expect(ranked.map((entry) => entry.product.id)).toEqual(['priced', 'unpriced']);
+    const tight = rankEligibleProducts([unpriced, priced], baseProfile, ['appearance.hydration_look_low'], 2500);
+    expect(tight.map((entry) => entry.product.id)).toEqual(['unpriced']);
+  });
+});

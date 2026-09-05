@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
+import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
 import { evaluateProductEligibility, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
 import {
   budgetMaximumCents,
@@ -22,6 +23,15 @@ const slotLabels = {
   protect: 'Protect',
   weekly: 'Weekly',
 } as const;
+
+const kindLabels: Record<CatalogEntry['productKind'], string> = {
+  single: 'Product',
+  bundle: 'Bundle / system',
+  travel_size: 'Travel size',
+  body: 'Body / neck care',
+  device: 'Device / tool',
+  supplement: 'Supplement',
+};
 
 const reasonCopy: Record<IneligibilityReason, string> = {
   not_verified: 'Not yet verified',
@@ -78,12 +88,15 @@ export default function ProductsScreen() {
     if (!result.eligible) return { kind: 'excluded', reasons: result.reasons };
     if (!result.matchedTags.length) return { kind: 'no_goal_match' };
     const ceiling = budgetMaximumCents[routineProfile.budgetPreference];
-    if (ceiling !== null && product.listPriceCents > ceiling) return { kind: 'over_budget', tags: result.matchedTags };
+    if (ceiling !== null && product.listPriceCents !== null && product.listPriceCents > ceiling) {
+      return { kind: 'over_budget', tags: result.matchedTags };
+    }
     return { kind: 'match', tags: result.matchedTags };
   };
 
   const evaluated = catalog.products.map((product) => ({ product, status: evaluate(product) }));
   const matchCount = evaluated.filter((entry) => entry.status.kind === 'match').length;
+  const listedCount = catalog.products.length + catalog.outsideRoutine.length;
 
   return (
     <Screen title="Product list" back>
@@ -96,7 +109,7 @@ export default function ProductsScreen() {
       </Text>
 
       <View style={styles.summary}>
-        <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{catalog.products.length}</Text><Text style={styles.summaryLabel}>LISTED</Text></View>
+        <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{listedCount}</Text><Text style={styles.summaryLabel}>LISTED</Text></View>
         <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{routineProfile && analysis.result ? matchCount : '–'}</Text><Text style={styles.summaryLabel}>MATCH YOU</Text></View>
         <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{catalog.blocked.length + catalog.invalid.length}</Text><Text style={styles.summaryLabel}>HELD BACK</Text></View>
       </View>
@@ -120,16 +133,44 @@ export default function ProductsScreen() {
                 <Text style={styles.price}>{formatPrice(product.listPriceCents, product.currencyCode)}</Text>
                 <Text style={styles.meta}>{fictional ? 'Fictional price' : 'Approximate list price'}</Text>
               </View>
-              <Text style={styles.tags}>Helps with: {product.observationTags.map(describeTag).join(', ')}</Text>
+              <Text style={styles.tags}>Helps with: {product.observationTags.length ? product.observationTags.map(describeTag).join(', ') : 'no listed appearance goal'}</Text>
+              {product.whenToUse ? <Text style={styles.note}>When: {product.whenToUse}</Text> : null}
+              {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
               <Text style={styles.statusBody}>{statusBody(status)}</Text>
             </View>
           );
         })}
       </View>
 
+      {catalog.outsideRoutine.length ? (
+        <>
+          <Text style={styles.sectionTitle}>Also on the list</Text>
+          <Text style={styles.sectionBody}>Bundles, travel sizes, body care, devices, and supplements are listed for reference. Daily routines are built from single face-care products only.</Text>
+          <View style={styles.list}>
+            {catalog.outsideRoutine.map((entry) => (
+              <View key={entry.productId} style={styles.row}>
+                <View style={styles.rowHeading}>
+                  <Text style={styles.slot}>{kindLabels[entry.productKind].toUpperCase()}</Text>
+                  <Text style={styles.badge}>NOT IN ROUTINES</Text>
+                </View>
+                <Text style={styles.brand}>{entry.brand}</Text>
+                <Text style={styles.name}>{entry.productName}</Text>
+                <View style={styles.metaRow}>
+                  <Text style={styles.price}>{formatPrice(entry.approximatePriceCents, entry.currencyCode)}</Text>
+                  <Text style={styles.meta}>{entry.category}</Text>
+                </View>
+                {entry.sourceNotes?.findings ? <Text style={styles.tags}>Positioned for: {entry.sourceNotes.findings}</Text> : null}
+                {entry.sourceNotes?.caution ? <Text style={styles.caution}>Caution: {entry.sourceNotes.caution}</Text> : null}
+              </View>
+            ))}
+          </View>
+        </>
+      ) : null}
+
       {catalog.blocked.length ? (
         <View style={styles.heldBack}>
-          <Text style={styles.heldBackTitle}>Held back from the list</Text>
+          <Text style={styles.heldBackTitle}>Held back until verified</Text>
+          <Text style={styles.heldBackBody}>These products are on the list but need product-page verification before they can be offered.</Text>
           {catalog.blocked.map(({ entry, reasons }) => (
             <Text key={entry.productId} style={styles.heldBackRow}>{entry.brand} {entry.productName}: {reasons.join(', ').replaceAll('_', ' ')}</Text>
           ))}
@@ -172,6 +213,11 @@ const styles = StyleSheet.create({
   meta: { color: colors.muted, fontSize: 9 },
   tags: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 4, textTransform: 'capitalize' },
   statusBody: { color: colors.text, fontSize: 10, lineHeight: 14, marginTop: 4 },
+  note: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 3 },
+  caution: { color: colors.gold, fontSize: 9, lineHeight: 13, marginTop: 3 },
+  sectionTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 20, marginTop: 6 },
+  sectionBody: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: -8 },
+  heldBackBody: { color: colors.muted, fontSize: 11, lineHeight: 15, marginBottom: 4 },
   heldBack: { backgroundColor: `${colors.gold}12`, borderWidth: 1, borderColor: `${colors.gold}44`, borderRadius: radius.medium, padding: 14, gap: 4 },
   heldBackTitle: { color: colors.gold, fontSize: 12, fontWeight: '700' },
   heldBackRow: { color: colors.muted, fontSize: 11, lineHeight: 15 },

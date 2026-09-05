@@ -90,6 +90,8 @@ export interface BuiltRoutine {
   /** How many listed products were considered and how many were eligible. */
   consideredCount: number;
   eligibleCount: number;
+  /** True when an offered product has no verified price. */
+  pricesUnverified: boolean;
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -257,6 +259,9 @@ export function buildSyntheticRoutine(
     ? ['cleanse', 'hydrate']
     : ['cleanse', 'support', 'hydrate'];
   const amSlots: RoutineSlot[] = [...coreSlots, 'protect'];
+  // Occasional care (masks, exfoliation) is an evening-only option and is
+  // withheld entirely whenever the routine is conservative.
+  const pmSlots: RoutineSlot[] = holdTargetedSupport ? coreSlots : [...coreSlots, 'weekly'];
   const notes: string[] = ['Patch test one new product at a time and stop if irritation occurs.'];
 
   notes.push(`Budget applied: ${budgetPreferenceLabels[intake.budgetPreference]}. Price never increases a product's match score.`);
@@ -287,10 +292,11 @@ export function buildSyntheticRoutine(
   return {
     mode,
     am: amSlots.map((slot) => stepFor(slot, 'am')),
-    pm: coreSlots.map((slot) => stepFor(slot, 'pm')),
+    pm: pmSlots.map((slot) => stepFor(slot, 'pm')),
     notes,
     namedSamplesHidden,
     consideredCount: catalog.length,
     eligibleCount: ranked.length,
+    pricesUnverified: [...chosen.values()].some((entry) => entry.product.listPriceCents === null),
   };
 }

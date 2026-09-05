@@ -46,6 +46,8 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             {step.matchedTags.length ? (
               <Text style={styles.matchReason}>Matched on: {step.matchedTags.map(describeTag).join(', ')}</Text>
             ) : null}
+            {step.product.whenToUse ? <Text style={styles.productNote}>When: {step.product.whenToUse}</Text> : null}
+            {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
           </View>
         ) : (
           <View style={styles.categoryOnly}>
@@ -164,7 +166,9 @@ export default function RoutineScreen() {
       {fictional ? (
         <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and links appear only once a reviewed product list is loaded." />
       ) : (
-        <InfoCard title="Reviewed product list" body="Products come from the reviewed list. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen." tone="green" />
+        <InfoCard title="Reviewed product list" body={routine.pricesUnverified
+          ? 'Products come from the reviewed list. Their prices have not been verified yet, so no price is shown and your budget ceiling cannot be applied to them. Nothing commercial influences which product is chosen.'
+          : 'Products come from the reviewed list. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen.'} tone="green" />
       )}
       <PrimaryButton label="See progress" onPress={() => router.push('/compare')} />
       <SecondaryButton label="Change routine preferences" onPress={() => router.push('/routine-intake')} />
@@ -212,6 +216,8 @@ const styles = StyleSheet.create({
   productPrice: { color: colors.green, fontSize: 10, fontWeight: '800' },
   productName: { color: colors.text, fontSize: 11, fontWeight: '600', marginTop: 2 },
   matchReason: { color: colors.muted, fontSize: 9, marginTop: 4, textTransform: 'capitalize' },
+  productNote: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 4 },
+  productCaution: { color: colors.gold, fontSize: 9, lineHeight: 13, marginTop: 3 },
   categoryOnly: { marginTop: 9, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line },
   categoryOnlyTitle: { color: colors.green, fontSize: 9, fontWeight: '700' },
   categoryOnlyBody: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 3 },

@@ -20,11 +20,14 @@ import { assessConsumerVisibility, catalogEntrySchema, type CatalogEntry } from 
 
 export interface CatalogConversion {
   candidates: ProductCandidate[];
+  /** Visible entries with no routine slot (bundles, travel sizes, body, devices, supplements). */
+  outsideRoutine: CatalogEntry[];
   blocked: { entry: CatalogEntry; reasons: ReturnType<typeof assessConsumerVisibility> }[];
   invalid: { index: number; message: string }[];
 }
 
-export function toProductCandidate(entry: CatalogEntry): ProductCandidate {
+export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null {
+  if (entry.routineSlot === null) return null;
   const flags = new Set<ExclusionFlag>();
   if (entry.pregnancyNursingStatus !== 'reviewed_acceptable') {
     flags.add('pregnancy_exclude');
@@ -44,6 +47,9 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate {
     listPriceCents: entry.approximatePriceCents,
     currencyCode: entry.currencyCode,
     priceVerifiedAtIso: entry.priceVerifiedAtIso,
+    whenToUse: entry.sourceNotes?.whenToUse ?? null,
+    cautionNote: entry.sourceNotes?.caution ?? null,
+    category: entry.category,
     observationTags: entry.skinConcernTags,
     activeFamilies: deriveActiveFamilies(entry),
     ingredients: [...new Set([...entry.keyIngredients, ...entry.allergyCautions])],
@@ -82,7 +88,7 @@ export function deriveActiveFamilies(entry: Pick<CatalogEntry, 'keyIngredients'>
  * or partially trusted.
  */
 export function convertCatalogEntries(rows: readonly unknown[], nowIso: string): CatalogConversion {
-  const conversion: CatalogConversion = { candidates: [], blocked: [], invalid: [] };
+  const conversion: CatalogConversion = { candidates: [], outsideRoutine: [], blocked: [], invalid: [] };
 
   rows.forEach((row, index) => {
     const parsed = catalogEntrySchema.safeParse(row);
@@ -95,7 +101,9 @@ export function convertCatalogEntries(rows: readonly unknown[], nowIso: string):
       conversion.blocked.push({ entry: parsed.data, reasons });
       return;
     }
-    conversion.candidates.push(toProductCandidate(parsed.data));
+    const candidate = toProductCandidate(parsed.data);
+    if (candidate) conversion.candidates.push(candidate);
+    else conversion.outsideRoutine.push(parsed.data);
   });
 
   return conversion;

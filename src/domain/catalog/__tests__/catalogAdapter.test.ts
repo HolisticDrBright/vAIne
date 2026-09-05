@@ -37,6 +37,8 @@ function entry(overrides: Partial<CatalogEntry> = {}): CatalogEntry {
   });
 }
 
+const candidateOf = (item: CatalogEntry) => toProductCandidate(item)!;
+
 const profile: SafetyProfile = {
   pregnantOrTrying: false,
   nursing: false,
@@ -50,7 +52,7 @@ const profile: SafetyProfile = {
 
 describe('catalog adapter', () => {
   test('converts a reviewed entry into an eligible candidate without commercial fields', () => {
-    const candidate = toProductCandidate(entry());
+    const candidate = candidateOf(entry());
     expect(candidate).toMatchObject({
       id: 'prod-001',
       brandName: 'Example Brand',
@@ -64,7 +66,7 @@ describe('catalog adapter', () => {
   });
 
   test('maps unknown safety facts to cautious exclusions', () => {
-    const candidate = toProductCandidate(entry({
+    const candidate = candidateOf(entry({
       pregnancyNursingStatus: 'not_reviewed',
       sensitivityCaution: null,
       fragranceStatus: 'unknown',
@@ -78,7 +80,7 @@ describe('catalog adapter', () => {
   });
 
   test('lets a named allergen exclude a product through allergy cautions', () => {
-    const candidate = toProductCandidate(entry({ allergyCautions: ['Lanolin'] }));
+    const candidate = candidateOf(entry({ allergyCautions: ['Lanolin'] }));
     const result = evaluateProductEligibility(candidate, { ...profile, allergies: ['lanolin'] }, ['appearance.hydration_look_low']);
     expect(result.reasons).toContain('allergy_match');
   });
@@ -97,5 +99,23 @@ describe('catalog adapter', () => {
     expect(conversion.candidates.map((candidate) => candidate.id)).toEqual(['prod-001']);
     expect(conversion.blocked[0]).toMatchObject({ reasons: ['inactive'] });
     expect(conversion.invalid[0]?.index).toBe(2);
+  });
+});
+
+describe('catalog adapter: unpriced and non-routine entries', () => {
+  test('keeps an unpriced product visible and eligible without a budget claim', () => {
+    const candidate = candidateOf(entry({ approximatePriceCents: null, priceVerifiedAtIso: null }));
+    expect(candidate?.listPriceCents).toBeNull();
+    expect(convertCatalogEntries([entry({ approximatePriceCents: null, priceVerifiedAtIso: null })], NOW).candidates).toHaveLength(1);
+  });
+
+  test('a listed price without a verification date is rejected', () => {
+    expect(() => entry({ priceVerifiedAtIso: null })).toThrow();
+  });
+
+  test('routes slot-less products outside the routine instead of dropping them', () => {
+    const conversion = convertCatalogEntries([entry({ productId: 'bundle-1', productKind: 'bundle', routineSlot: null })], NOW);
+    expect(conversion.candidates).toHaveLength(0);
+    expect(conversion.outsideRoutine.map((item) => item.productId)).toEqual(['bundle-1']);
   });
 });

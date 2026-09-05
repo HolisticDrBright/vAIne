@@ -24,9 +24,14 @@ export interface ProductCandidate {
   catalogReviewState: CatalogReviewState;
   catalogSource: CatalogSource;
   routineSlot: RoutineSlot;
-  listPriceCents: number;
+  /** null = price not yet verified. Never assumed to fit a budget ceiling. */
+  listPriceCents: number | null;
   currencyCode: string;
-  priceVerifiedAtIso: string;
+  priceVerifiedAtIso: string | null;
+  /** Optional editorial context shown with the product; never ranked on. */
+  whenToUse?: string | null;
+  cautionNote?: string | null;
+  category?: string | null;
   observationTags: readonly SkinObservationTag[];
   activeFamilies: readonly string[];
   ingredients: readonly string[];
@@ -105,6 +110,13 @@ export function evaluateProductEligibility(
   return { eligible: reasons.length === 0, reasons: [...new Set(reasons)], matchedTags };
 }
 
+function comparePrice(left: number | null, right: number | null): number {
+  if (left === null && right === null) return 0;
+  if (left === null) return 1;
+  if (right === null) return -1;
+  return left - right;
+}
+
 export interface RankedEligibleProduct {
   product: ProductCandidate;
   eligibility: EligibilityResult;
@@ -113,7 +125,10 @@ export interface RankedEligibleProduct {
 
 /**
  * Ranks eligible products using reviewed match characteristics first. A user's
- * list-price ceiling is a hard filter, and lower price is only a tie-breaker.
+ * list-price ceiling is a hard filter for products with a verified price, and
+ * lower price is only a tie-breaker. A product with no verified price is not
+ * excluded by the ceiling (its price is unknown, not over) but ranks after an
+ * equally matched product whose price is known.
  * Commercial links, commission, discounts, and availability are absent.
  */
 export function rankEligibleProducts(
@@ -131,11 +146,11 @@ export function rankEligibleProducts(
     .filter((entry) => (
       entry.eligibility.eligible &&
       entry.eligibility.matchedTags.length > 0 &&
-      (maxPriceCents === null || entry.product.listPriceCents <= maxPriceCents)
+      (maxPriceCents === null || entry.product.listPriceCents === null || entry.product.listPriceCents <= maxPriceCents)
     ))
     .sort((a, b) => (
       b.rankScore - a.rankScore ||
-      a.product.listPriceCents - b.product.listPriceCents ||
+      comparePrice(a.product.listPriceCents, b.product.listPriceCents) ||
       a.product.productName.localeCompare(b.product.productName)
     ));
 }

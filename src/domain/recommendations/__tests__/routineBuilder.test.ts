@@ -22,7 +22,7 @@ describe('synthetic routine builder', () => {
 
     expect(routine.mode).toBe('standard');
     expect(routine.am.map((step) => step.slot)).toEqual(['cleanse', 'support', 'hydrate', 'protect']);
-    expect(routine.pm.map((step) => step.slot)).toEqual(['cleanse', 'support', 'hydrate']);
+    expect(routine.pm.map((step) => step.slot)).toEqual(['cleanse', 'support', 'hydrate', 'weekly']);
     expect(routine.am.find((step) => step.slot === 'protect')?.product?.listPriceCents).toBeLessThanOrEqual(5000);
   });
 
@@ -46,6 +46,7 @@ describe('synthetic routine builder', () => {
       expect(routine.mode).toBe('cautious');
       expect(routine.am.some((step) => step.slot === 'support')).toBe(false);
       expect(routine.pm.some((step) => step.slot === 'support')).toBe(false);
+      expect(routine.pm.some((step) => step.slot === 'weekly')).toBe(false);
     },
   );
 

@@ -10,8 +10,10 @@ import { SKIN_OBSERVATION_TAGS } from '../analysis/observationTaxonomy';
  *   products structurally cannot enter this catalog.
  * - Unknown compatibility data stays unknown (`'unknown'` / `null`) — it is
  *   never guessed, and preference filters treat unknown conservatively.
- * - Prices are approximate and time-limited: entries carry a verification
- *   timestamp and go invisible when it goes stale.
+ * - Prices are approximate and time-limited: a listed price carries a
+ *   verification timestamp and goes stale after 90 days. A product with no
+ *   verified price stays visible but is shown without one and is never
+ *   assumed to fit a budget ceiling.
  * - Affiliate URLs are never fabricated: they must be clean HTTPS with no
  *   template placeholders, and every affiliate link requires a non-affiliate
  *   fallback URL and disclosure.
@@ -33,6 +35,27 @@ const httpsUrlSchema = z
 
 const skinTypeSchema = z.enum(['dry', 'oily', 'combination', 'sensitive', 'balanced', 'unknown']);
 
+const isoDateSchema = z.string().refine((value) => Number.isFinite(Date.parse(value)), 'must be an ISO timestamp');
+
+/**
+ * Editorial context carried from the source product database. Displayed to
+ * the person as-is (usage timing, cautions); never used for ranking.
+ */
+export const catalogSourceNotesSchema = z.object({
+  sourceFile: z.string().min(1).nullable(),
+  sourceRow: z.number().int().positive().nullable(),
+  priority: z.number().int().positive().nullable(),
+  verificationLevel: z.string().nullable(),
+  findings: z.string().nullable(),
+  bestFor: z.string().nullable(),
+  whenToUse: z.string().nullable(),
+  caution: z.string().nullable(),
+  recommendationLogic: z.string().nullable(),
+  notes: z.string().nullable(),
+}).strict();
+
+export type CatalogProductKind = 'single' | 'bundle' | 'travel_size' | 'body' | 'device' | 'supplement';
+
 export const catalogEntrySchema = z
   .object({
     schemaVersion: z.literal(CATALOG_ENTRY_SCHEMA_VERSION),
@@ -40,7 +63,10 @@ export const catalogEntrySchema = z
     brand: z.string().min(1),
     productName: z.string().min(1),
     category: z.string().min(1),
-    routineSlot: z.enum(['cleanse', 'support', 'hydrate', 'protect', 'weekly']),
+    /** Single face-care products join daily routines; everything else is listed only. */
+    productKind: z.enum(['single', 'bundle', 'travel_size', 'body', 'device', 'supplement']).default('single'),
+    /** null = listed in the catalog but never placed in a routine step. */
+    routineSlot: z.enum(['cleanse', 'support', 'hydrate', 'protect', 'weekly']).nullable(),
     keyIngredients: z.array(z.string().min(1)).min(1),
     skinConcernTags: z.array(z.enum(SKIN_OBSERVATION_TAGS)),
     skinTypeCompatibility: z.array(skinTypeSchema).min(1),
@@ -51,9 +77,10 @@ export const catalogEntrySchema = z
     fragranceStatus: z.enum(['fragrance_free', 'contains_fragrance', 'unknown']),
     crueltyFreeStatus: z.enum(['verified', 'not_verified', 'unknown']),
     veganStatus: z.enum(['verified', 'not_verified', 'unknown']),
-    approximatePriceCents: z.number().int().positive(),
+    /** null = price not yet verified; the product is then shown without a price and never assumed to fit a budget ceiling. */
+    approximatePriceCents: z.number().int().positive().nullable(),
     currencyCode: z.string().length(3),
-    priceVerifiedAtIso: z.string().refine((value) => Number.isFinite(Date.parse(value))),
+    priceVerifiedAtIso: isoDateSchema.nullable(),
     affiliate: z
       .object({
         network: z.string().min(1),
@@ -65,11 +92,16 @@ export const catalogEntrySchema = z
     market: z.string().min(2),
     availabilityStatus: z.enum(['available', 'limited', 'discontinued', 'unknown']),
     source: z.enum(['reviewed_research', 'editorial']),
-    lastReviewedAtIso: z.string().refine((value) => Number.isFinite(Date.parse(value))),
+    lastReviewedAtIso: isoDateSchema,
     evidenceReviewStatus: z.enum(['approved', 'pending', 'rejected']),
     active: z.boolean(),
+    sourceNotes: catalogSourceNotesSchema.nullable().default(null),
   })
-  .strict();
+  .strict()
+  .refine((entry) => entry.approximatePriceCents === null || entry.priceVerifiedAtIso !== null, {
+    message: 'a listed price needs a verification timestamp',
+    path: ['priceVerifiedAtIso'],
+  });
 
 export type CatalogEntry = z.infer<typeof catalogEntrySchema>;
 
@@ -80,7 +112,8 @@ export type BudgetTier = 'affordable' | 'moderate' | 'premium' | 'luxury';
  * (Up to $25 / $50 / $100; "flexible" is a user range, not a product trait).
  * A higher tier is never treated as better.
  */
-export function deriveBudgetTier(approximatePriceCents: number): BudgetTier {
+export function deriveBudgetTier(approximatePriceCents: number | null): BudgetTier | null {
+  if (approximatePriceCents === null) return null;
   if (approximatePriceCents <= 2_500) return 'affordable';
   if (approximatePriceCents <= 5_000) return 'moderate';
   if (approximatePriceCents <= 10_000) return 'premium';
@@ -119,7 +152,8 @@ export function assessConsumerVisibility(entry: CatalogEntry, nowIso: string): V
   if (!Number.isFinite(now) || now - Date.parse(entry.lastReviewedAtIso) > MAX_REVIEW_AGE_DAYS * DAY_MS) {
     reasons.push('review_stale');
   }
-  if (!Number.isFinite(now) || now - Date.parse(entry.priceVerifiedAtIso) > MAX_PRICE_AGE_DAYS * DAY_MS) {
+  if (entry.approximatePriceCents !== null && entry.priceVerifiedAtIso !== null
+    && (!Number.isFinite(now) || now - Date.parse(entry.priceVerifiedAtIso) > MAX_PRICE_AGE_DAYS * DAY_MS)) {
     reasons.push('price_stale');
   }
   if (entry.affiliate && !entry.nonAffiliateFallbackUrl) {
