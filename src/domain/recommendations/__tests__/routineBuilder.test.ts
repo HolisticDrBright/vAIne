@@ -5,6 +5,7 @@ import {
   buildSyntheticRoutine,
   type RoutineSafetyIntake,
 } from '../routineBuilder';
+import type { ProductCandidate } from '../eligibility';
 
 const standardIntake: RoutineSafetyIntake = {
   sensitivityPreference: 'standard',
@@ -139,5 +140,62 @@ describe('routine builder product matching', () => {
     expect(hydrate?.matchedTags).toContain('appearance.hydration_look_low');
     expect(routine.consideredCount).toBe(approvedPrototypeCatalog.length);
     expect(routine.eligibleCount).toBeGreaterThan(0);
+  });
+});
+
+describe('routine builder protocol scheduling', () => {
+  const candidate = (
+    id: string,
+    productName: string,
+    ingredients: readonly string[],
+    routineSlot: ProductCandidate['routineSlot'] = 'support',
+  ): ProductCandidate => ({
+    id,
+    brandName: 'Protocol Test',
+    productName,
+    verificationStatus: 'official',
+    catalogReviewState: 'catalog_approved',
+    catalogSource: 'reviewed_research',
+    routineSlot,
+    listPriceCents: 10_000,
+    currencyCode: 'USD',
+    priceVerifiedAtIso: '2026-09-01T00:00:00.000Z',
+    observationTags: ['appearance.texture_irregular'],
+    activeFamilies: ingredients.some((item) => /retinal/i.test(item)) ? ['retinoid'] : [],
+    ingredients,
+    exclusionFlags: [],
+  });
+
+  test('can select different support products for morning and evening', () => {
+    const vitaminC = candidate('medik8-c-tetra-vitamin-c-serum', 'C-Tetra Vitamin C Serum', ['vitamin C']);
+    const retinal = candidate('medik8-crystal-retinal-3', 'Crystal Retinal 3', ['retinal']);
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'no_limit' },
+      [vitaminC, retinal],
+    );
+
+    expect(routine.am.find((step) => step.slot === 'support')?.product?.id).toBe(vitaminC.id);
+    expect(routine.pm.find((step) => step.slot === 'support')?.product?.id).toBe(retinal.id);
+  });
+
+  test('places exfoliation on a separate evening when the PM support is a retinoid', () => {
+    const retinal = candidate('medik8-crystal-retinal-3', 'Crystal Retinal 3', ['retinal']);
+    const exfoliant = candidate(
+      'naturium-bha-liquid-exfoliant-2-pct',
+      'BHA Liquid Exfoliant 2%',
+      ['salicylic acid'],
+      'weekly',
+    );
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'no_limit' },
+      [retinal, exfoliant],
+    );
+
+    const weekly = routine.pm.find((step) => step.slot === 'weekly');
+    expect(weekly?.title).toBe('Optional separate treatment night');
+    expect(weekly?.instruction).toMatch(/different evening/i);
+    expect(routine.notes.join(' ')).toMatch(/separate evening/i);
   });
 });

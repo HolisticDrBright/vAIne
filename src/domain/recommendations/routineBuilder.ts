@@ -1,5 +1,6 @@
 import type { SkinAnalysis } from '../analysis/skinAnalysisSchema';
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
+import { protocolSupportsPeriod } from '../../data/productUseProtocols';
 import {
   evaluateProductEligibility,
   rankEligibleProducts,
@@ -248,11 +249,14 @@ export function buildSyntheticRoutine(
   const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
   const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
   const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
-  const chosen = new Map<RoutineSlot, (typeof ranked)[number]>();
+  const chosen = new Map<string, (typeof ranked)[number]>();
 
   if (!namedSamplesHidden) {
-    for (const entry of ranked) {
-      if (!chosen.has(entry.product.routineSlot)) chosen.set(entry.product.routineSlot, entry);
+    for (const period of ['am', 'pm'] as const) {
+      for (const entry of ranked) {
+        const key = `${period}-${entry.product.routineSlot}`;
+        if (!chosen.has(key) && protocolSupportsPeriod(entry.product, period)) chosen.set(key, entry);
+      }
     }
   }
 
@@ -284,7 +288,7 @@ export function buildSyntheticRoutine(
   }
 
   const stepFor = (slot: RoutineSlot, period: RoutinePeriod): BuiltRoutineStep => {
-    const pick = chosen.get(slot);
+    const pick = chosen.get(`${period}-${slot}`);
     if (pick) return makeStep(slot, period, pick.product, pick.eligibility.matchedTags, null);
     const reason: NoProductReason = namedSamplesHidden
       ? 'hidden_for_review'
@@ -292,10 +296,27 @@ export function buildSyntheticRoutine(
     return makeStep(slot, period, null, [], reason);
   };
 
+  const am = amSlots.map((slot) => stepFor(slot, 'am'));
+  let pm = pmSlots.map((slot) => stepFor(slot, 'pm'));
+  const pmSupport = pm.find((step) => step.slot === 'support')?.product;
+  const needsSeparateTreatmentNight = pmSupport?.activeFamilies.some((family) => (
+    family === 'retinoid' || family === 'exfoliating-acid'
+  )) ?? false;
+  if (needsSeparateTreatmentNight) {
+    pm = pm.map((step) => step.slot === 'weekly'
+      ? {
+        ...step,
+        title: 'Optional separate treatment night',
+        instruction: 'Use this on a different evening from the targeted support step; do not stack a retinoid with an exfoliating acid.',
+      }
+      : step);
+    notes.push('The optional weekly treatment belongs on a separate evening from the selected retinoid or exfoliating support step.');
+  }
+
   return {
     mode,
-    am: amSlots.map((slot) => stepFor(slot, 'am')),
-    pm: pmSlots.map((slot) => stepFor(slot, 'pm')),
+    am,
+    pm,
     notes,
     namedSamplesHidden,
     consideredCount: catalog.length,

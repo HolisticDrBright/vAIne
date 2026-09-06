@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
+import { ProductProtocolDetails } from '@/components/ProductProtocolDetails';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import type { SkinObservationTag } from '@/domain/analysis/observationTaxonomy';
@@ -187,10 +188,10 @@ export default function ProductsScreen() {
                 {ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100
               </Text>
               {evidence.matchedSignals.length ? <Text style={styles.note}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not a finished-product clinical trial.</Text> : null}
-              {product.whenToUse ? <Text style={styles.note}>When: {product.whenToUse}</Text> : null}
               {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
               {product.note ? <Text style={styles.note}>Note: {product.note}</Text> : null}
               <Text style={styles.statusBody}>{statusBody(status)}</Text>
+              {!fictional ? <ProductProtocolDetails product={product} /> : null}
               <ProductPurchaseLink productId={product.id} productName={product.productName} />
             </View>
           );
@@ -225,6 +226,14 @@ export default function ProductsScreen() {
                 {entry.sourceNotes?.findings ? <Text style={styles.tags}>Positioned for: {entry.sourceNotes.findings}</Text> : null}
                 <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100 · not ranked into a daily routine</Text>
                 {entry.sourceNotes?.caution ? <Text style={styles.caution}>Caution: {entry.sourceNotes.caution}</Text> : null}
+                <ProductProtocolDetails product={{
+                  id: entry.productId,
+                  brandName: entry.brand,
+                  productName: entry.productName,
+                  routineSlot: entry.routineSlot,
+                  whenToUse: entry.sourceNotes?.whenToUse,
+                  category: entry.category,
+                }} />
                 <ProductPurchaseLink productId={entry.productId} productName={entry.productName} />
               </View>
               );

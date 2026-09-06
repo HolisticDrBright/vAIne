@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
+import { ProductProtocolDetails } from '@/components/ProductProtocolDetails';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
@@ -60,9 +61,9 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             {evidence && !fictional && evidence.matchedSignals.length ? (
               <Text style={styles.productNote}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not proof of this finished product.</Text>
             ) : null}
-            {step.product.whenToUse ? <Text style={styles.productNote}>When: {step.product.whenToUse}</Text> : null}
             {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
             {step.product.note ? <Text style={styles.productNote}>Note: {step.product.note}</Text> : null}
+            {!fictional ? <ProductProtocolDetails product={step.product} /> : null}
             <ProductPurchaseLink productId={step.product.id} productName={step.product.productName} />
           </View>
         ) : (
