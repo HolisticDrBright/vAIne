@@ -1,6 +1,6 @@
 import generatedEntries from './consumerCatalog.generated.json';
 import { applyBetaCatalogTestingOverride, betaCatalogTestingEnabled } from './betaCatalogTesting';
-import { commercialCatalogOverrides } from './commercialLinks';
+import { commercialBrandOverrides, commercialCatalogOverrides } from './commercialLinks';
 
 /**
  * The reviewed consumer product list.
@@ -19,7 +19,9 @@ import { commercialCatalogOverrides } from './commercialLinks';
  * docs/consumer-catalog.md for the format and the import workflow.
  */
 export const consumerCatalogEntries: readonly unknown[] = generatedEntries.map((entry) => {
+  const brandOverride = commercialBrandOverrides[entry.brand];
   const override = commercialCatalogOverrides[entry.productId];
-  const withCommercialLink = override ? { ...entry, ...override } : entry;
+  const withBrandCommercialLink = brandOverride ? { ...entry, ...brandOverride } : entry;
+  const withCommercialLink = override ? { ...withBrandCommercialLink, ...override } : withBrandCommercialLink;
   return betaCatalogTestingEnabled ? applyBetaCatalogTestingOverride(withCommercialLink) : withCommercialLink;
 });
