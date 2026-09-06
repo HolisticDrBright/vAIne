@@ -1,7 +1,7 @@
 import type { CatalogEntry } from '../domain/catalog/catalogEntry';
 
 type CommercialCatalogOverride = Pick<CatalogEntry, 'affiliate' | 'nonAffiliateFallbackUrl'>;
-type CommercialBrandOverride = Pick<CatalogEntry, 'affiliate'>;
+type CommercialBrandOverride = Partial<Pick<CatalogEntry, 'affiliate' | 'nonAffiliateFallbackUrl'>>;
 
 /**
  * Owner-provided commercial links live outside the research-generated catalog.
@@ -30,5 +30,13 @@ export const commercialBrandOverrides: Readonly<Record<string, CommercialBrandOv
       url: 'https://alituranaturals.pxf.io/55ZjBD',
       disclosureText: 'Affiliate link — use code DRBRIGHT for 20% off. vAIne may earn a commission if you buy through this link.',
     },
+  },
+  'Sky and Sol': {
+    affiliate: {
+      network: 'Sky and Sol affiliate program',
+      url: 'https://skyandsol.co/pages/shop?lc_ambassador_id=Y3VzdG9tZXI6NjUyMjI0OQ',
+      disclosureText: 'Affiliate link — use code BRANDON at checkout. vAIne may earn a commission if you buy through this link.',
+    },
+    nonAffiliateFallbackUrl: 'https://skyandsol.co/pages/shop',
   },
 };
