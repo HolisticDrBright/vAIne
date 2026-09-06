@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
+import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
@@ -141,6 +142,7 @@ export default function ProductsScreen() {
               {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
               {product.note ? <Text style={styles.note}>Note: {product.note}</Text> : null}
               <Text style={styles.statusBody}>{statusBody(status)}</Text>
+              <ProductPurchaseLink productId={product.id} productName={product.productName} />
             </View>
           );
         })}
@@ -165,6 +167,7 @@ export default function ProductsScreen() {
                 </View>
                 {entry.sourceNotes?.findings ? <Text style={styles.tags}>Positioned for: {entry.sourceNotes.findings}</Text> : null}
                 {entry.sourceNotes?.caution ? <Text style={styles.caution}>Caution: {entry.sourceNotes.caution}</Text> : null}
+                <ProductPurchaseLink productId={entry.productId} productName={entry.productName} />
               </View>
             ))}
           </View>

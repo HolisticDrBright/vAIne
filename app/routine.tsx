@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
+import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import {
@@ -54,6 +55,7 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             {step.product.whenToUse ? <Text style={styles.productNote}>When: {step.product.whenToUse}</Text> : null}
             {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
             {step.product.note ? <Text style={styles.productNote}>Note: {step.product.note}</Text> : null}
+            <ProductPurchaseLink productId={step.product.id} productName={step.product.productName} />
           </View>
         ) : (
           <View style={styles.categoryOnly}>

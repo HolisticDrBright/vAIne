@@ -4,6 +4,7 @@ import { BotanicalAccent } from '@/components/BotanicalAccent';
 import { LegalNote, Screen } from '@/components/AppChrome';
 import { futureModules } from '@/data/prototype';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
+import { useAnalysisRuntime } from '@/state/AnalysisRuntime';
 import { useAuth } from '@/state/AuthContext';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -31,6 +32,7 @@ export default function ScanSelectionScreen() {
   const { analysis } = useAnalysisSession();
   const { routineProfile } = useRoutineProfile();
   const { auth } = useAuth();
+  const { route: analysisRoute, demoReason } = useAnalysisRuntime();
   const remembered = status === 'ready' && (profile.lastCheckIn !== null || routineProfile !== null);
   const lastCheckIn = profile.lastCheckIn;
   const canOpenResults = analysis.status === 'ready' && analysis.result !== null;
@@ -76,10 +78,18 @@ export default function ScanSelectionScreen() {
             />
           </View>
         </View>
-        <Pressable accessibilityRole="button" style={({ pressed }) => [styles.startCard, pressed && styles.pressed]} onPress={() => router.push('/consent')}>
+        <Pressable
+          accessibilityRole="button"
+          style={({ pressed }) => [styles.startCard, pressed && styles.pressed]}
+          onPress={() => router.push(demoReason === 'signed_out' ? '/account' : '/consent')}
+        >
           <View>
             <Text style={styles.startTitle}>Skin</Text>
-            <Text style={styles.startSubtitle}>{remembered ? 'New check-in' : 'Start analysis'}</Text>
+            <Text style={styles.startSubtitle}>{demoReason === 'signed_out'
+              ? 'Sign in for live analysis'
+              : analysisRoute === 'live'
+                ? 'Start live analysis'
+                : remembered ? 'New sample check-in' : 'Try sample check-in'}</Text>
           </View>
           <View style={styles.arrowCircle}><Text style={styles.arrow}>→</Text></View>
         </Pressable>
