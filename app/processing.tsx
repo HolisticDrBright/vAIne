@@ -57,7 +57,7 @@ export default function ProcessingScreen() {
         <Text style={styles.subtitle}>
           {isDemo
             ? 'This milestone validates and presents fictional demonstration data. It does not inspect, transmit, or analyze your photos.'
-            : 'Your photos are being reviewed for visible appearance characteristics only. They are held in memory for this one request and are not stored by vAIne.'}
+            : 'Your live skin appearance analysis is running now.'}
         </Text>
       </View>
 
@@ -83,8 +83,8 @@ export default function ProcessingScreen() {
         />
       ) : (
         <InfoCard
-          title={`${session.captures.length} photo${session.captures.length === 1 ? '' : 's'} sent once`}
-          body="No synthetic result is ever substituted: if the analysis fails you will see the failure, not a sample."
+          title="Real analysis in progress"
+          body="If the photos cannot support a confident result, vAIne will ask you to retake them instead of showing a sample."
           tone="green"
         />
       )}

@@ -69,7 +69,7 @@ export default function ZonesScreen() {
 
       <View style={styles.summary}>
         <View style={styles.summaryCopy}>
-          <Text style={styles.summaryEyebrow}>{frontPhoto ? 'FICTIONAL SAMPLE · NOT CALCULATED FROM PHOTO' : presentation.focus.toUpperCase()}</Text>
+          <Text style={styles.summaryEyebrow}>{live ? 'ANALYZED APPEARANCE' : frontPhoto ? 'FICTIONAL SAMPLE · NOT CALCULATED FROM PHOTO' : presentation.focus.toUpperCase()}</Text>
           <Text style={styles.title}>{presentation.label}</Text>
           <Text style={styles.body}>{observation?.observation ?? (live ? 'No observation was recorded for this zone.' : 'No sample observation is available for this zone.')}</Text>
           <Text style={styles.confidence}>Presentation confidence {Math.round((observation?.confidence ?? 0) * 100)}%</Text>
@@ -78,7 +78,7 @@ export default function ZonesScreen() {
       </View>
 
       <InfoCard
-        title={frontPhoto ? 'Your photo, demonstration observations' : 'How to read this'}
+        title={live ? 'Your analyzed zone' : frontPhoto ? 'Your photo, demonstration observations' : 'How to read this'}
         body={frontPhoto
           ? alignedZones
             ? live

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
+import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import {
   buildSyntheticRoutine,
   budgetPreferenceLabels,
@@ -172,8 +173,12 @@ export default function RoutineScreen() {
         <InfoCard title="Prototype catalog" body="Every named item and displayed price is fictional. Real products, current prices, and links appear only once a reviewed product list is loaded." />
       ) : (
         <InfoCard title="Reviewed product list" body={routine.pricesUnverified
-          ? 'Products come from your product list. Items marked research preview have an official product page but have not completed catalog approval. Prices have not been verified yet, so no price is shown and your budget ceiling cannot be applied to them. Nothing commercial influences which product is chosen.'
-          : 'Products come from your product list. Items marked research preview have an official product page but have not completed catalog approval. Prices are approximate list prices at the time of review and can change. Nothing commercial influences which product is chosen.'} tone="green" />
+          ? betaCatalogTestingEnabled
+            ? 'This TestFlight beta uses research-preview products from your list. Prices that have not been verified are omitted, and commercial links never influence matching.'
+            : 'Products come from your reviewed list. Prices that have not been verified are omitted, and commercial links never influence matching.'
+          : betaCatalogTestingEnabled
+            ? 'This TestFlight beta uses research-preview products from your list. Prices are approximate and can change; safety answers and appearance-goal fit are applied before price, and commercial links never influence matching.'
+            : 'Products come from your reviewed list. Prices are approximate and can change; safety answers and appearance-goal fit are applied before price, and commercial links never influence matching.'} tone="green" />
       )}
       <PrimaryButton label="See progress" onPress={() => router.push('/compare')} />
       <SecondaryButton label="Change routine preferences" onPress={() => router.push('/routine-intake')} />

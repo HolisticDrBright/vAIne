@@ -7758,5 +7758,66 @@
       "pregnancyProvisional": null,
       "fillPriority": null
     }
+  },
+  {
+    "schemaVersion": "catalog_entry_v1",
+    "productId": "healthgevity-facegevity",
+    "brand": "Healthgevity",
+    "productName": "FACEgevity™",
+    "category": "Peptide cream / longevity",
+    "productKind": "single",
+    "routineSlot": "support",
+    "keyIngredients": [
+      "GHK-Cu (3%)",
+      "PeptiYouth® (S-Pea Oligopeptide-1 SP)",
+      "Acetyl Hexapeptide-8",
+      "Pentapeptide-18",
+      "BPC-ARG",
+      "Hyaluronic Acid"
+    ],
+    "skinConcernTags": [
+      "appearance.hydration_look_low",
+      "appearance.texture_irregular",
+      "appearance.fine_lines_visible"
+    ],
+    "skinTypeCompatibility": [
+      "unknown"
+    ],
+    "sensitivityCaution": true,
+    "pregnancyNursingStatus": "not_reviewed",
+    "allergyCautions": [
+      "Pea protein-derived peptide disclosed",
+      "complete allergen and INCI review pending"
+    ],
+    "fragranceStatus": "contains_fragrance",
+    "crueltyFreeStatus": "unknown",
+    "veganStatus": "unknown",
+    "approximatePriceCents": 14999,
+    "currencyCode": "USD",
+    "priceVerifiedAtIso": "2026-09-06T00:00:00Z",
+    "affiliate": null,
+    "nonAffiliateFallbackUrl": "https://healthgev.com/products/facegevity",
+    "market": "US",
+    "availabilityStatus": "available",
+    "source": "reviewed_research",
+    "lastReviewedAtIso": "2026-09-06T00:00:00Z",
+    "evidenceReviewStatus": "rejected",
+    "catalogState": "blocked",
+    "blocker": "BLOCKER: Complete printed INCI, net contents, directions and warnings, fragrance status, allergen review, pregnancy/nursing review, and physical-label verification are required before catalog approval.",
+    "active": true,
+    "sourceNotes": {
+      "sourceFile": "Longevity_Skincare_AI_Product_Database_v2_fill_template.xlsx",
+      "sourceRow": 83,
+      "priority": 1,
+      "verificationLevel": "Official product page",
+      "findings": "Fine lines, texture irregularity, hydration, firmness appearance",
+      "bestFor": "Unknown — not published or reviewed",
+      "whenToUse": "AM/PM; after water-based serums and before moisturizer; before SPF in the morning",
+      "caution": "Patch test. Full INCI, fragrance status, allergens, and sensitivity compatibility are not yet published or reviewed.",
+      "recommendationLogic": "Research-stage candidate for hydration and visible fine-line or texture goals. Do not recommend until safety review is complete.",
+      "notes": "Manufacturer claims only. Efficacy, full INCI, net contents, fragrance, pregnancy/nursing, and sensitivity review are pending.",
+      "pregnancyProvisional": "Not reviewed",
+      "fillPriority": "7"
+    }
   }
 ]

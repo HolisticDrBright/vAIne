@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
+import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
 import { evaluateProductEligibility, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
 import {
@@ -105,7 +106,9 @@ export default function ProductsScreen() {
       <Text style={styles.subtitle}>
         {fictional
           ? 'The reviewed product list is empty, so routines use these clearly labeled fictional samples. Once reviewed products are loaded, they replace the samples automatically.'
-          : 'Products below come from your product list. Research preview items have an official product page but have not completed catalog approval yet. Routines pick from this list only; nothing commercial affects the order.'}
+          : betaCatalogTestingEnabled
+            ? 'This TestFlight beta enables sufficiently identified topical products as research previews so you can test matching and budget choices. Hard safety blockers, unverified sunscreens, devices, supplements, and missing products remain outside personalized routines.'
+            : 'Products below come from your reviewed product list. Routines pick from this list only; nothing commercial affects the order.'}
       </Text>
 
       <View style={styles.summary}>

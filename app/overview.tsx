@@ -63,7 +63,7 @@ export default function OverviewScreen() {
         <Text style={styles.prototypeNoticeBody}>{live
           ? remembered
             ? 'This is the visible-appearance analysis from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
-            : 'This report describes visible appearance in your photos. It is not a diagnosis, and the photos were deleted from the analysis service as soon as it finished.'
+            : 'This report was generated from this check-in’s photos and describes visible skin appearance, not a diagnosis.'
           : remembered
             ? 'This is the fictional sample report from your last check-in, saved on this device without any photo. Start a new check-in to refresh it.'
             : 'The report below is fictional sample content. It was not produced from your photos, and no image was uploaded or analyzed.'}</Text>

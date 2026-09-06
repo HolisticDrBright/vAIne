@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { consumerCatalogEntries } from '../consumerCatalog';
+import generatedEntries from '../consumerCatalog.generated.json';
+import { applyBetaCatalogTestingOverride } from '../betaCatalogTesting';
 import { approvedPrototypeCatalog } from '../prototypeCatalog';
 import { syntheticSkinAnalysis } from '../syntheticAnalysis';
 import { catalogEntrySchema } from '../../domain/catalog/catalogEntry';
@@ -22,7 +24,60 @@ describe('imported Longevity Skincare product database', () => {
   test('every imported row satisfies the catalog schema and carries no commercial terms', () => {
     expect(consumerCatalogEntries.length).toBeGreaterThanOrEqual(81);
     for (const row of consumerCatalogEntries) expect(() => catalogEntrySchema.parse(row)).not.toThrow();
-    expect(JSON.stringify(consumerCatalogEntries)).not.toMatch(/commission|affiliate potential|my code|BRANDON|cookie/i);
+    expect(JSON.stringify(generatedEntries)).not.toMatch(/commission|affiliate potential|my code|BRANDON|cookie/i);
+  });
+
+  test('stages FACEgevity with its owner-provided affiliate link without making it recommendable', () => {
+    const facegevity = consumerCatalogEntries
+      .map((row) => catalogEntrySchema.parse(row))
+      .find((entry) => entry.productId === 'healthgevity-facegevity');
+
+    expect(facegevity).toMatchObject({
+      brand: 'Healthgevity',
+      productName: 'FACEgevity™',
+      approximatePriceCents: 14_999,
+      catalogState: 'blocked',
+      evidenceReviewStatus: 'rejected',
+      nonAffiliateFallbackUrl: 'https://healthgev.com/products/facegevity',
+      affiliate: {
+        network: 'Refersion',
+        url: 'https://healthgev.com/products/facegevity?rfsn=7188917.246a77',
+      },
+    });
+
+    const resolved = resolveRoutineCatalog(consumerCatalogEntries, approvedPrototypeCatalog, NOW);
+    expect(resolved.blocked.some(({ entry }) => entry.productId === 'healthgevity-facegevity')).toBe(true);
+    expect(resolved.products.some((product) => product.id === 'healthgevity-facegevity')).toBe(false);
+  });
+
+  test('enables sufficiently identified topicals as research previews only in beta catalog mode', () => {
+    const sourceFacegevity = consumerCatalogEntries
+      .map((row) => catalogEntrySchema.parse(row))
+      .find((entry) => entry.productId === 'healthgevity-facegevity');
+    expect(sourceFacegevity).toBeDefined();
+
+    const betaFacegevity = catalogEntrySchema.parse(applyBetaCatalogTestingOverride(sourceFacegevity));
+    expect(betaFacegevity).toMatchObject({
+      catalogState: 'research_only',
+      evidenceReviewStatus: 'approved',
+      blocker: null,
+    });
+    expect(betaFacegevity.sourceNotes?.notes).toMatch(/Beta-only research preview/);
+
+    const betaResolved = resolveRoutineCatalog([betaFacegevity], approvedPrototypeCatalog, NOW);
+    expect(betaResolved.products.map((product) => product.id)).toContain('healthgevity-facegevity');
+
+    const blockedSunscreen = catalogEntrySchema.parse(generatedEntries.find((entry) => entry.productId === 'young-goose-bio-shield-spf-40'));
+    expect(applyBetaCatalogTestingOverride(blockedSunscreen)).toEqual(blockedSunscreen);
+
+    const unreviewedSunscreen = catalogEntrySchema.parse(generatedEntries.find((entry) => entry.productId === 'oneskin-os-01-shield-spf-30'));
+    expect(applyBetaCatalogTestingOverride(unreviewedSunscreen)).toEqual(unreviewedSunscreen);
+
+    const betaEntries = generatedEntries.map((entry) => applyBetaCatalogTestingOverride(entry));
+    const betaCatalog = resolveRoutineCatalog(betaEntries, approvedPrototypeCatalog, NOW);
+    expect(betaCatalog.products.length).toBeGreaterThan(70);
+    expect(betaCatalog.products.every((product) => product.routineSlot !== 'protect')).toBe(true);
+    expect(betaCatalog.products.some((product) => product.id === 'young-goose-vampire-exosomes')).toBe(false);
   });
 
   test('the reviewed list replaces the fictional samples', () => {

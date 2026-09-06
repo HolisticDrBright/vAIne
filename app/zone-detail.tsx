@@ -23,6 +23,7 @@ export default function ZoneDetailScreen() {
   const zone = resolveZone(params.zone);
   const presentation = zonePresentation[zone];
   const observation = analysis.result?.facialZones[zone];
+  const live = analysis.record?.mode === 'live';
   const frontPhoto = session.captures.find((capture) => capture.angle === 'front');
   const alignment = useMemo(() => summarizeCaptureAlignment(frontPhoto).alignment, [frontPhoto]);
   const zoneRect = alignment.mode === 'landmarks' ? alignment.zones[zone] : null;
@@ -57,10 +58,14 @@ export default function ZoneDetailScreen() {
 
       {frontPhoto ? (
         <InfoCard
-          title="Photo crop only"
-          body={zoneRect
-            ? 'This crop pans and zooms your original photo using on-device face landmarks. No skin analysis occurred, nothing identifies you, and no upload happened.'
-            : 'This crop uses a fixed position calibrated to the capture guide—face alignment was not available for this photo. No photo analysis or upload occurred.'}
+          title={live ? 'Your analyzed area' : 'Photo crop only'}
+          body={live
+            ? zoneRect
+              ? 'This crop uses on-device face landmarks to show the same facial area described by the live analysis.'
+              : 'This crop uses the fixed capture guide because face alignment was unavailable; the observation below still comes from the live analysis.'
+            : zoneRect
+              ? 'This crop pans and zooms your original photo using on-device face landmarks. The observation below remains sample content.'
+              : 'This crop uses a fixed position calibrated to the capture guide. The observation below remains sample content.'}
           tone="green"
         />
       ) : null}
@@ -68,7 +73,7 @@ export default function ZoneDetailScreen() {
       <View style={styles.scoreCard}>
         <ScoreRing score={observation.appearanceScore} compact />
         <View style={styles.scoreCopy}>
-          <Text style={styles.cardEyebrow}>{frontPhoto ? 'FICTIONAL SAMPLE INDEX · NOT FROM PHOTO' : 'ZONE APPEARANCE INDEX'}</Text>
+          <Text style={styles.cardEyebrow}>{live ? 'ANALYZED ZONE INDEX' : frontPhoto ? 'FICTIONAL SAMPLE INDEX · NOT FROM PHOTO' : 'ZONE APPEARANCE INDEX'}</Text>
           <Text style={styles.title}>{presentation.label}</Text>
           <Text style={styles.body}>{observation.observation}</Text>
         </View>
@@ -84,7 +89,13 @@ export default function ZoneDetailScreen() {
         ))}
       </View>
 
-      <InfoCard title="Close-up, same boundary" body="The photo stays local. Demonstration text does not reveal health status or establish a diagnosis." tone="lilac" />
+      <InfoCard
+        title="Close-up, same boundary"
+        body={live
+          ? 'This view describes visible appearance only and does not establish a medical diagnosis.'
+          : 'The demonstration text does not reveal health status or establish a diagnosis.'}
+        tone="lilac"
+      />
       <PrimaryButton label="Build today’s routine" onPress={() => router.push('/routine-intake')} />
       <SecondaryButton label="Choose another zone" onPress={() => router.back()} />
       <LegalNote />

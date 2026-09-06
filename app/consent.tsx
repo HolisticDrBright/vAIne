@@ -43,7 +43,6 @@ function ConsentRow({ title, body, selected, onPress, required = false, unavaila
 
 export default function ConsentScreen() {
   const [analysis, setAnalysis] = useState(false);
-  const [temporaryStorage, setTemporaryStorage] = useState(false);
   const [progressTracking, setProgressTracking] = useState(false);
   const [starting, setStarting] = useState(false);
   const { resetAnalysis } = useAnalysisSession();
@@ -51,7 +50,7 @@ export default function ConsentScreen() {
   const { profile, status: profileStatus, updateProfile } = useLocalProfile();
   const { route, demoReason } = useAnalysisRuntime();
   const live = route === 'live';
-  const canContinue = analysis && temporaryStorage && !starting;
+  const canContinue = analysis && !starting;
 
   // Only the optional progress choice is remembered as a default. The two
   // required choices are re-confirmed for every check-in.
@@ -68,7 +67,7 @@ export default function ConsentScreen() {
     void updateProfile((current, nowIso) => withConsentDefaults(current, { progressTracking }, nowIso));
     await startSession({
       analysis,
-      temporaryDeviceStorage: temporaryStorage,
+      temporaryDeviceStorage: true,
       progressTracking,
       researchUse: false,
     });
@@ -80,25 +79,18 @@ export default function ConsentScreen() {
       <Text style={styles.eyebrow}>YOUR IMAGE, YOUR CHOICE</Text>
       <Text style={styles.title}>Choose what happens to your photos</Text>
       <Text style={styles.subtitle}>{live
-        ? 'Camera access is requested only after these choices. Because you are signed in, this check-in sends your photos once to vAIne’s analysis service for a real visible-appearance analysis.'
-        : 'Camera access is requested only after these choices. This check-in does not upload a photo or send it to an AI service; the result shown is a labelled sample.'}</Text>
+        ? 'Confirm once, then take three guided photos for your live skin appearance analysis.'
+        : 'Confirm once, then take three guided photos to try the check-in flow with a labelled sample result.'}</Text>
 
       <View style={styles.list}>
         <ConsentRow
           title={live ? 'Analyze these photos' : 'Use photos in this check-in'}
           body={live
-            ? 'Sends your three photos, over an encrypted connection, to vAIne’s analysis service, which passes them once to an AI vision provider for visible-appearance observations only. The photos are held in memory during that single request and are not stored by vAIne; only the photo-free result (scores and observations) is kept in your account. On-device face detection still aligns the facial-zone views.'
-            : 'Allows vAIne to hold the captures in memory while you move between local app screens, and to run on-device face detection that only aligns the facial-zone views. It does not identify you, and nothing is uploaded.'}
+            ? 'I agree to send these photos securely for this analysis. vAIne stores the result, not the submitted photos.'
+            : 'I agree to use these photos in the local test flow. They are not sent for AI analysis.'}
           selected={analysis}
           required
           onPress={() => setAnalysis((value) => !value)}
-        />
-        <ConsentRow
-          title="Temporary device storage"
-          body="The camera writes each photo to the app cache. You can delete the complete session at any time."
-          selected={temporaryStorage}
-          required
-          onPress={() => setTemporaryStorage((value) => !value)}
         />
         <ConsentRow
           title="Progress tracking"
@@ -106,17 +98,9 @@ export default function ConsentScreen() {
           selected={progressTracking}
           onPress={() => setProgressTracking((value) => !value)}
         />
-        <ConsentRow
-          title="Research use"
-          body="Unavailable in this beta. A future research choice would be separate and off by default."
-          selected={false}
-          unavailable
-        />
       </View>
 
-      {live ? (
-        <InfoCard title="Live analysis" body="The analysis describes visible appearance only: it is not a diagnosis and does not identify you. Photos stay in temporary device cache afterwards unless you separately save a progress baseline. Your routine answers from earlier check-ins stay saved on this device." tone="gold" />
-      ) : (
+      {!live ? (
         <InfoCard
           title={demoReason === 'signed_out' ? 'Sign in for a live analysis' : 'Sample check-in'}
           body={demoReason === 'signed_out'
@@ -126,7 +110,7 @@ export default function ConsentScreen() {
               : 'This build runs fully on the device: the check-in shows the labelled sample result and uploads nothing.'}
           tone="green"
         />
-      )}
+      ) : null}
       <PrimaryButton label={starting ? 'Preparing camera…' : 'Continue to camera'} onPress={beginCapture} disabled={!canContinue} />
       <LegalNote />
     </Screen>

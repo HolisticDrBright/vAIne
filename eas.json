@@ -11,6 +11,9 @@
     "beta": {
       "extends": "production",
       "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_CATALOG_MODE": "research_preview"
+      },
       "autoIncrement": true
     }
   },
