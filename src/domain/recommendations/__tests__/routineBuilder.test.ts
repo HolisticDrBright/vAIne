@@ -15,6 +15,7 @@ const standardIntake: RoutineSafetyIntake = {
   currentStrongActives: 'no',
   avoidFragrance: false,
   budgetPreference: 'up_to_50',
+  routineProductCount: 4,
 };
 
 describe('synthetic routine builder', () => {
@@ -194,8 +195,52 @@ describe('routine builder protocol scheduling', () => {
     );
 
     const weekly = routine.pm.find((step) => step.slot === 'weekly');
-    expect(weekly?.title).toBe('Optional separate treatment night');
+    expect(weekly?.title).toMatch(/separate night/i);
     expect(weekly?.instruction).toMatch(/different evening/i);
     expect(routine.notes.join(' ')).toMatch(/separate evening/i);
+  });
+
+  test('caps a focused routine at two unique products', () => {
+    const products = [
+      candidate('test-spf', 'Daily SPF', ['zinc oxide'], 'protect'),
+      candidate('test-retinal', 'Retinal Serum', ['retinal']),
+      candidate('test-moisturizer', 'Barrier Moisturizer', ['hyaluronic acid'], 'hydrate'),
+      candidate('test-cleanser', 'Gentle Cleanser', ['glycerin'], 'cleanse'),
+    ];
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'no_limit', routineProductCount: 2 },
+      products,
+    );
+    const ids = new Set([...routine.am, ...routine.pm].flatMap((step) => step.product ? [step.product.id] : []));
+
+    expect(ids.size).toBe(2);
+    expect(ids).toContain('test-spf');
+    expect(ids).toContain('test-retinal');
+    expect(routine.notes.join(' ')).toMatch(/up to 2 unique products/i);
+  });
+
+  test('builds an eight-product plan with distinct peptide, EV, and weekly mask roles', () => {
+    const products = [
+      candidate('test-spf', 'Daily SPF', ['zinc oxide'], 'protect'),
+      candidate('test-retinal', 'Retinal Serum', ['retinal']),
+      candidate('test-moisturizer', 'Barrier Moisturizer', ['hyaluronic acid'], 'hydrate'),
+      candidate('test-cleanser', 'Gentle Cleanser', ['glycerin'], 'cleanse'),
+      candidate('healthgevity-facegevity', 'FACEgevity', ['GHK-Cu (3%)', 'PeptiYouth', 'peptide']),
+      candidate('plated-skin-science-intense-serum', 'INTENSE Serum', ['platelet-derived extracellular vesicles']),
+      candidate('test-toner', 'Hydrating Toner', ['glycerin'], 'hydrate'),
+      candidate('alitura-the-clay-mask', 'The Clay Mask', ['kaolin clay'], 'weekly'),
+    ];
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'no_limit', routineProductCount: 8 },
+      products,
+    );
+    const ids = new Set([...routine.am, ...routine.pm].flatMap((step) => step.product ? [step.product.id] : []));
+
+    expect(ids.size).toBe(8);
+    expect(routine.am.some((step) => step.product?.id === 'healthgevity-facegevity' && step.title === 'Peptide support')).toBe(true);
+    expect(routine.pm.some((step) => step.product?.id === 'plated-skin-science-intense-serum' && step.title === 'Advanced EV support')).toBe(true);
+    expect(routine.pm.some((step) => step.product?.id === 'alitura-the-clay-mask' && /Weekly clay mask/.test(step.title))).toBe(true);
   });
 });

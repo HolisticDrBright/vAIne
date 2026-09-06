@@ -44,6 +44,7 @@ const intake = {
   currentStrongActives: 'no' as const,
   avoidFragrance: false,
   budgetPreference: 'no_limit' as const,
+  routineProductCount: 4 as const,
 };
 
 describe('routine catalog resolver', () => {

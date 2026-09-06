@@ -40,6 +40,7 @@ describe('local profile', () => {
       currentStrongActives: 'no' as const,
       avoidFragrance: true,
       budgetPreference: 'up_to_50' as const,
+      routineProductCount: 6 as const,
       avoidIngredients: ['lanolin'],
       currentActiveFamilies: [],
     };
@@ -87,6 +88,10 @@ describe('local profile', () => {
       lastCheckIn: null,
       consentDefaults: null,
     };
-    expect(parseLocalProfile(legacy)?.routineIntake).toMatchObject({ avoidIngredients: [], currentActiveFamilies: [] });
+    expect(parseLocalProfile(legacy)?.routineIntake).toMatchObject({
+      avoidIngredients: [],
+      currentActiveFamilies: [],
+      routineProductCount: 4,
+    });
   });
 });

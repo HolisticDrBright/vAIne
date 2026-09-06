@@ -64,6 +64,16 @@ const verifiedProtocols: Readonly<Record<string, ProductUseProtocol>> = {
     sourceUrl: 'https://healthgev.com/products/facegevity',
     safetyAdaptation: null,
   }),
+  'young-goose-vampire-exosomes': official({
+    intendedUse: 'Daily cosmetic serum for visible firmness, hydration, texture, and resilience. ',
+    cadence: 'Brand direction: one to two pumps morning or evening; vAIne schedules one daily use when selected.',
+    application: 'Apply one to two pumps to clean skin.',
+    routineOrder: 'First leave-on step; follow with moisturizer or barrier serum and morning SPF.',
+    periods: AM_PM,
+    sourceLabel: 'Young Goose official product directions',
+    sourceUrl: 'https://www.younggoose.com/products/vampire-exosomes',
+    safetyAdaptation: 'Automated routines do not direct use on freshly treated or broken skin; follow a treating professional after a procedure.',
+  }),
 
   'alitura-the-pearl-cleanser': brandProtocol({
     intendedUse: 'Daily cleansing before the Alitura treatment steps.',
@@ -75,24 +85,24 @@ const verifiedProtocols: Readonly<Record<string, ProductUseProtocol>> = {
     sourceUrl: 'https://alitura.com/blogs/beauty-benefits/mapping-out-your-ideal-skincare-routine',
     safetyAdaptation: null,
   }),
-  'alitura-the-meteorite-facial-scrub': brandProtocol({
+  'alitura-the-meteorite-facial-scrub': official({
     intendedUse: 'Occasional physical exfoliation for visible texture and dullness.',
-    cadence: 'Brand protocol: two to three times weekly; vAIne starts once weekly or less.',
-    application: 'Use after cleansing according to the current package directions and rinse completely.',
+    cadence: 'vAIne schedule: once weekly; increase to no more than twice weekly only if well tolerated.',
+    application: 'After cleansing, massage a dime-size amount over damp skin in gentle circles for one to two minutes, then rinse completely.',
     routineOrder: 'After cleansing on a separate treatment evening.',
     periods: PM,
-    sourceLabel: 'Alitura official routine map',
-    sourceUrl: 'https://alitura.com/blogs/beauty-benefits/mapping-out-your-ideal-skincare-routine',
+    sourceLabel: 'Alitura official Meteorite Facial Scrub directions',
+    sourceUrl: 'https://alitura.com/products/the-meteorite-facial-scrub',
     safetyAdaptation: 'Do not combine with a derma roller, retinoid, or exfoliating acid on the same evening. Skip when skin is irritated.',
   }),
-  'alitura-the-clay-mask': brandProtocol({
+  'alitura-the-clay-mask': official({
     intendedUse: 'Occasional rinse-off mask for visible texture and clarity.',
-    cadence: 'Brand protocol: one to three times weekly; vAIne starts once weekly or less.',
-    application: 'Mix and apply according to the current package, then rinse completely.',
+    cadence: 'vAIne schedule: once weekly, not daily.',
+    application: 'Mix one tablespoon of powder with an equal amount of water, apply while avoiding the eye area, leave for 20–30 minutes, then rinse completely.',
     routineOrder: 'After cleansing on a separate treatment evening; serum and moisturizer follow.',
     periods: PM,
-    sourceLabel: 'Alitura official routine map',
-    sourceUrl: 'https://alitura.com/blogs/beauty-benefits/mapping-out-your-ideal-skincare-routine',
+    sourceLabel: 'Alitura official Clay Mask directions',
+    sourceUrl: 'https://alitura.com/products/alitura-clay-mask',
     safetyAdaptation: 'vAIne does not pair the mask with microneedling or another exfoliant; use only one intensive treatment per evening.',
   }),
   'alitura-the-gold-serum': brandProtocol({

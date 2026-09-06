@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
-import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
+import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
-type ChoiceValue = SafetyAnswer | BudgetPreference | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
+type ChoiceValue = SafetyAnswer | BudgetPreference | RoutineProductCount | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
 
 interface ChoiceOption<T extends ChoiceValue> {
   label: string;
@@ -43,6 +43,13 @@ const budgetOptions: readonly ChoiceOption<BudgetPreference>[] = [
   { label: 'Up to $50', value: 'up_to_50' },
   { label: 'Up to $100', value: 'up_to_100' },
   { label: 'No limit', value: 'no_limit' },
+];
+
+const routineSizeOptions: readonly ChoiceOption<RoutineProductCount>[] = [
+  { label: '2 focused', value: 2 },
+  { label: '4 simple', value: 4 },
+  { label: '6 complete', value: 6 },
+  { label: '8 advanced', value: 8 },
 ];
 
 function ChoiceQuestion<T extends ChoiceValue>({ title, body, value, options, onSelect }: ChoiceQuestionProps<T>) {
@@ -84,6 +91,7 @@ export default function RoutineIntakeScreen() {
     routineProfile ? (routineProfile.avoidFragrance ? 'avoid' : 'no_preference') : null
   ));
   const [budgetPreference, setBudgetPreference] = useState<BudgetPreference | null>(() => routineProfile?.budgetPreference ?? null);
+  const [routineProductCount, setRoutineProductCount] = useState<RoutineProductCount | null>(() => routineProfile?.routineProductCount ?? 4);
 
   const complete = Boolean(
     sensitivity &&
@@ -92,7 +100,7 @@ export default function RoutineIntakeScreen() {
     knownAllergyOrReaction &&
     currentStrongActives &&
     fragrancePreference &&
-    budgetPreference,
+    budgetPreference && routineProductCount,
   );
 
   const toggleFamily = (family: string) => {
@@ -107,7 +115,8 @@ export default function RoutineIntakeScreen() {
       !knownAllergyOrReaction ||
       !currentStrongActives ||
       !fragrancePreference ||
-      !budgetPreference
+      !budgetPreference ||
+      !routineProductCount
     ) return;
 
     saveRoutineProfile({
@@ -118,6 +127,7 @@ export default function RoutineIntakeScreen() {
       currentStrongActives,
       avoidFragrance: fragrancePreference === 'avoid',
       budgetPreference,
+      routineProductCount,
       avoidIngredients: knownAllergyOrReaction === 'yes' ? parseIngredientList(avoidIngredientsText) : [],
       currentActiveFamilies: currentStrongActives === 'yes' ? activeFamilies : [],
     });
@@ -145,6 +155,14 @@ export default function RoutineIntakeScreen() {
         value={budgetPreference}
         options={budgetOptions}
         onSelect={setBudgetPreference}
+      />
+
+      <ChoiceQuestion
+        title="How many products will you realistically use?"
+        body="Choose the maximum number of unique products in your full morning, evening, and weekly plan. A product used both morning and night counts once."
+        value={routineProductCount}
+        options={routineSizeOptions}
+        onSelect={setRoutineProductCount}
       />
 
       <ChoiceQuestion

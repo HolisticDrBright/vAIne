@@ -4,8 +4,10 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { ProductProtocolDetails } from '@/components/ProductProtocolDetails';
+import { AdvancedProductEvidenceDetails } from '@/components/AdvancedProductEvidenceDetails';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
+import { advancedEvidenceGroupLabel, advancedEvidenceTierRank, getAdvancedProductEvidence } from '@/data/advancedProductEvidence';
 import type { SkinObservationTag } from '@/domain/analysis/observationTaxonomy';
 import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
 import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
@@ -115,6 +117,19 @@ export default function ProductsScreen() {
     slotRankCounts.set(entry.product.routineSlot, next);
     slotRanks.set(entry.product.id, next);
   }
+  const specialtyRanks = new Map<string, { label: string; rank: number }>();
+  for (const label of ['peptide', 'EV / conditioned-media'] as const) {
+    const members = ranked
+      .filter(({ product }) => {
+        const review = getAdvancedProductEvidence(product.id);
+        return review ? advancedEvidenceGroupLabel(review) === label : false;
+      })
+      .sort((left, right) => (
+        advancedEvidenceTierRank(getAdvancedProductEvidence(left.product.id)) - advancedEvidenceTierRank(getAdvancedProductEvidence(right.product.id))
+        || right.rankScore - left.rankScore
+      ));
+    members.forEach((entry, index) => specialtyRanks.set(entry.product.id, { label, rank: index + 1 }));
+  }
   const statusPriority: Record<MatchStatus['kind'], number> = {
     match: 0,
     over_budget: 1,
@@ -134,6 +149,7 @@ export default function ProductsScreen() {
         status,
         evidence: assessProductEvidence(product, evidenceTags),
         slotRank: slotRanks.get(product.id) ?? null,
+        specialtyRank: specialtyRanks.get(product.id) ?? null,
       };
     })
     .sort((a, b) => (
@@ -168,7 +184,7 @@ export default function ProductsScreen() {
       ) : null}
 
       <View style={styles.list}>
-        {evaluated.map(({ product, status, evidence, slotRank }) => {
+        {evaluated.map(({ product, status, evidence, slotRank, specialtyRank }) => {
           const badge = statusLabel(status);
           return (
             <View key={product.id} style={styles.row}>
@@ -184,13 +200,14 @@ export default function ProductsScreen() {
               </View>
               <Text style={styles.tags}>Helps with: {product.observationTags.length ? product.observationTags.map(describeTag).join(', ') : 'no listed appearance goal'}</Text>
               <Text style={styles.evidence}>
-                {slotRank ? `#${slotRank} ${slotLabels[product.routineSlot].toLowerCase()} match · ` : ''}
+                {specialtyRank ? `#${specialtyRank.rank} ${specialtyRank.label} match · ` : slotRank ? `#${slotRank} ${slotLabels[product.routineSlot].toLowerCase()} match · ` : ''}
                 {ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100
               </Text>
-              {evidence.matchedSignals.length ? <Text style={styles.note}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not a finished-product clinical trial.</Text> : null}
+              {evidence.matchedSignals.length ? <Text style={styles.note}>Evidence signals: {evidence.matchedSignals.join(', ')}. Product-specific evidence and limits are identified below when available.</Text> : null}
               {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
               {product.note ? <Text style={styles.note}>Note: {product.note}</Text> : null}
               <Text style={styles.statusBody}>{statusBody(status)}</Text>
+              {!fictional ? <AdvancedProductEvidenceDetails productId={product.id} /> : null}
               {!fictional ? <ProductProtocolDetails product={product} /> : null}
               <ProductPurchaseLink productId={product.id} productName={product.productName} />
             </View>

@@ -1,5 +1,6 @@
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
 import type { ProductCandidate, RoutineSlot } from './eligibility';
+import { getAdvancedProductEvidence } from '../../data/advancedProductEvidence';
 
 export type IngredientEvidenceGrade = 'strong' | 'moderate' | 'limited' | 'insufficient';
 
@@ -269,6 +270,7 @@ const RULES: readonly EvidenceRule[] = [
 ];
 
 export interface EvidenceProductInput {
+  id?: string;
   productName: string;
   category?: string | null;
   routineSlot?: RoutineSlot | null;
@@ -283,7 +285,7 @@ export interface ProductEvidenceAssessment {
   perTagScores: Partial<Record<SkinObservationTag, number>>;
   matchedSignals: readonly string[];
   sourceIds: readonly string[];
-  basis: 'ingredient_evidence_not_product_trial';
+  basis: 'ingredient_evidence_not_product_trial' | 'ingredient_and_product_specific_review';
 }
 
 export const ingredientEvidenceGradeLabels: Record<IngredientEvidenceGrade, string> = {
@@ -308,6 +310,7 @@ export function assessProductEvidence(
   const perTagScores: Partial<Record<SkinObservationTag, number>> = {};
   const matchedSignals: string[] = [];
   const sourceIds = new Set<string>();
+  const advancedReview = getAdvancedProductEvidence('id' in product ? product.id : undefined);
 
   for (const rule of RULES) {
     if (rule.routineSlots && (!product.routineSlot || !rule.routineSlots.includes(product.routineSlot))) continue;
@@ -329,13 +332,27 @@ export function assessProductEvidence(
   // it were delivered by an otherwise comparable leave-on formulation.
   if (product.routineSlot === 'cleanse') effectivenessScore = Math.round(effectivenessScore * 0.75);
 
+  if (advancedReview) {
+    for (const tag of relevantTags) {
+      const floor = advancedReview.scoreFloorByTag[tag];
+      if (floor !== undefined) {
+        perTagScores[tag] = Math.max(perTagScores[tag] ?? 0, floor);
+      }
+    }
+    const reviewedScores = relevantTags.map((tag) => perTagScores[tag] ?? (product.observationTags.includes(tag) ? 20 : 0));
+    effectivenessScore = reviewedScores.length
+      ? Math.round(reviewedScores.reduce((sum, score) => sum + score, 0) / reviewedScores.length)
+      : effectivenessScore;
+    matchedSignals.push(advancedReview.label);
+  }
+
   return {
     effectivenessScore,
     grade: gradeFor(effectivenessScore),
     perTagScores,
     matchedSignals,
     sourceIds: [...sourceIds],
-    basis: 'ingredient_evidence_not_product_trial',
+    basis: advancedReview ? 'ingredient_and_product_specific_review' : 'ingredient_evidence_not_product_trial',
   };
 }
 

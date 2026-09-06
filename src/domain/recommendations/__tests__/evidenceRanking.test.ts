@@ -27,6 +27,22 @@ describe('ingredient evidence ranking', () => {
     expect(rinseOff.effectivenessScore).toBeLessThan(leaveOn.effectivenessScore);
   });
 
+  test('places FACEgevity high within peptides without calling it an exosome or finished-formula trial', () => {
+    const generic = assessProductEvidence({
+      ...makeProduct(['GHK-Cu', 'Peptide']),
+      id: 'generic-peptide',
+    }, ['appearance.fine_lines_visible']);
+    const facegevity = assessProductEvidence({
+      ...makeProduct(['GHK-Cu (3%)', 'PeptiYouth', 'Acetyl Hexapeptide-8']),
+      id: 'healthgevity-facegevity',
+    }, ['appearance.fine_lines_visible']);
+
+    expect(facegevity.effectivenessScore).toBeGreaterThan(generic.effectivenessScore);
+    expect(facegevity.matchedSignals.join(' ')).toMatch(/premium peptide/i);
+    expect(facegevity.matchedSignals.join(' ')).not.toMatch(/exosome/i);
+    expect(facegevity.basis).toBe('ingredient_and_product_specific_review');
+  });
+
   test('does not treat a non-sunscreen product as sun protection merely because it lists a UV filter', () => {
     const support = assessProductEvidence({
       productName: 'Night cream example',

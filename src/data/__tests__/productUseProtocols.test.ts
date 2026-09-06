@@ -84,4 +84,22 @@ describe('product use protocols', () => {
     expect(sunscreen.routineOrder).toMatch(/final/i);
     expect(sunscreen.safetyAdaptation).toMatch(/Drug Facts/i);
   });
+
+  test('keeps Alitura clay and scrub products out of daily care', () => {
+    const clay = getProductUseProtocol({
+      id: 'alitura-the-clay-mask',
+      brandName: 'Alitura',
+      productName: 'The Clay Mask',
+      routineSlot: 'weekly',
+    });
+    const scrub = getProductUseProtocol({
+      id: 'alitura-the-meteorite-facial-scrub',
+      brandName: 'Alitura',
+      productName: 'The Meteorite Facial Scrub',
+      routineSlot: 'weekly',
+    });
+    expect(clay.periods).toEqual(['pm']);
+    expect(clay.cadence).toMatch(/once weekly, not daily/i);
+    expect(scrub.cadence).toMatch(/once weekly.*twice weekly/i);
+  });
 });

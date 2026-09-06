@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { ProductProtocolDetails } from '@/components/ProductProtocolDetails';
+import { AdvancedProductEvidenceDetails } from '@/components/AdvancedProductEvidenceDetails';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
@@ -11,6 +12,7 @@ import {
   buildSyntheticRoutine,
   budgetPreferenceLabels,
   noProductReasonCopy,
+  routineProductCountLabels,
   type BuiltRoutineStep,
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
@@ -59,10 +61,11 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
               <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100</Text>
             ) : null}
             {evidence && !fictional && evidence.matchedSignals.length ? (
-              <Text style={styles.productNote}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not proof of this finished product.</Text>
+              <Text style={styles.productNote}>Evidence signals: {evidence.matchedSignals.join(', ')}. See the product-specific limits below where available.</Text>
             ) : null}
             {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
             {step.product.note ? <Text style={styles.productNote}>Note: {step.product.note}</Text> : null}
+            {!fictional ? <AdvancedProductEvidenceDetails productId={step.product.id} /> : null}
             {!fictional ? <ProductProtocolDetails product={step.product} /> : null}
             <ProductPurchaseLink productId={step.product.id} productName={step.product.productName} />
           </View>
@@ -174,6 +177,8 @@ export default function RoutineScreen() {
           : `${budgetPreferenceLabels[routineProfile.budgetPreference]}. Safety, appearance-goal fit, and ingredient evidence rank before price; equally ranked options favor the lower list price.`}
         tone="gold"
       />
+
+      <InfoCard title="Your routine size" body={`${routineProductCountLabels[routineProfile.routineProductCount]}. This is a maximum across the entire plan, not the number applied at one time.`} tone="lilac" />
 
       <InfoCard title="Evidence-based order" body="Scores compare the recorded ingredients with human clinical evidence for the goals in this check-in. They do not mean the finished product itself was clinically proven." tone="green" />
 

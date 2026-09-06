@@ -30,6 +30,7 @@ export const routineSafetyIntakeSchema = z.object({
   currentStrongActives: safetyAnswerSchema,
   avoidFragrance: z.boolean(),
   budgetPreference: z.enum(['up_to_25', 'up_to_50', 'up_to_100', 'no_limit']),
+  routineProductCount: z.union([z.literal(2), z.literal(4), z.literal(6), z.literal(8)]).default(4),
   /** Specific ingredients to avoid; empty when none were named. */
   avoidIngredients: z.array(z.string().min(1).max(80)).max(20).default([]),
   /** Active families already in use; empty when none were named. */

@@ -27,12 +27,14 @@ The authoritative runtime registry is `src/data/productUseProtocols.ts`. The cat
 
 The official routine order is Pearl Cleanser, occasional Meteorite Scrub, occasional Derma Roller, occasional Clay Mask, Gold Serum, then Moisturizer in the morning or Night Cream in the evening. The official Four Step Facial is Cleanser → Scrub → Gold Serum → Night Cream.
 
-vAIne does not reproduce the brand's more intensive scar protocol as an automatic schedule. It starts physical exfoliation no more than weekly and never automatically combines a scrub, acid, retinoid, mask, or microneedling tool on the same evening. Microneedling remains outside the automated routine.
+vAIne does not reproduce the brand's more intensive scar protocol as an automatic schedule. It schedules the Clay Mask once weekly and the Meteorite Facial Scrub once weekly, allowing the scrub to increase to no more than twice weekly only if well tolerated. Neither is a daily cleanser. The app never combines a scrub, acid, retinoid, mask, or microneedling tool on the same evening. Microneedling remains outside the automated routine.
 
 Sources:
 
 - https://alitura.com/blogs/beauty-benefits/mapping-out-your-ideal-skincare-routine
 - https://alitura.com/products/the-four-step-facial
+- https://alitura.com/products/alitura-clay-mask
+- https://alitura.com/products/the-meteorite-facial-scrub
 - https://alitura.com/blogs/skinsupport/alituras-scar-healing-protocol
 
 ### Young Goose

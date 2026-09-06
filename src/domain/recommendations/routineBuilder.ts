@@ -1,6 +1,7 @@
 import type { SkinAnalysis } from '../analysis/skinAnalysisSchema';
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
 import { protocolSupportsPeriod } from '../../data/productUseProtocols';
+import { advancedEvidenceTierRank, getAdvancedProductEvidence } from '../../data/advancedProductEvidence';
 import {
   evaluateProductEligibility,
   rankEligibleProducts,
@@ -13,6 +14,7 @@ export type SafetyAnswer = 'yes' | 'no' | 'prefer_not_to_say';
 export type RoutinePeriod = 'am' | 'pm';
 export type RoutineMode = 'standard' | 'gentle' | 'cautious';
 export type BudgetPreference = 'up_to_25' | 'up_to_50' | 'up_to_100' | 'no_limit';
+export type RoutineProductCount = 2 | 4 | 6 | 8;
 
 export const budgetMaximumCents: Record<BudgetPreference, number | null> = {
   up_to_25: 2500,
@@ -26,6 +28,13 @@ export const budgetPreferenceLabels: Record<BudgetPreference, string> = {
   up_to_50: 'Up to $50 per product',
   up_to_100: 'Up to $100 per product',
   no_limit: 'No price limit',
+};
+
+export const routineProductCountLabels: Record<RoutineProductCount, string> = {
+  2: '2 products · focused essentials',
+  4: '4 products · simple routine',
+  6: '6 products · complete routine',
+  8: '8 products · advanced routine',
 };
 
 /**
@@ -50,6 +59,8 @@ export interface RoutineSafetyIntake {
   currentStrongActives: SafetyAnswer;
   avoidFragrance: boolean;
   budgetPreference: BudgetPreference;
+  /** Maximum number of unique named products across AM, PM, and weekly care. */
+  routineProductCount: RoutineProductCount;
   /**
    * Ingredients the person named as allergens. When present alongside a
    * "yes" allergy answer, products containing them are excluded and the rest
@@ -68,7 +79,9 @@ export type NoProductReason =
   | 'no_products_in_slot'
   | 'no_goal_match'
   | 'safety_excluded'
-  | 'over_budget';
+  | 'over_budget'
+  | 'routine_size_limit'
+  | 'scheduled_elsewhere';
 
 export interface BuiltRoutineStep {
   id: string;
@@ -139,6 +152,8 @@ export const noProductReasonCopy: Record<NoProductReason, string> = {
   no_goal_match: 'No listed product for this step matches the appearance goals in this check-in.',
   safety_excluded: 'Listed products for this step were excluded by your safety answers.',
   over_budget: 'Matching products for this step are above your per-product budget.',
+  routine_size_limit: 'A matching product was left out to honor the routine size you chose.',
+  scheduled_elsewhere: 'Your selected product for this category is scheduled at another time of day.',
 };
 
 /** Splits a comma, semicolon, or newline separated list into trimmed, de-duplicated names. */
@@ -222,11 +237,14 @@ function makeStep(
   product: ProductCandidate | null,
   matchedTags: readonly SkinObservationTag[],
   noProductReason: NoProductReason | null,
+  sequence = 0,
+  titleOverride?: string,
 ): BuiltRoutineStep {
   return {
-    id: `${period}-${slot}`,
+    id: `${period}-${slot}-${product?.id ?? 'guidance'}-${sequence}`,
     slot,
     ...stepCopy[slot],
+    ...(titleOverride ? { title: titleOverride } : {}),
     product,
     matchedTags,
     noProductReason,
@@ -249,16 +267,11 @@ export function buildSyntheticRoutine(
   const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
   const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
   const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
-  const chosen = new Map<string, (typeof ranked)[number]>();
-
-  if (!namedSamplesHidden) {
-    for (const period of ['am', 'pm'] as const) {
-      for (const entry of ranked) {
-        const key = `${period}-${entry.product.routineSlot}`;
-        if (!chosen.has(key) && protocolSupportsPeriod(entry.product, period)) chosen.set(key, entry);
-      }
-    }
-  }
+  const productCount = intake.routineProductCount ?? 4;
+  const selectable = holdTargetedSupport
+    ? ranked.filter(({ product }) => product.routineSlot === 'cleanse' || product.routineSlot === 'hydrate' || product.routineSlot === 'protect')
+    : ranked;
+  const selected = namedSamplesHidden ? [] : selectRoutineProducts(selectable, productCount);
 
   const coreSlots: RoutineSlot[] = holdTargetedSupport
     ? ['cleanse', 'hydrate']
@@ -272,6 +285,7 @@ export function buildSyntheticRoutine(
   notes.push(intake.budgetPreference === 'no_limit'
     ? 'Price does not limit this routine. Ingredient evidence and fit rank first; a higher list price breaks only an otherwise equal tie.'
     : `Budget applied: ${budgetPreferenceLabels[intake.budgetPreference]}. Price never increases a product's evidence or match score.`);
+  notes.push(`Routine size: up to ${productCount} unique products across morning, evening, and weekly care. A product used twice counts once.`);
 
   if (holdTargetedSupport) {
     notes.push('Targeted active support is paused because one or more safety answers call for a conservative routine.');
@@ -287,26 +301,44 @@ export function buildSyntheticRoutine(
     notes.push('Follow the aftercare instructions from the professional who performed the recent procedure.');
   }
 
-  const stepFor = (slot: RoutineSlot, period: RoutinePeriod): BuiltRoutineStep => {
-    const pick = chosen.get(`${period}-${slot}`);
-    if (pick) return makeStep(slot, period, pick.product, pick.eligibility.matchedTags, null);
+  const stepsFor = (slot: RoutineSlot, period: RoutinePeriod): BuiltRoutineStep[] => {
+    const picks = selected.filter((selection) => (
+      selection.entry.product.routineSlot === slot && periodsForSelection(selection).includes(period)
+    ));
+    if (picks.length) return picks.map((pick, index) => makeStep(
+      slot,
+      period,
+      pick.entry.product,
+      pick.entry.eligibility.matchedTags,
+      null,
+      index,
+      titleForSelection(pick),
+    ));
+    const selectedInOtherPeriod = selected.some((selection) => selection.entry.product.routineSlot === slot);
+    const matchingButCapped = ranked.some((entry) => entry.product.routineSlot === slot);
     const reason: NoProductReason = namedSamplesHidden
       ? 'hidden_for_review'
-      : explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
-    return makeStep(slot, period, null, [], reason);
+      : selectedInOtherPeriod
+        ? 'scheduled_elsewhere'
+        : matchingButCapped && selected.length >= productCount
+          ? 'routine_size_limit'
+          : explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
+    return [makeStep(slot, period, null, [], reason)];
   };
 
-  const am = amSlots.map((slot) => stepFor(slot, 'am'));
-  let pm = pmSlots.map((slot) => stepFor(slot, 'pm'));
-  const pmSupport = pm.find((step) => step.slot === 'support')?.product;
-  const needsSeparateTreatmentNight = pmSupport?.activeFamilies.some((family) => (
+  const am = amSlots.flatMap((slot) => stepsFor(slot, 'am'));
+  let pm = pmSlots.flatMap((slot) => stepsFor(slot, 'pm'));
+  const pmSupports = pm.filter((step) => step.slot === 'support' && step.product);
+  const needsSeparateTreatmentNight = pmSupports.some((step) => step.product?.activeFamilies.some((family) => (
     family === 'retinoid' || family === 'exfoliating-acid'
-  )) ?? false;
+  )) ?? false);
   if (needsSeparateTreatmentNight) {
     pm = pm.map((step) => step.slot === 'weekly'
       ? {
         ...step,
-        title: 'Optional separate treatment night',
+        title: step.product && /\b(clay|mask)\b/i.test(productText(step.product))
+          ? 'Weekly clay mask · separate night'
+          : 'Weekly exfoliation · separate night',
         instruction: 'Use this on a different evening from the targeted support step; do not stack a retinoid with an exfoliating acid.',
       }
       : step);
@@ -321,6 +353,113 @@ export function buildSyntheticRoutine(
     namedSamplesHidden,
     consideredCount: catalog.length,
     eligibleCount: ranked.length,
-    pricesUnverified: [...chosen.values()].some((entry) => entry.product.listPriceCents === null),
+    pricesUnverified: selected.some(({ entry }) => entry.product.listPriceCents === null),
   };
+}
+
+type SelectionRole = 'protect' | 'targeted' | 'hydrate' | 'cleanse' | 'peptide' | 'exosome' | 'weekly' | 'toner';
+type RankedProduct = ReturnType<typeof rankEligibleProducts>[number];
+
+interface SelectedProduct {
+  entry: RankedProduct;
+  role: SelectionRole;
+}
+
+const rolePlans: Record<RoutineProductCount, readonly SelectionRole[]> = {
+  2: ['protect', 'targeted'],
+  4: ['protect', 'targeted', 'hydrate', 'cleanse'],
+  6: ['protect', 'targeted', 'hydrate', 'cleanse', 'peptide', 'weekly'],
+  8: ['protect', 'targeted', 'hydrate', 'cleanse', 'peptide', 'exosome', 'toner', 'weekly'],
+};
+
+function productText(product: ProductCandidate): string {
+  return `${product.productName} ${product.category ?? ''} ${product.ingredients.join(' ')}`;
+}
+
+function matchesRole(product: ProductCandidate, role: SelectionRole): boolean {
+  const text = productText(product);
+  const advanced = getAdvancedProductEvidence(product.id);
+  switch (role) {
+    case 'protect': return product.routineSlot === 'protect';
+    case 'cleanse': return product.routineSlot === 'cleanse';
+    case 'hydrate': return product.routineSlot === 'hydrate' && !/\b(toner|essence|mist)\b/i.test(text);
+    case 'toner': return product.routineSlot === 'hydrate' && /\b(toner|essence|mist)\b/i.test(text) && !product.activeFamilies.includes('exfoliating-acid');
+    case 'peptide': return product.routineSlot === 'support' && (advanced?.category === 'peptide' || product.activeFamilies.includes('peptide'));
+    case 'exosome': return product.routineSlot === 'support' && Boolean(advanced && advanced.category !== 'peptide');
+    case 'weekly': return product.routineSlot === 'weekly';
+    case 'targeted': return product.routineSlot === 'support';
+  }
+}
+
+function roleCandidates(ranked: readonly RankedProduct[], role: SelectionRole): RankedProduct[] {
+  const matches = ranked.filter(({ product }) => matchesRole(product, role));
+  if (role === 'weekly') {
+    return [...matches].sort((left, right) => {
+      const leftMask = /\b(clay|mask)\b/i.test(productText(left.product)) ? 0 : 1;
+      const rightMask = /\b(clay|mask)\b/i.test(productText(right.product)) ? 0 : 1;
+      return leftMask - rightMask || right.rankScore - left.rankScore;
+    });
+  }
+  if (role === 'exosome') {
+    return [...matches].sort((left, right) => {
+      const leftReview = getAdvancedProductEvidence(left.product.id);
+      const rightReview = getAdvancedProductEvidence(right.product.id);
+      const leftTier = advancedEvidenceTierRank(leftReview);
+      const rightTier = advancedEvidenceTierRank(rightReview);
+      return leftTier - rightTier || right.rankScore - left.rankScore;
+    });
+  }
+  return matches;
+}
+
+function selectRoutineProducts(ranked: readonly RankedProduct[], count: RoutineProductCount): SelectedProduct[] {
+  const selected: SelectedProduct[] = [];
+  const used = new Set<string>();
+  const tryRole = (role: SelectionRole) => {
+    // A targeted pick may already fill a later specialty role. Do not spend a
+    // second routine slot on the same type of treatment just to fill the plan.
+    if ((role === 'peptide' || role === 'exosome')
+      && selected.some(({ entry }) => matchesRole(entry.product, role))) return;
+    const candidate = roleCandidates(ranked, role).find(({ product }) => !used.has(product.id));
+    if (!candidate) return;
+    selected.push({ entry: candidate, role });
+    used.add(candidate.product.id);
+  };
+
+  rolePlans[count].forEach(tryRole);
+  const fallbackRoles: readonly SelectionRole[] = ['hydrate', 'cleanse', 'peptide', 'exosome', 'toner', 'weekly', 'targeted', 'protect'];
+  for (const role of fallbackRoles) {
+    if (selected.length >= count) break;
+    for (const candidate of roleCandidates(ranked, role)) {
+      if (selected.length >= count) break;
+      if (used.has(candidate.product.id)) continue;
+      selected.push({ entry: candidate, role });
+      used.add(candidate.product.id);
+    }
+  }
+  return selected;
+}
+
+function titleForSelection(selection: SelectedProduct): string {
+  switch (selection.role) {
+    case 'peptide': return 'Peptide support';
+    case 'exosome': return 'Advanced EV support';
+    case 'toner': return 'Toner or essence';
+    case 'weekly': return /\b(clay|mask)\b/i.test(productText(selection.entry.product)) ? 'Weekly clay mask' : 'Weekly exfoliation';
+    default: return stepCopy[selection.entry.product.routineSlot].title;
+  }
+}
+
+function periodsForSelection(selection: SelectedProduct): readonly RoutinePeriod[] {
+  const product = selection.entry.product;
+  const supportsAm = protocolSupportsPeriod(product, 'am');
+  const supportsPm = protocolSupportsPeriod(product, 'pm');
+  if (!supportsAm) return supportsPm ? ['pm'] : [];
+  if (!supportsPm) return ['am'];
+  if (product.routineSlot === 'cleanse' || product.routineSlot === 'hydrate') return ['am', 'pm'];
+  if (selection.role === 'peptide') return ['am'];
+  if (selection.role === 'exosome') return ['pm'];
+  if (product.activeFamilies.includes('retinoid') || product.activeFamilies.includes('exfoliating-acid')) return ['pm'];
+  if (product.activeFamilies.includes('vitamin-c')) return ['am'];
+  return ['am'];
 }

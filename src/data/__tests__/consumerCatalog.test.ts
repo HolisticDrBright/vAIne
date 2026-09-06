@@ -18,6 +18,7 @@ const standardIntake: RoutineSafetyIntake = {
   currentStrongActives: 'no',
   avoidFragrance: false,
   budgetPreference: 'up_to_50',
+  routineProductCount: 4,
 };
 
 describe('imported Longevity Skincare product database', () => {
