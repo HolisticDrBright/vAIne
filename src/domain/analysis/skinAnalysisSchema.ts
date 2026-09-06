@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { SKIN_OBSERVATION_TAGS } from './observationTaxonomy';
 
 export const SKIN_ANALYSIS_PROMPT_VERSION = 'consumer_skin_v1_2026-08-05';
+export const SKIN_ANALYSIS_SCHEMA_VERSION = 'skin_analysis_v1';
 
 const observationTagSchema = z.enum(SKIN_OBSERVATION_TAGS);
 

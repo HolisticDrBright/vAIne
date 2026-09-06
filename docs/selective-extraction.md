@@ -27,3 +27,5 @@ Source inspected read-only:
 - Private photographs, screenshots, report assets, and identifying details.
 
 The vAIne modules are standalone rewrites. They are not connected to an AI provider or production backend, and they do not yet analyze photographs.
+
+The per-product budget ceiling and fictional prototype prices were created specifically for vAIne. No price, product, affiliate, or effectiveness claim was imported from the research packages.

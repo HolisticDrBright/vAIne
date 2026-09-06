@@ -4,7 +4,7 @@ export type CatalogReviewState =
   | 'safety_reviewed'
   | 'catalog_approved';
 
-export type CatalogSource = 'synthetic_prototype' | 'reviewed_research';
+export type CatalogSource = 'synthetic_prototype' | 'reviewed_research' | 'editorial';
 
 export type ResearchDisposition =
   | 'exact_identity_candidate'

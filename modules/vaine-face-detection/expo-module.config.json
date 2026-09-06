@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["VaineFaceDetectionModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.vainefacedetection.VaineFaceDetectionModule"]
+  }
+}

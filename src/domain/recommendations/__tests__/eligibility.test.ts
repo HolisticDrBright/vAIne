@@ -26,6 +26,9 @@ const baseProduct: ProductCandidate = {
   catalogReviewState: 'catalog_approved',
   catalogSource: 'synthetic_prototype',
   routineSlot: 'hydrate',
+  listPriceCents: 3200,
+  currencyCode: 'USD',
+  priceVerifiedAtIso: '2026-08-05T12:00:00.000Z',
   observationTags: ['appearance.hydration_look_low'],
   activeFamilies: ['ceramide-family'],
   ingredients: ['water', 'synthetic ceramide'],
@@ -70,11 +73,48 @@ describe('product eligibility', () => {
     expect(result.reasons).toEqual(expect.arrayContaining(['allergy_match', 'duplicate_active_family']));
   });
 
-  test('ranks using tag match and verification only', () => {
+  test('treats an explicit fragrance preference as a hard filter', () => {
+    const result = evaluateProductEligibility(
+      { ...baseProduct, exclusionFlags: ['contains_fragrance'] },
+      { ...baseProfile, avoidFragrance: true },
+      ['appearance.hydration_look_low'],
+    );
+    expect(result.reasons).toContain('sensitivity_exclusion');
+  });
+
+  test('uses source verification only after evidence and match are equal', () => {
     const official = { ...baseProduct, id: 'official', productName: 'Official Example', verificationStatus: 'official' as const };
     const verified = { ...baseProduct, id: 'verified', productName: 'Verified Example' };
     const ranked = rankEligibleProducts([verified, official], baseProfile, ['appearance.hydration_look_low']);
     expect(ranked.map((entry) => entry.product.id)).toEqual(['official', 'verified']);
+  });
+
+  test('filters above-budget products and uses lower price only as a tie-breaker', () => {
+    const value = { ...baseProduct, id: 'value', productName: 'Value Example', listPriceCents: 1800 };
+    const expensiveEqualMatch = { ...baseProduct, id: 'expensive', productName: 'Expensive Example', listPriceCents: 7800 };
+    const strongerMatch = {
+      ...baseProduct,
+      id: 'stronger',
+      productName: 'Stronger Match Example',
+      listPriceCents: 4200,
+      observationTags: ['appearance.hydration_look_low', 'appearance.texture_irregular'] as const,
+    };
+    const requested = ['appearance.hydration_look_low', 'appearance.texture_irregular'] as const;
+
+    expect(rankEligibleProducts([expensiveEqualMatch, value], baseProfile, requested, null)[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 2500)[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 5000)[0].product.id).toBe('stronger');
+  });
+
+  test('uses higher price only as an equal-evidence tie-breaker when price does not matter', () => {
+    const value = { ...baseProduct, id: 'value', productName: 'Value Example', listPriceCents: 1800 };
+    const luxury = { ...baseProduct, id: 'luxury', productName: 'Luxury Example', listPriceCents: 7800 };
+    const unpriced = { ...baseProduct, id: 'unpriced', productName: 'Unpriced Example', listPriceCents: null, priceVerifiedAtIso: null };
+    const requested = ['appearance.hydration_look_low'] as const;
+
+    expect(rankEligibleProducts([value, luxury], baseProfile, requested, null, 'lower')[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, luxury], baseProfile, requested, null, 'higher')[0].product.id).toBe('luxury');
+    expect(rankEligibleProducts([unpriced, value, luxury], baseProfile, requested, null, 'higher').map((entry) => entry.product.id)).toEqual(['luxury', 'value', 'unpriced']);
   });
 
   test('attaches commercial links after ranking without changing order', () => {
@@ -108,5 +148,25 @@ describe('product eligibility', () => {
 
     expect(attachCommercialLinks(products, [{ ...baseLink, reviewStatus: 'pending' }])[0].commercialLink).toBeNull();
     expect(attachCommercialLinks(products, [{ ...baseLink, disclosure: null }])[0].commercialLink).toBeNull();
+  });
+});
+
+describe('unverified prices', () => {
+  test('an unpriced product passes the ceiling but ranks after an equally matched priced one', () => {
+    const priced = { ...baseProduct, id: 'priced', productName: 'Priced', listPriceCents: 4000 };
+    const unpriced = { ...baseProduct, id: 'unpriced', productName: 'Unpriced', listPriceCents: null, priceVerifiedAtIso: null };
+    const ranked = rankEligibleProducts([unpriced, priced], baseProfile, ['appearance.hydration_look_low'], 5000);
+    expect(ranked.map((entry) => entry.product.id)).toEqual(['priced', 'unpriced']);
+    const tight = rankEligibleProducts([unpriced, priced], baseProfile, ['appearance.hydration_look_low'], 2500);
+    expect(tight.map((entry) => entry.product.id)).toEqual(['unpriced']);
+  });
+});
+
+describe('ingredient name matching', () => {
+  test('matches a named allergen inside a full ingredient name, but not inside another word', () => {
+    const product = { ...baseProduct, ingredients: ['Aqua', 'Lavandula Angustifolia (Lavender) Oil', 'Rosmarinus Officinalis Leaf Extract'] };
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['lavender'] }, ['appearance.hydration_look_low']).reasons).toContain('allergy_match');
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['rose'] }, ['appearance.hydration_look_low']).reasons).not.toContain('allergy_match');
+    expect(evaluateProductEligibility(product, { ...baseProfile, allergies: ['LAVENDER OIL'] }, ['appearance.hydration_look_low']).reasons).toContain('allergy_match');
   });
 });

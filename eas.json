@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 21.6.0",
+    "appVersionSource": "remote",
+    "requireCommit": true
+  },
+  "build": {
+    "production": {
+      "autoIncrement": true
+    },
+    "beta": {
+      "extends": "production",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_CATALOG_MODE": "research_preview"
+      },
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6798456032"
+      }
+    },
+    "beta": {
+      "ios": {
+        "ascAppId": "6798456032"
+      }
+    }
+  }
+}

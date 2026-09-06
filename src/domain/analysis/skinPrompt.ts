@@ -31,7 +31,7 @@ PROFESSIONAL REVIEW
 If a visible feature seems unsuitable for a cosmetic routine, set professionalReview.recommended to true and provide neutral language such as "Consider having this area reviewed by a qualified healthcare professional." Do not name or speculate about a condition.
 
 ROUTINE HANDOFF
-Emit generic routine goals only. A separate deterministic eligibility service may later match goals to independently verified products after allergies, sensitivity, pregnancy or nursing, current products, and recent procedures have been considered. Commercial information is never an input to eligibility or ranking.
+Emit generic routine goals only. A separate deterministic service may later match goals to independently reviewed products after allergies, sensitivity, pregnancy or nursing, current products, and recent procedures have been considered. Affiliate relationships, commissions, discounts, and merchant placement never influence eligibility or match score. A user-selected list-price ceiling may filter otherwise eligible products after safety review.
 
 OUTPUT
 Return only strict JSON conforming to prompt version ${SKIN_ANALYSIS_PROMPT_VERSION}. Do not wrap the JSON in markdown.`;

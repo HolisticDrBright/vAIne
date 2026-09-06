@@ -1,0 +1,20 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.vainefacedetection'
+version = '1.0.0'
+
+android {
+  namespace "expo.modules.vainefacedetection"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+}
+
+dependencies {
+  // Bundled on-device model; pinned exact for reproducible EAS builds.
+  implementation 'com.google.mlkit:face-detection:16.1.7'
+}

@@ -14,6 +14,7 @@ Research products enter the app boundary as `research_only`. A product can becom
 6. A practitioner verifies the reviewed facts.
 7. A reviewer creates the consumer-safe routine mapping.
 8. A catalog reviewer explicitly records `catalog_approved`.
+9. Any consumer-visible price has a currency and a verification timestamp.
 
 The source package's `clinically_approved` and `imported` values are preserved as research provenance only. They never grant catalog access.
 
@@ -27,3 +28,17 @@ Commercial links remain outside product eligibility and ranking. A link attaches
 - an affiliate or referral relationship has disclosure text.
 
 Synthetic prototype products never receive real commercial links.
+
+## Budget and evidence matching
+
+Budget is a user preference, not evidence of quality or effectiveness. The app applies safety exclusions, appearance-goal matching, and ingredient-evidence scoring first. It then removes products above the user's per-product ceiling and uses lower list price only to break an otherwise equal match. When the user selects no price limit, the strongest evidence and fit still rank first; a higher list price breaks only an otherwise equal tie. Affiliate relationships, commissions, discounts, and merchant placement cannot improve a match score.
+
+Prices can change. A future live catalog must retain currency and a recent verification timestamp, refresh stale prices, and show category-level guidance when it cannot confirm a product falls within the selected budget.
+
+## Beta research preview
+
+The product database's `Catalog State` column is the visibility authority. Nothing in it has reached `catalog_approved` yet, so during the beta the importer shows `research_only` rows that have an official product page and no blocker, labelled "Research preview" everywhere they appear. Blocked and out-of-scope rows are held back with the reviewer's reason. Before launch, re-run the importer with `--no-research-preview` so only `catalog_approved` rows are visible, as the eight-step progression above requires.
+
+## From reviewed entry to routine
+
+Reviewed products reach the app as `CatalogEntry` rows (`src/domain/catalog/catalogEntry.ts`) in `src/data/consumerCatalog.ts`. `src/domain/catalog/catalogAdapter.ts` converts only the rows that pass the runtime visibility gate, maps every unreviewed safety fact to the cautious exclusion, and strips commercial fields before ranking. `src/domain/catalog/catalogResolver.ts` then hands the routine builder either the reviewed list (whenever any row is visible) or the labeled synthetic samples — never a mix. The full format and matching table are in `docs/consumer-catalog.md`.
