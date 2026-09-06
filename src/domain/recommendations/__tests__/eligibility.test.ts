@@ -82,7 +82,7 @@ describe('product eligibility', () => {
     expect(result.reasons).toContain('sensitivity_exclusion');
   });
 
-  test('ranks using tag match and verification only', () => {
+  test('uses source verification only after evidence and match are equal', () => {
     const official = { ...baseProduct, id: 'official', productName: 'Official Example', verificationStatus: 'official' as const };
     const verified = { ...baseProduct, id: 'verified', productName: 'Verified Example' };
     const ranked = rankEligibleProducts([verified, official], baseProfile, ['appearance.hydration_look_low']);
@@ -104,6 +104,17 @@ describe('product eligibility', () => {
     expect(rankEligibleProducts([expensiveEqualMatch, value], baseProfile, requested, null)[0].product.id).toBe('value');
     expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 2500)[0].product.id).toBe('value');
     expect(rankEligibleProducts([value, strongerMatch], baseProfile, requested, 5000)[0].product.id).toBe('stronger');
+  });
+
+  test('uses higher price only as an equal-evidence tie-breaker when price does not matter', () => {
+    const value = { ...baseProduct, id: 'value', productName: 'Value Example', listPriceCents: 1800 };
+    const luxury = { ...baseProduct, id: 'luxury', productName: 'Luxury Example', listPriceCents: 7800 };
+    const unpriced = { ...baseProduct, id: 'unpriced', productName: 'Unpriced Example', listPriceCents: null, priceVerifiedAtIso: null };
+    const requested = ['appearance.hydration_look_low'] as const;
+
+    expect(rankEligibleProducts([value, luxury], baseProfile, requested, null, 'lower')[0].product.id).toBe('value');
+    expect(rankEligibleProducts([value, luxury], baseProfile, requested, null, 'higher')[0].product.id).toBe('luxury');
+    expect(rankEligibleProducts([unpriced, value, luxury], baseProfile, requested, null, 'higher').map((entry) => entry.product.id)).toEqual(['luxury', 'value', 'unpriced']);
   });
 
   test('attaches commercial links after ranking without changing order', () => {

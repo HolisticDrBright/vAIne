@@ -246,7 +246,8 @@ export function buildSyntheticRoutine(
   const profile = buildSafetyProfile(intake);
   const requestedTags = requestedTagsFor(analysis);
   const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
-  const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents);
+  const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
+  const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
   const chosen = new Map<RoutineSlot, (typeof ranked)[number]>();
 
   if (!namedSamplesHidden) {
@@ -264,7 +265,9 @@ export function buildSyntheticRoutine(
   const pmSlots: RoutineSlot[] = holdTargetedSupport ? coreSlots : [...coreSlots, 'weekly'];
   const notes: string[] = ['Patch test one new product at a time and stop if irritation occurs.'];
 
-  notes.push(`Budget applied: ${budgetPreferenceLabels[intake.budgetPreference]}. Price never increases a product's match score.`);
+  notes.push(intake.budgetPreference === 'no_limit'
+    ? 'Price does not limit this routine. Ingredient evidence and fit rank first; a higher list price breaks only an otherwise equal tie.'
+    : `Budget applied: ${budgetPreferenceLabels[intake.budgetPreference]}. Price never increases a product's evidence or match score.`);
 
   if (holdTargetedSupport) {
     notes.push('Targeted active support is paused because one or more safety answers call for a conservative routine.');

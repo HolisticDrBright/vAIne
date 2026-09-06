@@ -5,8 +5,10 @@ import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/c
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
+import type { SkinObservationTag } from '@/domain/analysis/observationTaxonomy';
 import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
-import { evaluateProductEligibility, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
+import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
+import { evaluateProductEligibility, rankEligibleProducts, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
 import {
   budgetMaximumCents,
   buildSafetyProfile,
@@ -50,8 +52,8 @@ const reasonCopy: Record<IneligibilityReason, string> = {
 type MatchStatus =
   | { kind: 'no_profile' }
   | { kind: 'hidden' }
-  | { kind: 'match'; tags: readonly string[] }
-  | { kind: 'over_budget'; tags: readonly string[] }
+  | { kind: 'match'; tags: readonly SkinObservationTag[] }
+  | { kind: 'over_budget'; tags: readonly SkinObservationTag[] }
   | { kind: 'no_goal_match' }
   | { kind: 'excluded'; reasons: readonly IneligibilityReason[] };
 
@@ -96,7 +98,49 @@ export default function ProductsScreen() {
     return { kind: 'match', tags: result.matchedTags };
   };
 
-  const evaluated = catalog.products.map((product) => ({ product, status: evaluate(product) }));
+  const ranked = routineProfile && analysis.status === 'ready' && analysis.result
+    ? rankEligibleProducts(
+      catalog.products,
+      buildSafetyProfile(routineProfile),
+      requestedTagsFor(analysis.result),
+      budgetMaximumCents[routineProfile.budgetPreference],
+      routineProfile.budgetPreference === 'no_limit' ? 'higher' : 'lower',
+    )
+    : [];
+  const slotRankCounts = new Map<string, number>();
+  const slotRanks = new Map<string, number>();
+  for (const entry of ranked) {
+    const next = (slotRankCounts.get(entry.product.routineSlot) ?? 0) + 1;
+    slotRankCounts.set(entry.product.routineSlot, next);
+    slotRanks.set(entry.product.id, next);
+  }
+  const statusPriority: Record<MatchStatus['kind'], number> = {
+    match: 0,
+    over_budget: 1,
+    no_goal_match: 2,
+    excluded: 3,
+    hidden: 4,
+    no_profile: 5,
+  };
+  const evaluated = catalog.products
+    .map((product) => {
+      const status = evaluate(product);
+      const evidenceTags = status.kind === 'match' || status.kind === 'over_budget'
+        ? status.tags
+        : product.observationTags;
+      return {
+        product,
+        status,
+        evidence: assessProductEvidence(product, evidenceTags),
+        slotRank: slotRanks.get(product.id) ?? null,
+      };
+    })
+    .sort((a, b) => (
+      statusPriority[a.status.kind] - statusPriority[b.status.kind]
+      || (a.slotRank ?? Number.MAX_SAFE_INTEGER) - (b.slotRank ?? Number.MAX_SAFE_INTEGER)
+      || b.evidence.effectivenessScore - a.evidence.effectivenessScore
+      || a.product.productName.localeCompare(b.product.productName)
+    ));
   const matchCount = evaluated.filter((entry) => entry.status.kind === 'match').length;
   const listedCount = catalog.products.length + catalog.outsideRoutine.length;
 
@@ -123,7 +167,7 @@ export default function ProductsScreen() {
       ) : null}
 
       <View style={styles.list}>
-        {evaluated.map(({ product, status }) => {
+        {evaluated.map(({ product, status, evidence, slotRank }) => {
           const badge = statusLabel(status);
           return (
             <View key={product.id} style={styles.row}>
@@ -138,6 +182,11 @@ export default function ProductsScreen() {
                 <Text style={styles.meta}>{fictional ? 'Fictional price' : 'Approximate list price'}</Text>
               </View>
               <Text style={styles.tags}>Helps with: {product.observationTags.length ? product.observationTags.map(describeTag).join(', ') : 'no listed appearance goal'}</Text>
+              <Text style={styles.evidence}>
+                {slotRank ? `#${slotRank} ${slotLabels[product.routineSlot].toLowerCase()} match · ` : ''}
+                {ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100
+              </Text>
+              {evidence.matchedSignals.length ? <Text style={styles.note}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not a finished-product clinical trial.</Text> : null}
               {product.whenToUse ? <Text style={styles.note}>When: {product.whenToUse}</Text> : null}
               {product.cautionNote ? <Text style={styles.caution}>Caution: {product.cautionNote}</Text> : null}
               {product.note ? <Text style={styles.note}>Note: {product.note}</Text> : null}
@@ -153,7 +202,15 @@ export default function ProductsScreen() {
           <Text style={styles.sectionTitle}>Also on the list</Text>
           <Text style={styles.sectionBody}>Bundles, travel sizes, body care, devices, and supplements are listed for reference. Daily routines are built from single face-care products only.</Text>
           <View style={styles.list}>
-            {catalog.outsideRoutine.map((entry) => (
+            {catalog.outsideRoutine.map((entry) => {
+              const evidence = assessProductEvidence({
+                productName: entry.productName,
+                category: entry.category,
+                routineSlot: entry.routineSlot,
+                ingredients: entry.keyIngredients,
+                observationTags: entry.skinConcernTags,
+              });
+              return (
               <View key={entry.productId} style={styles.row}>
                 <View style={styles.rowHeading}>
                   <Text style={styles.slot}>{kindLabels[entry.productKind].toUpperCase()}</Text>
@@ -166,10 +223,12 @@ export default function ProductsScreen() {
                   <Text style={styles.meta}>{entry.category}</Text>
                 </View>
                 {entry.sourceNotes?.findings ? <Text style={styles.tags}>Positioned for: {entry.sourceNotes.findings}</Text> : null}
+                <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100 · not ranked into a daily routine</Text>
                 {entry.sourceNotes?.caution ? <Text style={styles.caution}>Caution: {entry.sourceNotes.caution}</Text> : null}
                 <ProductPurchaseLink productId={entry.productId} productName={entry.productName} />
               </View>
-            ))}
+              );
+            })}
           </View>
         </>
       ) : null}
@@ -222,6 +281,7 @@ const styles = StyleSheet.create({
   price: { color: colors.green, fontSize: 11, fontWeight: '800' },
   meta: { color: colors.muted, fontSize: 9 },
   tags: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 4, textTransform: 'capitalize' },
+  evidence: { color: colors.blue, fontSize: 10, lineHeight: 15, fontWeight: '800', marginTop: 3 },
   statusBody: { color: colors.text, fontSize: 10, lineHeight: 14, marginTop: 4 },
   note: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 3 },
   caution: { color: colors.gold, fontSize: 9, lineHeight: 13, marginTop: 3 },

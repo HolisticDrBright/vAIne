@@ -29,9 +29,9 @@ Commercial links remain outside product eligibility and ranking. A link attaches
 
 Synthetic prototype products never receive real commercial links.
 
-## Budget matching
+## Budget and evidence matching
 
-Budget is a user preference, not evidence of quality or effectiveness. The app applies safety exclusions and appearance-goal matching first, removes products above the user's per-product ceiling, and uses lower list price only to break an otherwise equal match. Affiliate relationships, commissions, discounts, and merchant placement cannot improve a match score.
+Budget is a user preference, not evidence of quality or effectiveness. The app applies safety exclusions, appearance-goal matching, and ingredient-evidence scoring first. It then removes products above the user's per-product ceiling and uses lower list price only to break an otherwise equal match. When the user selects no price limit, the strongest evidence and fit still rank first; a higher list price breaks only an otherwise equal tie. Affiliate relationships, commissions, discounts, and merchant placement cannot improve a match score.
 
 Prices can change. A future live catalog must retain currency and a recent verification timestamp, refresh stale prices, and show category-level guidance when it cannot confirm a product falls within the selected budget.
 

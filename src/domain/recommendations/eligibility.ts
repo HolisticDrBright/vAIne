@@ -1,5 +1,6 @@
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
 import type { CatalogReviewState, CatalogSource } from '../catalog/types';
+import { assessProductEvidence, type IngredientEvidenceGrade } from './evidenceRanking';
 
 export type VerificationStatus = 'candidate' | 'verified' | 'official';
 export type RoutineSlot = 'cleanse' | 'support' | 'hydrate' | 'protect' | 'weekly';
@@ -131,10 +132,19 @@ function comparePrice(left: number | null, right: number | null): number {
   return left - right;
 }
 
+function comparePriceDescending(left: number | null, right: number | null): number {
+  if (left === null && right === null) return 0;
+  if (left === null) return 1;
+  if (right === null) return -1;
+  return right - left;
+}
+
 export interface RankedEligibleProduct {
   product: ProductCandidate;
   eligibility: EligibilityResult;
   rankScore: number;
+  effectivenessScore: number;
+  evidenceGrade: IngredientEvidenceGrade;
 }
 
 /**
@@ -150,12 +160,23 @@ export function rankEligibleProducts(
   profile: SafetyProfile,
   requestedTags: readonly SkinObservationTag[],
   maxPriceCents: number | null = null,
+  priceTieBreaker: 'lower' | 'higher' = 'lower',
 ): RankedEligibleProduct[] {
   return products
     .map((product) => {
       const eligibility = evaluateProductEligibility(product, profile, requestedTags);
+      const evidence = assessProductEvidence(product, eligibility.matchedTags);
       const verificationBonus = product.verificationStatus === 'official' ? 1 : 0;
-      return { product, eligibility, rankScore: eligibility.matchedTags.length * 10 + verificationBonus };
+      const rankScore = evidence.effectivenessScore * Math.max(1, eligibility.matchedTags.length) * 100
+        + eligibility.matchedTags.length * 10
+        + verificationBonus;
+      return {
+        product,
+        eligibility,
+        rankScore,
+        effectivenessScore: evidence.effectivenessScore,
+        evidenceGrade: evidence.grade,
+      };
     })
     .filter((entry) => (
       entry.eligibility.eligible &&
@@ -164,7 +185,9 @@ export function rankEligibleProducts(
     ))
     .sort((a, b) => (
       b.rankScore - a.rankScore ||
-      comparePrice(a.product.listPriceCents, b.product.listPriceCents) ||
+      (priceTieBreaker === 'higher'
+        ? comparePriceDescending(a.product.listPriceCents, b.product.listPriceCents)
+        : comparePrice(a.product.listPriceCents, b.product.listPriceCents)) ||
       a.product.productName.localeCompare(b.product.productName)
     ));
 }

@@ -5,6 +5,7 @@ import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/c
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
 import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
+import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
 import {
   buildSyntheticRoutine,
   budgetPreferenceLabels,
@@ -27,6 +28,7 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
   const formattedPrice = step.product
     ? formatPrice(step.product.listPriceCents, step.product.currencyCode)
     : null;
+  const evidence = step.product ? assessProductEvidence(step.product, step.matchedTags) : null;
 
   return (
     <View style={styles.row}>
@@ -51,6 +53,12 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             <Text style={styles.productName}>{step.product.productName}</Text>
             {step.matchedTags.length ? (
               <Text style={styles.matchReason}>Matched on: {step.matchedTags.map(describeTag).join(', ')}</Text>
+            ) : null}
+            {evidence && !fictional ? (
+              <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100</Text>
+            ) : null}
+            {evidence && !fictional && evidence.matchedSignals.length ? (
+              <Text style={styles.productNote}>Evidence signals: {evidence.matchedSignals.join(', ')}. Ingredient evidence, not proof of this finished product.</Text>
             ) : null}
             {step.product.whenToUse ? <Text style={styles.productNote}>When: {step.product.whenToUse}</Text> : null}
             {step.product.cautionNote ? <Text style={styles.productCaution}>Caution: {step.product.cautionNote}</Text> : null}
@@ -160,9 +168,13 @@ export default function RoutineScreen() {
 
       <InfoCard
         title="Your price preference"
-        body={`${budgetPreferenceLabels[routineProfile.budgetPreference]}. Safety and appearance-goal fit are applied before price, and equally matched options favor the lower list price.`}
+        body={routineProfile.budgetPreference === 'no_limit'
+          ? 'No price limit. Safety, appearance-goal fit, and ingredient evidence rank first; higher price breaks only an otherwise equal tie.'
+          : `${budgetPreferenceLabels[routineProfile.budgetPreference]}. Safety, appearance-goal fit, and ingredient evidence rank before price; equally ranked options favor the lower list price.`}
         tone="gold"
       />
+
+      <InfoCard title="Evidence-based order" body="Scores compare the recorded ingredients with human clinical evidence for the goals in this check-in. They do not mean the finished product itself was clinically proven." tone="green" />
 
       <View style={styles.list}>
         {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} />)}
@@ -228,6 +240,7 @@ const styles = StyleSheet.create({
   productPrice: { color: colors.green, fontSize: 10, fontWeight: '800' },
   productName: { color: colors.text, fontSize: 11, fontWeight: '600', marginTop: 2 },
   matchReason: { color: colors.muted, fontSize: 9, marginTop: 4, textTransform: 'capitalize' },
+  evidence: { color: colors.blue, fontSize: 9, lineHeight: 13, fontWeight: '800', marginTop: 4 },
   productNote: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 4 },
   productCaution: { color: colors.gold, fontSize: 9, lineHeight: 13, marginTop: 3 },
   categoryOnly: { marginTop: 9, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line },
