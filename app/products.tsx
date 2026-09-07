@@ -57,6 +57,7 @@ type MatchStatus =
   | { kind: 'hidden' }
   | { kind: 'match'; tags: readonly SkinObservationTag[] }
   | { kind: 'over_budget'; tags: readonly SkinObservationTag[] }
+  | { kind: 'currency_mismatch'; tags: readonly SkinObservationTag[]; currencyCode: string }
   | { kind: 'no_goal_match' }
   | { kind: 'excluded'; reasons: readonly IneligibilityReason[] };
 
@@ -66,6 +67,7 @@ function statusLabel(status: MatchStatus): { label: string; tone: 'green' | 'gol
     case 'hidden': return { label: 'HIDDEN FOR REVIEW', tone: 'gold' };
     case 'match': return { label: 'MATCHES YOU', tone: 'green' };
     case 'over_budget': return { label: 'OVER BUDGET', tone: 'gold' };
+    case 'currency_mismatch': return { label: 'DIFFERENT CURRENCY', tone: 'gold' };
     case 'no_goal_match': return { label: 'NOT A GOAL MATCH', tone: 'muted' };
     case 'excluded': return { label: 'EXCLUDED', tone: 'gold' };
   }
@@ -77,6 +79,7 @@ function statusBody(status: MatchStatus): string {
     case 'hidden': return 'Named products are hidden until your allergy or reaction can be reviewed product by product.';
     case 'match': return `Matched on: ${status.tags.map(describeTag).join(', ')}.`;
     case 'over_budget': return `Would match on ${status.tags.map(describeTag).join(', ')}, but is above your per-product budget.`;
+    case 'currency_mismatch': return `Would match on ${status.tags.map(describeTag).join(', ')}, but its ${status.currencyCode} price is not compared with a USD budget. Choose no price limit to include it.`;
     case 'no_goal_match': return 'Does not address an appearance goal from this check-in.';
     case 'excluded': return status.reasons.map((reason) => reasonCopy[reason]).join(' · ');
   }
@@ -95,6 +98,9 @@ export default function ProductsScreen() {
     if (!result.eligible) return { kind: 'excluded', reasons: result.reasons };
     if (!result.matchedTags.length) return { kind: 'no_goal_match' };
     const ceiling = budgetMaximumCents[routineProfile.budgetPreference];
+    if (ceiling !== null && product.currencyCode.toUpperCase() !== 'USD') {
+      return { kind: 'currency_mismatch', tags: result.matchedTags, currencyCode: product.currencyCode };
+    }
     if (ceiling !== null && product.listPriceCents !== null && product.listPriceCents > ceiling) {
       return { kind: 'over_budget', tags: result.matchedTags };
     }
@@ -133,6 +139,7 @@ export default function ProductsScreen() {
   const statusPriority: Record<MatchStatus['kind'], number> = {
     match: 0,
     over_budget: 1,
+    currency_mismatch: 1,
     no_goal_match: 2,
     excluded: 3,
     hidden: 4,
@@ -141,7 +148,7 @@ export default function ProductsScreen() {
   const evaluated = catalog.products
     .map((product) => {
       const status = evaluate(product);
-      const evidenceTags = status.kind === 'match' || status.kind === 'over_budget'
+      const evidenceTags = status.kind === 'match' || status.kind === 'over_budget' || status.kind === 'currency_mismatch'
         ? status.tags
         : product.observationTags;
       return {

@@ -14,7 +14,7 @@ This separation is intentional. A higher price does not make a product more effe
 
 ## Source status
 
-- 88 catalog products now have a structured protocol verified from an official product page or official brand routine, including travel sizes that inherit the matching full-size directions.
+- 93 catalog products now have a structured protocol verified from an official product page or official brand routine, including travel sizes that inherit the matching full-size directions.
 - Every catalog row resolves to structured intended-use, cadence, application, and order fields.
 - Rows without an official protocol show **Catalog note — verify label** and do not invent exact manufacturer directions.
 - Devices, supplements, bundles, travel sizes, and body products remain outside personalized face routines even when their official directions are displayed.
@@ -71,6 +71,22 @@ Sources:
 - https://www.vitaliskincare.com/blogs/inside-out/copper-peptides-hydrating-ingredients
 - https://www.vitaliskincare.com/blogs/inside-out/vita-zero-age-exosomes-your-top-questions
 - https://www.vitaliskincare.com/blogs/inside-out/reveal-your-radiance-the-gentle-power-of-lactic-acid-for-beautiful-skin
+
+### INBLUEM
+
+Five individual face-care products are included from the Australian catalog: Finger Lime Repair Serum, Kakadu Plum Radiance Serum, Native Hydrosoul Mist, Native Sandalwood Face & Body Oil, and the Finger Lime & Eucalyptus Soul Soap variant. Prices remain in AUD. Body wash, tools, and ritual bundles are not placed into automated face routines.
+
+The brand’s order is cleanse or mist → serum → facial oil. Its Nourish ritual specifies Kakadu Plum serum before Native Sandalwood oil; its Nurture ritual specifies Native Hydrosoul before Finger Lime serum. vAIne preserves those directions while treating benefit statements as manufacturer claims, not independent efficacy findings. Essential-oil, aromatic-botanical, and nut-oil cautions remain active.
+
+Sources:
+
+- https://inbluem.com/products/finger-lime-repair-serum
+- https://inbluem.com/products/kakadu-plum-radiance-serum
+- https://inbluem.com/products/nativehydrosoulcleansingmist
+- https://inbluem.com/products/nativesandalwoodfaceandbodyoil
+- https://inbluem.com/products/soul-soap-au-naturel?variant=42491224031447
+- https://inbluem.com/products/nourish-radiance-ritual
+- https://inbluem.com/products/nurture-repair-ritual
 
 ### Clinical and premium protocols
 

@@ -117,6 +117,15 @@ describe('product eligibility', () => {
     expect(rankEligibleProducts([unpriced, value, luxury], baseProfile, requested, null, 'higher').map((entry) => entry.product.id)).toEqual(['luxury', 'value', 'unpriced']);
   });
 
+  test('does not compare an AUD list price with a capped USD budget', () => {
+    const usd = { ...baseProduct, id: 'usd', productName: 'USD Example', listPriceCents: 4900 };
+    const aud = { ...baseProduct, id: 'aud', productName: 'AUD Example', listPriceCents: 7900, currencyCode: 'AUD' };
+    const requested = ['appearance.hydration_look_low'] as const;
+
+    expect(rankEligibleProducts([aud, usd], baseProfile, requested, 5000).map((entry) => entry.product.id)).toEqual(['usd']);
+    expect(rankEligibleProducts([aud, usd], baseProfile, requested, null).map((entry) => entry.product.id)).toContain('aud');
+  });
+
   test('attaches commercial links after ranking without changing order', () => {
     const products = [
       { id: 'first', name: 'First' },

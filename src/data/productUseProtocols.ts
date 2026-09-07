@@ -25,7 +25,7 @@ export interface ProtocolProduct {
   category?: string | null;
 }
 
-const REVIEWED_AT = '2026-09-06T00:00:00.000Z';
+const REVIEWED_AT = '2026-09-07T00:00:00.000Z';
 const AM_PM = ['am', 'pm'] as const;
 const AM = ['am'] as const;
 const PM = ['pm'] as const;
@@ -63,6 +63,56 @@ const verifiedProtocols: Readonly<Record<string, ProductUseProtocol>> = {
     sourceLabel: 'FACEgevity official product directions',
     sourceUrl: 'https://healthgev.com/products/facegevity',
     safetyAdaptation: null,
+  }),
+  'inbluem-finger-lime-repair-serum': official({
+    intendedUse: 'A minimalist botanical serum the brand positions for hydration and barrier-appearance support.',
+    cadence: 'Morning or night; vAIne schedules one daily use when selected.',
+    application: 'Apply three drops to clean skin and gently press or massage in.',
+    routineOrder: 'After cleansing and mist; before facial oil, moisturizer, and morning SPF.',
+    periods: AM_PM,
+    sourceLabel: 'INBLUEM official Finger Lime directions',
+    sourceUrl: 'https://inbluem.com/products/finger-lime-repair-serum',
+    safetyAdaptation: 'Patch test first if reactive; botanical extracts can still cause individual reactions.',
+  }),
+  'inbluem-kakadu-plum-radiance-serum': official({
+    intendedUse: 'A glycerin and Kakadu-plum serum the brand positions for radiance and uneven-tone appearance.',
+    cadence: 'Nightly; introduce less often if reactive.',
+    application: 'Apply three drops to clean skin, avoiding direct eye contact.',
+    routineOrder: 'After cleansing and mist; before facial oil or moisturizer.',
+    periods: PM,
+    sourceLabel: 'INBLUEM official Kakadu Plum directions',
+    sourceUrl: 'https://inbluem.com/products/kakadu-plum-radiance-serum',
+    safetyAdaptation: 'The fruit extract is not treated as a verified concentration of topical ascorbic acid. Stop if persistent irritation occurs.',
+  }),
+  'inbluem-native-hydrosoul-cleansing-and-toning-mist': official({
+    intendedUse: 'A eucalyptus face mist for refreshing, toning, and light hydration.',
+    cadence: 'Morning, night, or as needed; vAIne schedules it after cleansing.',
+    application: 'Close eyes and mist over the face.',
+    routineOrder: 'After a rinse-off cleanse when sunscreen or makeup must be removed; before serum and moisturizer.',
+    periods: AM_PM,
+    sourceLabel: 'INBLUEM official Native Hydrosoul directions',
+    sourceUrl: 'https://inbluem.com/products/nativehydrosoulcleansingmist',
+    safetyAdaptation: 'Contains eucalyptus essential oil; exclude when essential oils are avoided and use cautiously on reactive skin.',
+  }),
+  'inbluem-native-sandalwood-face-and-body-oil': official({
+    intendedUse: 'A face-and-body oil used as an optional final moisture-sealing layer for dry-looking skin.',
+    cadence: 'Daily or seasonally as needed.',
+    application: 'Massage a small amount over the face after water-based products.',
+    routineOrder: 'After serum and moisturizer; before morning SPF if used during the day.',
+    periods: AM_PM,
+    sourceLabel: 'INBLUEM official Native Sandalwood directions',
+    sourceUrl: 'https://inbluem.com/products/nativesandalwoodfaceandbodyoil',
+    safetyAdaptation: 'Contains sweet almond, macadamia, and aromatic sandalwood nut oils; exclude for matching allergies and patch test if reactive.',
+  }),
+  'inbluem-soul-soap-cleansing-bar-finger-lime-and-eucalyptus': official({
+    intendedUse: 'A rinse-off soap cleansing bar for face and body.',
+    cadence: 'Once daily at most when selected; reduce frequency if skin feels tight or dry.',
+    application: 'Lather with water, cleanse gently, and rinse completely.',
+    routineOrder: 'First step.',
+    periods: AM_PM,
+    sourceLabel: 'INBLUEM official Soul Soap directions and ingredient panel',
+    sourceUrl: 'https://inbluem.com/products/soul-soap-au-naturel?variant=42491224031447',
+    safetyAdaptation: 'This entry represents only the Finger Lime & Eucalyptus variant. It contains eucalyptus essential oil and may feel drying; stop if tightness or irritation occurs.',
   }),
   'young-goose-vampire-exosomes': official({
     intendedUse: 'Daily cosmetic serum for visible firmness, hydration, texture, and resilience. ',

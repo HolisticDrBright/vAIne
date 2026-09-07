@@ -125,6 +125,12 @@ export function evaluateProductEligibility(
   return { eligible: reasons.length === 0, reasons: [...new Set(reasons)], matchedTags };
 }
 
+function comparablePrice(product: ProductCandidate, currencyCode: string): number | null {
+  return product.currencyCode.toUpperCase() === currencyCode.toUpperCase()
+    ? product.listPriceCents
+    : null;
+}
+
 function comparePrice(left: number | null, right: number | null): number {
   if (left === null && right === null) return 0;
   if (left === null) return 1;
@@ -161,6 +167,7 @@ export function rankEligibleProducts(
   requestedTags: readonly SkinObservationTag[],
   maxPriceCents: number | null = null,
   priceTieBreaker: 'lower' | 'higher' = 'lower',
+  budgetCurrencyCode = 'USD',
 ): RankedEligibleProduct[] {
   return products
     .map((product) => {
@@ -181,13 +188,16 @@ export function rankEligibleProducts(
     .filter((entry) => (
       entry.eligibility.eligible &&
       entry.eligibility.matchedTags.length > 0 &&
-      (maxPriceCents === null || entry.product.listPriceCents === null || entry.product.listPriceCents <= maxPriceCents)
+      (maxPriceCents === null || (
+        entry.product.currencyCode.toUpperCase() === budgetCurrencyCode.toUpperCase() &&
+        (entry.product.listPriceCents === null || entry.product.listPriceCents <= maxPriceCents)
+      ))
     ))
     .sort((a, b) => (
       b.rankScore - a.rankScore ||
       (priceTieBreaker === 'higher'
-        ? comparePriceDescending(a.product.listPriceCents, b.product.listPriceCents)
-        : comparePrice(a.product.listPriceCents, b.product.listPriceCents)) ||
+        ? comparePriceDescending(comparablePrice(a.product, budgetCurrencyCode), comparablePrice(b.product, budgetCurrencyCode))
+        : comparePrice(comparablePrice(a.product, budgetCurrencyCode), comparablePrice(b.product, budgetCurrencyCode))) ||
       a.product.productName.localeCompare(b.product.productName)
     ));
 }

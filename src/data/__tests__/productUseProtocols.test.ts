@@ -102,4 +102,25 @@ describe('product use protocols', () => {
     expect(clay.cadence).toMatch(/once weekly, not daily/i);
     expect(scrub.cadence).toMatch(/once weekly.*twice weekly/i);
   });
+
+  test('keeps INBLUEM layering and essential-oil cautions explicit', () => {
+    const mist = getProductUseProtocol({
+      id: 'inbluem-native-hydrosoul-cleansing-and-toning-mist',
+      brandName: 'INBLUEM',
+      productName: 'Native Hydrosoul Cleansing & Toning Mist',
+      routineSlot: 'hydrate',
+    });
+    const oil = getProductUseProtocol({
+      id: 'inbluem-native-sandalwood-face-and-body-oil',
+      brandName: 'INBLUEM',
+      productName: 'Native Sandalwood Face & Body Oil',
+      routineSlot: 'hydrate',
+    });
+
+    expect(mist.sourceKind).toBe('official_product');
+    expect(mist.routineOrder).toMatch(/before serum/i);
+    expect(mist.safetyAdaptation).toMatch(/eucalyptus essential oil/i);
+    expect(oil.routineOrder).toMatch(/after serum and moisturizer/i);
+    expect(oil.safetyAdaptation).toMatch(/almond.*macadamia/i);
+  });
 });

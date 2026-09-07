@@ -28,6 +28,24 @@ describe('imported Longevity Skincare product database', () => {
     expect(JSON.stringify(generatedEntries)).not.toMatch(/commission|affiliate potential|my code|BRANDON|cookie/i);
   });
 
+  test('includes the five governed INBLUEM face-care products with AUD prices and ordinary links', () => {
+    const inbluem = generatedEntries
+      .map((row) => catalogEntrySchema.parse(row))
+      .filter((entry) => entry.brand === 'INBLUEM');
+
+    expect(inbluem).toHaveLength(5);
+    expect(inbluem.every((entry) => entry.currencyCode === 'AUD' && entry.market === 'AU')).toBe(true);
+    expect(inbluem.every((entry) => entry.approximatePriceCents !== null && entry.priceVerifiedAtIso === '2026-09-07T00:00:00.000Z')).toBe(true);
+    expect(inbluem.every((entry) => entry.affiliate === null && entry.nonAffiliateFallbackUrl?.startsWith('https://inbluem.com/products/'))).toBe(true);
+    expect(inbluem.map((entry) => entry.productId)).toEqual(expect.arrayContaining([
+      'inbluem-finger-lime-repair-serum',
+      'inbluem-kakadu-plum-radiance-serum',
+      'inbluem-native-hydrosoul-cleansing-and-toning-mist',
+      'inbluem-native-sandalwood-face-and-body-oil',
+      'inbluem-soul-soap-cleansing-bar-finger-lime-and-eucalyptus',
+    ]));
+  });
+
   test('stages FACEgevity with its owner-provided affiliate link without making it recommendable', () => {
     const facegevity = consumerCatalogEntries
       .map((row) => catalogEntrySchema.parse(row))

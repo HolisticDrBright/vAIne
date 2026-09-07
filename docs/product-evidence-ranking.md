@@ -69,6 +69,6 @@ Sources:
 
 ## Current catalog limitations
 
-The catalog contains 122 entries. The source audit found 111 research-only entries, seven blocked entries, four out-of-scope entries, and 57 entries with unknown skin-type compatibility. The imported workbook rows do not yet contain structured product-study fields. The separate reviewed registry in `src/data/advancedProductEvidence.ts` captures the narrow product-specific review above without weakening the workbook's catalog and safety gates.
+The catalog contains 127 entries. The source audit found 116 research-only entries, seven blocked entries, four out-of-scope entries, and 57 entries with unknown skin-type compatibility. The imported workbook rows do not yet contain structured product-study fields. The separate reviewed registry in `src/data/advancedProductEvidence.ts` captures the narrow product-specific review above without weakening the workbook's catalog and safety gates.
 
 Before paid launch, each visible product needs current official product-page verification, complete INCI and active concentration where available, a skin-type and irritation review, sunscreen Drug Facts where applicable, and an independent reviewer decision. Product-specific trials should be linked separately and should supersede ingredient-only evidence only after study-quality and conflict-of-interest review.

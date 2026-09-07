@@ -54,7 +54,7 @@ A blank is a fact; the importer never infers a value:
 
 | Column | Effect once filled |
 | --- | --- |
-| Price (USD) + Price Verified (date) | Shows the price and enables the budget ceiling. A price without a date stays unverified. |
+| Price + Currency Code + Market + Price Verified (date) | Shows the source-market price. A price without a date stays unverified. Capped budgets are currently USD-only, so products listed in another currency require “No price limit” rather than an invented conversion. |
 | Fragrance-Free (Yes / No / Unknown) | Enables the "avoid fragrance" preference. The workbook's rule is strict: Yes means no Fragrance/Parfum/Aroma declared **and** no essential oils or fragrant botanicals in the list. Unknown still counts as fragranced. |
 | Full INCI | Replaces the listed actives for allergen matching and active-family detection. ACTIVE/INACTIVE labels are stripped. A named allergen matches anywhere inside an ingredient name ("lavender" matches "Lavandula Angustifolia (Lavender) Oil"). |
 | Pregnancy Flag | Only values beginning with `REVIEWED` are trusted (avoid / practitioner → `reviewed_avoid`; acceptable → `reviewed_acceptable`). Provisional classes stay `not_reviewed` and are shown as a note. |
@@ -131,7 +131,7 @@ eligibility engine's `ProductCandidate`:
 | `fragranceStatus` other than `fragrance_free` | Excluded when fragrance is avoided. |
 | `keyIngredients` + `allergyCautions` | Compared against the ingredients a person named as allergens. |
 | `keyIngredients` | Mapped to active families (retinoid, exfoliating acid, vitamin C, niacinamide, peptide, UV filter, hydroquinone) so a family already in use is not doubled. |
-| `approximatePriceCents` | Hard ceiling from the budget answer for verified prices; lower price only breaks ties. An unverified (null) price is never assumed to fit the ceiling and ranks after an equally matched verified one. |
+| `approximatePriceCents`, `currencyCode` | Hard ceiling from the budget answer for verified USD prices; lower price only breaks ties among comparable USD amounts. A product priced in another currency is kept in that currency and requires “No price limit” until explicit currency conversion exists. |
 | `affiliate`, `nonAffiliateFallbackUrl` | Dropped before ranking. Links can only attach afterwards through the commercial-attachment boundary. |
 
 Entries that fail the visibility gate (blocked or out-of-scope catalog state,

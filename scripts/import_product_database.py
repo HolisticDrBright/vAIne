@@ -14,7 +14,7 @@ Usage:
         [--no-research-preview] [--output src/data/consumerCatalog.generated.json]
 
 Fill columns the workbook carries (blank = not known; never inferred):
-    Price (USD) + Price Verified (date)   -> approximatePriceCents / priceVerifiedAtIso
+    Price + Currency Code + Price Verified -> approximatePriceCents / currencyCode / priceVerifiedAtIso
     Fragrance-Free (Yes/No/Unknown)       -> fragranceStatus
     Full INCI                             -> keyIngredients (replaces listed actives)
     Pregnancy Flag: REVIEWED - ... values -> pregnancyNursingStatus (provisional values stay not_reviewed)
@@ -60,7 +60,7 @@ EXPECTED_HEADER = [
 ]
 # Optional fill columns added 2026-09-04; read by header name when present.
 FILL_COLUMNS = {
-    'price': 'Price (USD)',
+    'price': 'Price (listed currency)',
     'price_source': 'Price Source URL',
     'price_verified': 'Price Verified (date)',
     'fragrance_free': 'Fragrance-Free',
@@ -74,6 +74,8 @@ FILL_COLUMNS = {
     'catalog_state': 'Catalog State',
     'blocker': 'Blocker / Known Issue',
     'fill_priority': 'Fill Priority',
+    'currency_code': 'Currency Code',
+    'market': 'Market',
 }
 CATALOG_STATES = {'research_only', 'catalog_approved', 'blocked', 'out_of_scope'}
 
@@ -409,6 +411,10 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
         if price_cents and not price_verified:
             # A price without a verification date is not trusted; keep it unverified.
             price_cents = None
+        currency_code = fill['currency_code'].strip().upper() or 'USD'
+        if not re.fullmatch(r'[A-Z]{3}', currency_code):
+            currency_code = 'USD'
+        market = fill['market'].strip().upper() or 'US'
         inci = split_inci(fill['inci'])
         blocker_text = fill['blocker'].strip()
         # The Blocker column carries both real blockers and capture notes
@@ -444,11 +450,11 @@ def convert(rows: list[list[str | None]], source_file: str, research_preview: bo
             'crueltyFreeStatus': 'unknown',
             'veganStatus': 'unknown',
             'approximatePriceCents': price_cents,
-            'currencyCode': 'USD',
+            'currencyCode': currency_code,
             'priceVerifiedAtIso': price_verified,
             'affiliate': None,
             'nonAffiliateFallbackUrl': row['Source URL'] or None,
-            'market': 'US',
+            'market': market,
             'availabilityStatus': 'unknown' if not_found else ('available' if official else 'unknown'),
             'source': 'reviewed_research',
             'lastReviewedAtIso': REVIEW_DATE,
