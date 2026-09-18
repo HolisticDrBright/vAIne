@@ -133,12 +133,39 @@ eligibility engine's `ProductCandidate`:
 | `keyIngredients` | Mapped to active families (retinoid, exfoliating acid, vitamin C, niacinamide, peptide, UV filter, hydroquinone) so a family already in use is not doubled. |
 | `approximatePriceCents`, `currencyCode` | Hard ceiling from the budget answer for verified USD prices; lower price only breaks ties among comparable USD amounts. A product priced in another currency is kept in that currency and requires “No price limit” until explicit currency conversion exists. |
 | `affiliate`, `nonAffiliateFallbackUrl` | Dropped before ranking. Links can only attach afterwards through the commercial-attachment boundary. |
+| `productName`, `category`, `routineSlot`, active families | Tagged with consumer product types (cleanser, exfoliant, moisturizer, wrinkle / fine-line treatment, serum, dark spots / brightening, eye cream, sunscreen, mask, toner / mist / essence, face oil) by `src/domain/recommendations/productTypes.ts`. Used only for the "What are you shopping for?" checkboxes; never ranked on by itself. |
 
 Entries that fail the visibility gate (blocked or out-of-scope catalog state,
 inactive, evidence not approved, discontinued or unknown availability, stale
 review, stale price, affiliate link without a fallback) are listed under
 "Held back" on the product-list screen with the reviewer's reason and never
 offered.
+
+### Shopping interests
+
+The routine preferences screen asks "What are you shopping for?" with one
+checkbox per product type. The answer is optional, remembered on the device
+with the other routine answers, and used in two places:
+
+- **When a routine role is filled**, the first eligible, in-budget product of
+  a checked type is chosen ahead of an equally acceptable product that is not.
+  Safety exclusions, the goal-match requirement, the budget ceiling, and the
+  routine-size cap are applied first and are never relaxed by an interest.
+- **"Picks for what you're shopping for"** lists one product per checked
+  type: the best safe, in-budget product of that type from the steps the
+  routine allows (so no exfoliant or active treatment while support is
+  paused). A goal match ranks first but is not required, because the person
+  asked for the type explicitly; a pick without one says so. Two checked
+  types yield two different products whenever the list has them. When
+  nothing qualifies the pick explains why (no products of that type on the
+  list, paused, excluded by safety answers, over budget, or hidden for
+  review).
+
+Product types come from the product name, the sheet's category, the routine
+slot, and reviewed active families. Ingredient-derived types only apply to
+leave-on steps, lip products carry no type, and each slot supplies a default
+so brand coinages stay findable. The product-list screen shows every
+product's types so a wrong tag is easy to spot and correct in the rules.
 
 ## Where the list is visible
 
@@ -147,5 +174,6 @@ offered.
   it matches the person, is over budget, is excluded and why, or is hidden for
   review.
 - **Routine screen**: each step shows the chosen product, the goals it matched
-  on, and a badge saying whether it came from the reviewed list or is a
-  fictional sample. Steps without a product explain why.
+  on, whether a shopping interest put it first, and a badge saying whether it
+  came from the reviewed list or is a fictional sample. Steps without a
+  product explain why. Checked shopping interests add a picks section.

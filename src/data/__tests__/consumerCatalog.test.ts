@@ -166,4 +166,30 @@ describe('imported Longevity Skincare product database', () => {
     expect([...pregnant.am, ...pregnant.pm].every((step) => step.product === null)).toBe(true);
     expect(pregnant.am[0].noProductReason).toBe('safety_excluded');
   });
+
+  test('the everyday product types are all represented except sunscreen, which the list has not cleared yet', () => {
+    const catalog = resolveRoutineCatalog(consumerCatalogEntries, approvedPrototypeCatalog, NOW);
+    const typed = new Set(catalog.products.flatMap((product) => product.productTypes ?? []));
+    for (const type of ['cleanser', 'exfoliant', 'moisturizer', 'wrinkle_treatment', 'serum', 'brightening', 'eye_care', 'mask', 'toner_mist', 'face_oil']) {
+      expect(typed.has(type as never), type).toBe(true);
+    }
+    // No sunscreen has cleared review yet, so a sunscreen interest reports
+    // "no products of this type" rather than guessing.
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['sunscreen'] }, catalog.products);
+    expect(routine.interestPicks[0]).toEqual(expect.objectContaining({ product: null, noProductReason: 'no_products_of_type' }));
+  });
+
+  test('a shopping interest adds a pick of that type from the real list', () => {
+    const catalog = resolveRoutineCatalog(consumerCatalogEntries, approvedPrototypeCatalog, NOW);
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, budgetPreference: 'no_limit', routineProductCount: 6, productInterests: ['exfoliant', 'eye_care'] },
+      catalog.products,
+    );
+    expect(routine.interestPicks.map((pick) => pick.interest)).toEqual(['exfoliant', 'eye_care']);
+    for (const pick of routine.interestPicks) {
+      expect(pick.product, pick.interest).not.toBeNull();
+      expect(pick.product?.productTypes).toContain(pick.interest);
+    }
+  });
 });

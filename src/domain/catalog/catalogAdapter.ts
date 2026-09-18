@@ -1,4 +1,5 @@
 import type { ExclusionFlag, ProductCandidate } from '../recommendations/eligibility';
+import { deriveProductTypes } from '../recommendations/productTypes';
 import { assessConsumerVisibility, catalogEntrySchema, type CatalogEntry } from './catalogEntry';
 
 /**
@@ -38,6 +39,7 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
   if (entry.sensitivityCaution !== false) flags.add('sensitivity_exclude');
   if (entry.fragranceStatus !== 'fragrance_free') flags.add('contains_fragrance');
   if (entry.allergyCautions.some((name) => /essential oil|\bEOs?\b/i.test(name))) flags.add('contains_essential_oils');
+  const activeFamilies = deriveActiveFamilies(entry);
 
   return {
     id: entry.productId,
@@ -55,8 +57,14 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
     cautionNote: entry.sourceNotes?.caution ?? null,
     note: entry.sourceNotes?.notes ?? null,
     category: entry.category,
+    productTypes: deriveProductTypes({
+      productName: entry.productName,
+      category: entry.category,
+      routineSlot: entry.routineSlot,
+      activeFamilies,
+    }),
     observationTags: entry.skinConcernTags,
-    activeFamilies: deriveActiveFamilies(entry),
+    activeFamilies,
     ingredients: [...new Set([...entry.keyIngredients, ...entry.allergyCautions])],
     exclusionFlags: [...flags],
   };

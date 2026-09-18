@@ -43,6 +43,7 @@ describe('local profile', () => {
       routineProductCount: 6 as const,
       avoidIngredients: ['lanolin'],
       currentActiveFamilies: [],
+      productInterests: [],
     };
     let profile = withRoutineIntake(emptyLocalProfile, intake, NOW);
     profile = withLastCheckIn(profile, sampleRecord(), NOW);
@@ -92,6 +93,30 @@ describe('local profile', () => {
       avoidIngredients: [],
       currentActiveFamilies: [],
       routineProductCount: 4,
+      productInterests: [],
     });
+  });
+
+  test('remembers shopping interests and rejects unknown product types', () => {
+    const intake = {
+      sensitivityPreference: 'standard' as const,
+      pregnancyOrNursing: 'no' as const,
+      recentProcedure: 'no' as const,
+      knownAllergyOrReaction: 'no' as const,
+      currentStrongActives: 'no' as const,
+      avoidFragrance: false,
+      budgetPreference: 'up_to_50' as const,
+      routineProductCount: 4 as const,
+    };
+    const remembered = withRoutineIntake(emptyLocalProfile, { ...intake, productInterests: ['cleanser', 'moisturizer'] }, NOW);
+    expect(remembered.routineIntake?.productInterests).toEqual(['cleanser', 'moisturizer']);
+    expect(parseLocalProfile(JSON.parse(JSON.stringify(remembered)))).toEqual(remembered);
+
+    const legacy = withRoutineIntake(emptyLocalProfile, intake, NOW);
+    expect(legacy.routineIntake?.productInterests).toEqual([]);
+
+    const tampered = JSON.parse(JSON.stringify(remembered));
+    tampered.routineIntake.productInterests = ['nail polish'];
+    expect(parseLocalProfile(tampered)).toBeNull();
   });
 });

@@ -21,6 +21,7 @@ import {
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
+import { describeProductType, matchesInterest } from '@/domain/recommendations/productTypes';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 const slotLabels = {
@@ -145,6 +146,7 @@ export default function ProductsScreen() {
     hidden: 4,
     no_profile: 5,
   };
+  const interests = routineProfile?.productInterests ?? [];
   const evaluated = catalog.products
     .map((product) => {
       const status = evaluate(product);
@@ -154,6 +156,7 @@ export default function ProductsScreen() {
       return {
         product,
         status,
+        interest: matchesInterest(product.productTypes, interests),
         evidence: assessProductEvidence(product, evidenceTags),
         slotRank: slotRanks.get(product.id) ?? null,
         specialtyRank: specialtyRanks.get(product.id) ?? null,
@@ -166,6 +169,7 @@ export default function ProductsScreen() {
       || a.product.productName.localeCompare(b.product.productName)
     ));
   const matchCount = evaluated.filter((entry) => entry.status.kind === 'match').length;
+  const interestCount = evaluated.filter((entry) => entry.interest !== null).length;
   const listedCount = catalog.products.length + catalog.outsideRoutine.length;
 
   return (
@@ -189,18 +193,27 @@ export default function ProductsScreen() {
       {!routineProfile || analysis.status !== 'ready' ? (
         <InfoCard title="See your matches" body="Complete a check-in and the short safety questions; each product then shows whether it matches your goals, budget, and safety answers." tone="lilac" />
       ) : null}
+      {interests.length ? (
+        <InfoCard
+          title="Your shopping list"
+          body={`You are shopping for: ${interests.map((type) => describeProductType(type).toLowerCase()).join(', ')}. ${interestCount} listed product${interestCount === 1 ? '' : 's'} match those types and are marked below.`}
+          tone="green"
+        />
+      ) : null}
 
       <View style={styles.list}>
-        {evaluated.map(({ product, status, evidence, slotRank, specialtyRank }) => {
+        {evaluated.map(({ product, status, interest, evidence, slotRank, specialtyRank }) => {
           const badge = statusLabel(status);
+          const types = product.productTypes ?? [];
           return (
             <View key={product.id} style={styles.row}>
               <View style={styles.rowHeading}>
-                <Text style={styles.slot}>{slotLabels[product.routineSlot].toUpperCase()}{product.catalogState && product.catalogState !== 'catalog_approved' ? ' · RESEARCH PREVIEW' : ''}</Text>
+                <Text style={styles.slot}>{slotLabels[product.routineSlot].toUpperCase()}{product.catalogState && product.catalogState !== 'catalog_approved' ? ' · RESEARCH PREVIEW' : ''}{interest ? ' · ON YOUR SHOPPING LIST' : ''}</Text>
                 <Text style={[styles.badge, badge.tone === 'green' && styles.badgeGreen, badge.tone === 'gold' && styles.badgeGold]}>{badge.label}</Text>
               </View>
               <Text style={styles.brand}>{product.brandName}</Text>
               <Text style={styles.name}>{product.productName}</Text>
+              {types.length ? <Text style={styles.meta}>Type: {types.map(describeProductType).join(' · ')}</Text> : null}
               <View style={styles.metaRow}>
                 <Text style={styles.price}>{formatPrice(product.listPriceCents, product.currencyCode)}</Text>
                 <Text style={styles.meta}>{fictional ? 'Fictional price' : 'Approximate list price'}</Text>

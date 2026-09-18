@@ -31,6 +31,7 @@ export function RoutineProfileProvider({ children }: PropsWithChildren) {
       ...intake,
       avoidIngredients: intake.avoidIngredients ?? [],
       currentActiveFamilies: intake.currentActiveFamilies ?? [],
+      productInterests: intake.productInterests ?? [],
     }, nowIso));
   }, [updateProfile]);
   const clearRoutineProfile = useCallback(() => {

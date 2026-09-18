@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
+import { PRODUCT_TYPE_OPTIONS, type ProductType } from '@/domain/recommendations/productTypes';
 import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -78,6 +79,20 @@ function ChoiceQuestion<T extends ChoiceValue>({ title, body, value, options, on
 }
 
 export default function RoutineIntakeScreen() {
+  const { routineProfile, loading } = useRoutineProfile();
+  if (loading) {
+    return (
+      <Screen title="Routine preferences" back>
+        <Text style={styles.heading}>Loading your saved answers…</Text>
+      </Screen>
+    );
+  }
+  // The form seeds its state from the remembered answers once, so it only
+  // mounts after they have been read from the device.
+  return <RoutineIntakeForm key={routineProfile ? 'saved' : 'new'} />;
+}
+
+function RoutineIntakeForm() {
   const { analysis } = useAnalysisSession();
   const { routineProfile, saveRoutineProfile } = useRoutineProfile();
   const [sensitivity, setSensitivity] = useState<'standard' | 'sensitive' | null>(() => routineProfile?.sensitivityPreference ?? null);
@@ -92,6 +107,7 @@ export default function RoutineIntakeScreen() {
   ));
   const [budgetPreference, setBudgetPreference] = useState<BudgetPreference | null>(() => routineProfile?.budgetPreference ?? null);
   const [routineProductCount, setRoutineProductCount] = useState<RoutineProductCount | null>(() => routineProfile?.routineProductCount ?? 4);
+  const [productInterests, setProductInterests] = useState<readonly ProductType[]>(() => routineProfile?.productInterests ?? []);
 
   const complete = Boolean(
     sensitivity &&
@@ -105,6 +121,10 @@ export default function RoutineIntakeScreen() {
 
   const toggleFamily = (family: string) => {
     setActiveFamilies((current) => (current.includes(family) ? current.filter((item) => item !== family) : [...current, family]));
+  };
+
+  const toggleInterest = (type: ProductType) => {
+    setProductInterests((current) => (current.includes(type) ? current.filter((item) => item !== type) : [...current, type]));
   };
 
   const buildRoutine = () => {
@@ -130,6 +150,7 @@ export default function RoutineIntakeScreen() {
       routineProductCount,
       avoidIngredients: knownAllergyOrReaction === 'yes' ? parseIngredientList(avoidIngredientsText) : [],
       currentActiveFamilies: currentStrongActives === 'yes' ? activeFamilies : [],
+      productInterests,
     });
     router.replace('/routine');
   };
@@ -148,6 +169,39 @@ export default function RoutineIntakeScreen() {
       <Text style={styles.eyebrow}>A SHORT SAFETY CHECK</Text>
       <Text style={styles.heading}>{routineProfile ? 'Review your saved answers' : 'Keep today’s routine comfortably simple'}</Text>
       <Text style={styles.subtitle}>These answers are saved on this device so you do not repeat them each check-in. They are not uploaded, not tied to an account, and not used for diagnosis. Delete them any time from privacy controls.</Text>
+
+      <View style={styles.question}>
+        <Text style={styles.questionTitle}>What are you shopping for?</Text>
+        <Text style={styles.questionBody}>Optional. Check everything you are interested in. Products of these types are chosen first for your routine and each gets its own pick, as long as they pass the same safety, goal, budget, and routine-size rules.</Text>
+        <View style={styles.checklist}>
+          {PRODUCT_TYPE_OPTIONS.map((option) => {
+            const selected = productInterests.includes(option.value);
+            return (
+              <Pressable
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
+                accessibilityLabel={option.label}
+                key={option.value}
+                onPress={() => toggleInterest(option.value)}
+                style={[styles.checkRow, selected && styles.checkRowSelected]}
+              >
+                <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
+                  {selected ? <Text style={styles.checkmark}>✓</Text> : null}
+                </View>
+                <View style={styles.checkCopy}>
+                  <Text style={[styles.checkLabel, selected && styles.optionTextSelected]}>{option.label}</Text>
+                  <Text style={styles.checkHint}>{option.hint}</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Text style={styles.inputHint}>
+          {productInterests.length
+            ? `${productInterests.length} type${productInterests.length === 1 ? '' : 's'} selected. Leave all unchecked for no preference.`
+            : 'Nothing selected, so the routine is built from your check-in goals alone.'}
+        </Text>
+      </View>
 
       <ChoiceQuestion
         title="What should each product cost at most?"
@@ -274,4 +328,13 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: colors.text },
   input: { marginTop: 11, minHeight: 64, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panelSoft, color: colors.text, fontSize: 13, paddingHorizontal: 12, paddingVertical: 10, textAlignVertical: 'top' },
   inputHint: { color: colors.green, fontSize: 10, fontWeight: '700', marginTop: 7 },
+  checklist: { marginTop: 11, gap: 6 },
+  checkRow: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, paddingHorizontal: 10, paddingVertical: 7, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panelSoft },
+  checkRowSelected: { borderColor: colors.blue, backgroundColor: `${colors.blue}14` },
+  checkbox: { width: 20, height: 20, borderRadius: 5, borderWidth: 1.5, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.panel },
+  checkboxSelected: { borderColor: colors.blue, backgroundColor: colors.blue },
+  checkmark: { color: colors.white, fontSize: 12, fontWeight: '800', lineHeight: 14 },
+  checkCopy: { flex: 1 },
+  checkLabel: { color: colors.muted, fontSize: 12, fontWeight: '700' },
+  checkHint: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 1 },
 });

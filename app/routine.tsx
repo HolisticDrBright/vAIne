@@ -11,11 +11,14 @@ import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/r
 import {
   buildSyntheticRoutine,
   budgetPreferenceLabels,
+  interestReasonCopy,
   noProductReasonCopy,
   routineProductCountLabels,
   type BuiltRoutineStep,
+  type InterestPick,
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
+import { describeProductType } from '@/domain/recommendations/productTypes';
 import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -57,6 +60,9 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
             {step.matchedTags.length ? (
               <Text style={styles.matchReason}>Matched on: {step.matchedTags.map(describeTag).join(', ')}</Text>
             ) : null}
+            {step.interest ? (
+              <Text style={styles.interestReason}>Chosen first because you are shopping for a {describeProductType(step.interest).toLowerCase()}.</Text>
+            ) : null}
             {evidence && !fictional ? (
               <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100</Text>
             ) : null}
@@ -76,6 +82,42 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
           </View>
         )}
       </View>
+    </View>
+  );
+}
+
+function InterestPickCard({ pick, fictional }: { pick: InterestPick; fictional: boolean }) {
+  const label = describeProductType(pick.interest);
+  return (
+    <View style={styles.pickRow}>
+      <View style={styles.nameLine}>
+        <Text style={styles.pickTitle}>{label}</Text>
+        {pick.product ? (
+          <Text style={styles.demoBadge}>
+            {fictional ? 'FICTIONAL SAMPLE' : pick.product.catalogState === 'catalog_approved' ? 'FROM YOUR LIST' : 'RESEARCH PREVIEW'}
+          </Text>
+        ) : null}
+      </View>
+      {pick.product ? (
+        <View style={styles.pickBody}>
+          <View style={styles.productMeta}>
+            <Text style={styles.productBrand}>{pick.product.brandName}</Text>
+            <Text style={styles.productPrice}>{formatPrice(pick.product.listPriceCents, pick.product.currencyCode)}</Text>
+          </View>
+          <Text style={styles.productName}>{pick.product.productName}</Text>
+          <Text style={styles.matchReason}>
+            {pick.matchedTags.length
+              ? `Matched on: ${pick.matchedTags.map(describeTag).join(', ')}`
+              : 'Passes your safety and budget rules; no direct match to a goal from this check-in.'}
+          </Text>
+          {pick.inRoutine ? <Text style={styles.productNote}>Already a step in today’s routine.</Text> : null}
+          {pick.product.cautionNote ? <Text style={styles.productCaution}>Caution: {pick.product.cautionNote}</Text> : null}
+          {!fictional ? <ProductProtocolDetails product={pick.product} /> : null}
+          <ProductPurchaseLink productId={pick.product.id} productName={pick.product.productName} />
+        </View>
+      ) : (
+        <Text style={styles.categoryOnlyBody}>{pick.noProductReason ? interestReasonCopy(pick.interest, pick.noProductReason) : 'No listed product was selected.'}</Text>
+      )}
     </View>
   );
 }
@@ -186,6 +228,16 @@ export default function RoutineScreen() {
         {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} />)}
       </View>
 
+      {routine.interestPicks.length ? (
+        <>
+          <Text style={styles.sectionTitle}>Picks for what you’re shopping for</Text>
+          <Text style={styles.sectionBody}>One product per type you checked, chosen with the same safety, goal, and budget rules as the routine. Change the list any time from routine preferences.</Text>
+          <View style={styles.list}>
+            {routine.interestPicks.map((pick) => <InterestPickCard key={pick.interest} pick={pick} fictional={fictional} />)}
+          </View>
+        </>
+      ) : null}
+
       {routine.notes.map((note, index) => (
         <InfoCard key={note} title={index === 0 ? 'Routine safety' : 'Why this routine looks this way'} body={note} tone={index === 0 ? 'lilac' : 'gold'} />
       ))}
@@ -246,6 +298,12 @@ const styles = StyleSheet.create({
   productPrice: { color: colors.green, fontSize: 10, fontWeight: '800' },
   productName: { color: colors.text, fontSize: 11, fontWeight: '600', marginTop: 2 },
   matchReason: { color: colors.muted, fontSize: 9, marginTop: 4, textTransform: 'capitalize' },
+  interestReason: { color: colors.blue, fontSize: 9, lineHeight: 13, marginTop: 4 },
+  sectionTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 20, marginTop: 6 },
+  sectionBody: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: -8 },
+  pickRow: { padding: 15, borderBottomWidth: 1, borderBottomColor: colors.line },
+  pickTitle: { color: colors.text, fontSize: 14, fontWeight: '700' },
+  pickBody: { marginTop: 8 },
   evidence: { color: colors.blue, fontSize: 9, lineHeight: 13, fontWeight: '800', marginTop: 4 },
   productNote: { color: colors.muted, fontSize: 9, lineHeight: 13, marginTop: 4 },
   productCaution: { color: colors.gold, fontSize: 9, lineHeight: 13, marginTop: 3 },

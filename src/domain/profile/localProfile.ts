@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { skinAnalysisSchema } from '../analysis/skinAnalysisSchema';
 import type { AnalysisRecord } from '../analysis/analysisService';
 import type { RoutineSafetyIntake } from '../recommendations/routineBuilder';
+import { PRODUCT_TYPE_VALUES } from '../recommendations/productTypes';
 
 /**
  * The on-device profile that lets vAIne remember a person between launches.
@@ -35,6 +36,8 @@ export const routineSafetyIntakeSchema = z.object({
   avoidIngredients: z.array(z.string().min(1).max(80)).max(20).default([]),
   /** Active families already in use; empty when none were named. */
   currentActiveFamilies: z.array(z.string().min(1).max(80)).max(10).default([]),
+  /** Product types the person said they are shopping for; empty means no preference. */
+  productInterests: z.array(z.enum(PRODUCT_TYPE_VALUES)).max(PRODUCT_TYPE_VALUES.length).default([]),
 }).strict();
 
 const captureMetaSchema = z.object({

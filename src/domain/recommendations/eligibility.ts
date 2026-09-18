@@ -1,6 +1,7 @@
 import type { SkinObservationTag } from '../analysis/observationTaxonomy';
 import type { CatalogReviewState, CatalogSource } from '../catalog/types';
 import { assessProductEvidence, type IngredientEvidenceGrade } from './evidenceRanking';
+import type { ProductType } from './productTypes';
 
 export type VerificationStatus = 'candidate' | 'verified' | 'official';
 export type RoutineSlot = 'cleanse' | 'support' | 'hydrate' | 'protect' | 'weekly';
@@ -37,6 +38,8 @@ export interface ProductCandidate {
   /** Reviewer's capture note (sizes, list quality, delisting) shown as-is. */
   note?: string | null;
   category?: string | null;
+  /** Consumer product types (cleanser, moisturizer, ...) derived from the reviewed row; never ranked on. */
+  productTypes?: readonly ProductType[];
   observationTags: readonly SkinObservationTag[];
   activeFamilies: readonly string[];
   ingredients: readonly string[];
@@ -161,6 +164,16 @@ export interface RankedEligibleProduct {
  * equally matched product whose price is known.
  * Commercial links, commission, discounts, and availability are absent.
  */
+export interface RankOptions {
+  /**
+   * Routine steps require at least one appearance-goal match (default). A
+   * pick the person explicitly asked for by product type may relax this so
+   * the best safe, in-budget product of that type is still offered; goal
+   * matches then rank first.
+   */
+  requireGoalMatch?: boolean;
+}
+
 export function rankEligibleProducts(
   products: readonly ProductCandidate[],
   profile: SafetyProfile,
@@ -168,7 +181,9 @@ export function rankEligibleProducts(
   maxPriceCents: number | null = null,
   priceTieBreaker: 'lower' | 'higher' = 'lower',
   budgetCurrencyCode = 'USD',
+  options: RankOptions = {},
 ): RankedEligibleProduct[] {
+  const requireGoalMatch = options.requireGoalMatch ?? true;
   return products
     .map((product) => {
       const eligibility = evaluateProductEligibility(product, profile, requestedTags);
@@ -187,7 +202,7 @@ export function rankEligibleProducts(
     })
     .filter((entry) => (
       entry.eligibility.eligible &&
-      entry.eligibility.matchedTags.length > 0 &&
+      (!requireGoalMatch || entry.eligibility.matchedTags.length > 0) &&
       (maxPriceCents === null || (
         entry.product.currencyCode.toUpperCase() === budgetCurrencyCode.toUpperCase() &&
         (entry.product.listPriceCents === null || entry.product.listPriceCents <= maxPriceCents)

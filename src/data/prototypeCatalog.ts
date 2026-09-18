@@ -1,11 +1,12 @@
 import type { ProductCandidate } from '../domain/recommendations/eligibility';
+import { deriveProductTypes } from '../domain/recommendations/productTypes';
 
 /**
  * Fictional products for demonstrating budget-aware approved-catalog matching.
  * They are not derived from Phase 9F, a real brand, an affiliate feed, or a
  * private label. Prices are fictional USD list prices for interface testing.
  */
-export const approvedPrototypeCatalog: readonly ProductCandidate[] = [
+const samples: readonly ProductCandidate[] = [
   {
     id: 'synthetic-cleanse-01',
     brandName: 'vAIne Demo',
@@ -183,3 +184,8 @@ export const approvedPrototypeCatalog: readonly ProductCandidate[] = [
     exclusionFlags: [],
   },
 ] as const;
+
+export const approvedPrototypeCatalog: readonly ProductCandidate[] = samples.map((sample) => ({
+  ...sample,
+  productTypes: deriveProductTypes({ productName: sample.productName, routineSlot: sample.routineSlot, activeFamilies: sample.activeFamilies }),
+}));

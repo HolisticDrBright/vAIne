@@ -6,9 +6,11 @@ import {
   evaluateProductEligibility,
   rankEligibleProducts,
   type ProductCandidate,
+  type RankedEligibleProduct,
   type RoutineSlot,
   type SafetyProfile,
 } from './eligibility';
+import { matchesInterest, pluralProductType, type ProductType } from './productTypes';
 
 export type SafetyAnswer = 'yes' | 'no' | 'prefer_not_to_say';
 export type RoutinePeriod = 'am' | 'pm';
@@ -70,6 +72,14 @@ export interface RoutineSafetyIntake {
   avoidIngredients?: readonly string[];
   /** Active families already in use; a matching family is excluded. */
   currentActiveFamilies?: readonly string[];
+  /**
+   * Product types the person is shopping for (cleanser, moisturizer, ...).
+   * When a routine role is filled, an eligible product of a wanted type is
+   * preferred over an equally acceptable one that is not, and each wanted
+   * type gets its own pick. Empty means no preference. Never relaxes a
+   * safety, goal, budget, or routine-size rule.
+   */
+  productInterests?: readonly ProductType[];
 }
 
 /** Why a routine step shows category guidance instead of a listed product. */
@@ -81,7 +91,8 @@ export type NoProductReason =
   | 'safety_excluded'
   | 'over_budget'
   | 'routine_size_limit'
-  | 'scheduled_elsewhere';
+  | 'scheduled_elsewhere'
+  | 'no_products_of_type';
 
 export interface BuiltRoutineStep {
   id: string;
@@ -92,6 +103,18 @@ export interface BuiltRoutineStep {
   product: ProductCandidate | null;
   /** Observation tags that made this product a match; empty without a product. */
   matchedTags: readonly SkinObservationTag[];
+  /** The shopping interest this product satisfies, when one decided the choice. */
+  interest: ProductType | null;
+  noProductReason: NoProductReason | null;
+}
+
+/** The best safe, in-budget listed product for a type the person is shopping for. */
+export interface InterestPick {
+  interest: ProductType;
+  product: ProductCandidate | null;
+  matchedTags: readonly SkinObservationTag[];
+  /** True when the same product already appears as a routine step. */
+  inRoutine: boolean;
   noProductReason: NoProductReason | null;
 }
 
@@ -106,6 +129,8 @@ export interface BuiltRoutine {
   eligibleCount: number;
   /** True when an offered product has no verified price. */
   pricesUnverified: boolean;
+  /** One pick per product type the person said they are shopping for, in the order chosen. */
+  interestPicks: readonly InterestPick[];
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -154,7 +179,25 @@ export const noProductReasonCopy: Record<NoProductReason, string> = {
   over_budget: 'Matching products for this step are above your per-product budget.',
   routine_size_limit: 'A matching product was left out to honor the routine size you chose.',
   scheduled_elsewhere: 'Your selected product for this category is scheduled at another time of day.',
+  no_products_of_type: 'The product list has no product of this type yet.',
 };
+
+/** Explains a missing interest pick in words that name the type. */
+export function interestReasonCopy(interest: ProductType, reason: NoProductReason): string {
+  const plural = pluralProductType(interest);
+  switch (reason) {
+    case 'no_products_of_type':
+    case 'no_products_in_slot':
+      return `The product list has no ${plural} yet.`;
+    case 'support_paused': return `Listed ${plural} are paused for this routine because of a safety answer.`;
+    case 'safety_excluded': return `Listed ${plural} were excluded by your safety answers.`;
+    case 'over_budget': return `Listed ${plural} that fit you are above your per-product budget.`;
+    case 'no_goal_match': return `No listed ${plural} match the appearance goals in this check-in.`;
+    case 'hidden_for_review': return noProductReasonCopy.hidden_for_review;
+    case 'routine_size_limit': return noProductReasonCopy.routine_size_limit;
+    case 'scheduled_elsewhere': return noProductReasonCopy.scheduled_elsewhere;
+  }
+}
 
 /** Splits a comma, semicolon, or newline separated list into trimmed, de-duplicated names. */
 export function parseIngredientList(text: string): string[] {
@@ -236,6 +279,7 @@ function makeStep(
   period: RoutinePeriod,
   product: ProductCandidate | null,
   matchedTags: readonly SkinObservationTag[],
+  interest: ProductType | null,
   noProductReason: NoProductReason | null,
   sequence = 0,
   titleOverride?: string,
@@ -247,8 +291,25 @@ function makeStep(
     ...(titleOverride ? { title: titleOverride } : {}),
     product,
     matchedTags,
+    interest,
     noProductReason,
   };
+}
+
+function explainMissingInterest(
+  interest: ProductType,
+  catalog: readonly ProductCandidate[],
+  allowedSlots: ReadonlySet<RoutineSlot>,
+  profile: SafetyProfile,
+  requestedTags: readonly SkinObservationTag[],
+): NoProductReason {
+  const ofType = catalog.filter((product) => product.productTypes?.includes(interest));
+  if (!ofType.length) return 'no_products_of_type';
+  const allowed = ofType.filter((product) => allowedSlots.has(product.routineSlot));
+  if (!allowed.length) return 'support_paused';
+  const eligible = allowed.filter((product) => evaluateProductEligibility(product, profile, requestedTags).eligible);
+  if (!eligible.length) return 'safety_excluded';
+  return 'over_budget';
 }
 
 export function buildSyntheticRoutine(
@@ -268,10 +329,12 @@ export function buildSyntheticRoutine(
   const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
   const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
   const productCount = intake.routineProductCount ?? 4;
-  const selectable = holdTargetedSupport
-    ? ranked.filter(({ product }) => product.routineSlot === 'cleanse' || product.routineSlot === 'hydrate' || product.routineSlot === 'protect')
-    : ranked;
-  const selected = namedSamplesHidden ? [] : selectRoutineProducts(selectable, productCount);
+  const interests = intake.productInterests ?? [];
+  const allowedSlots = new Set<RoutineSlot>(holdTargetedSupport
+    ? ['cleanse', 'hydrate', 'protect']
+    : ['cleanse', 'support', 'hydrate', 'protect', 'weekly']);
+  const selectable = ranked.filter(({ product }) => allowedSlots.has(product.routineSlot));
+  const selected = namedSamplesHidden ? [] : selectRoutineProducts(selectable, productCount, interests);
 
   const coreSlots: RoutineSlot[] = holdTargetedSupport
     ? ['cleanse', 'hydrate']
@@ -310,6 +373,7 @@ export function buildSyntheticRoutine(
       period,
       pick.entry.product,
       pick.entry.eligibility.matchedTags,
+      pick.interest,
       null,
       index,
       titleForSelection(pick),
@@ -323,7 +387,7 @@ export function buildSyntheticRoutine(
         : matchingButCapped && selected.length >= productCount
           ? 'routine_size_limit'
           : explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
-    return [makeStep(slot, period, null, [], reason)];
+    return [makeStep(slot, period, null, [], null, reason)];
   };
 
   const am = amSlots.flatMap((slot) => stepsFor(slot, 'am'));
@@ -345,6 +409,44 @@ export function buildSyntheticRoutine(
     notes.push('The optional weekly treatment belongs on a separate evening from the selected retinoid or exfoliating support step.');
   }
 
+  // A pick per wanted type: the best safe, in-budget product of that type
+  // from the steps this routine allows. A goal match ranks first but is not
+  // required, because the person asked for the type explicitly. Two checked
+  // types yield two different products whenever the list has them.
+  const inRoutineIds = new Set(selected.map(({ entry }) => entry.product.id));
+  const rankedForPicks = namedSamplesHidden
+    ? []
+    : rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker, 'USD', { requireGoalMatch: false });
+  const pickedIds = new Set<string>();
+  const interestPicks: InterestPick[] = interests.map((interest) => {
+    const candidates = rankedForPicks.filter((entry) => (
+      allowedSlots.has(entry.product.routineSlot) && entry.product.productTypes?.includes(interest)
+    ));
+    const best = candidates.find((entry) => !pickedIds.has(entry.product.id)) ?? candidates[0];
+    if (best) {
+      pickedIds.add(best.product.id);
+      return {
+        interest,
+        product: best.product,
+        matchedTags: best.eligibility.matchedTags,
+        inRoutine: inRoutineIds.has(best.product.id),
+        noProductReason: null,
+      };
+    }
+    const reason: NoProductReason = namedSamplesHidden
+      ? 'hidden_for_review'
+      : explainMissingInterest(interest, catalog, allowedSlots, profile, requestedTags);
+    return { interest, product: null, matchedTags: [], inRoutine: false, noProductReason: reason };
+  });
+  if (interests.length) {
+    notes.push('Products of the types you are shopping for are chosen first whenever they pass the same safety, goal, budget, and routine-size rules.');
+  }
+
+  const offered = [
+    ...selected.map(({ entry }) => entry.product),
+    ...interestPicks.flatMap((pick) => (pick.product ? [pick.product] : [])),
+  ];
+
   return {
     mode,
     am,
@@ -353,7 +455,8 @@ export function buildSyntheticRoutine(
     namedSamplesHidden,
     consideredCount: catalog.length,
     eligibleCount: ranked.length,
-    pricesUnverified: selected.some(({ entry }) => entry.product.listPriceCents === null),
+    pricesUnverified: offered.some((product) => product.listPriceCents === null),
+    interestPicks,
   };
 }
 
@@ -363,6 +466,21 @@ type RankedProduct = ReturnType<typeof rankEligibleProducts>[number];
 interface SelectedProduct {
   entry: RankedProduct;
   role: SelectionRole;
+  /** The shopping interest that put this product ahead of others for its role. */
+  interest: ProductType | null;
+}
+
+/**
+ * Stable partition: candidates of a type the person is shopping for come
+ * first, in their existing rank order, followed by the rest. Ranking has
+ * already applied safety, goal fit, and budget, so this only reorders
+ * products that are all acceptable.
+ */
+function preferInterests(candidates: readonly RankedProduct[], interests: readonly ProductType[]): RankedProduct[] {
+  if (!interests.length) return [...candidates];
+  const wanted = candidates.filter((entry) => matchesInterest(entry.product.productTypes, interests) !== null);
+  const rest = candidates.filter((entry) => matchesInterest(entry.product.productTypes, interests) === null);
+  return [...wanted, ...rest];
 }
 
 const rolePlans: Record<RoutineProductCount, readonly SelectionRole[]> = {
@@ -412,29 +530,35 @@ function roleCandidates(ranked: readonly RankedProduct[], role: SelectionRole): 
   return matches;
 }
 
-function selectRoutineProducts(ranked: readonly RankedProduct[], count: RoutineProductCount): SelectedProduct[] {
+function selectRoutineProducts(
+  ranked: readonly RankedProduct[],
+  count: RoutineProductCount,
+  interests: readonly ProductType[] = [],
+): SelectedProduct[] {
   const selected: SelectedProduct[] = [];
   const used = new Set<string>();
+  const take = (candidate: RankedProduct, role: SelectionRole) => {
+    selected.push({ entry: candidate, role, interest: matchesInterest(candidate.product.productTypes, interests) });
+    used.add(candidate.product.id);
+  };
   const tryRole = (role: SelectionRole) => {
     // A targeted pick may already fill a later specialty role. Do not spend a
     // second routine slot on the same type of treatment just to fill the plan.
     if ((role === 'peptide' || role === 'exosome')
       && selected.some(({ entry }) => matchesRole(entry.product, role))) return;
-    const candidate = roleCandidates(ranked, role).find(({ product }) => !used.has(product.id));
+    const candidate = preferInterests(roleCandidates(ranked, role), interests).find(({ product }) => !used.has(product.id));
     if (!candidate) return;
-    selected.push({ entry: candidate, role });
-    used.add(candidate.product.id);
+    take(candidate, role);
   };
 
   rolePlans[count].forEach(tryRole);
   const fallbackRoles: readonly SelectionRole[] = ['hydrate', 'cleanse', 'peptide', 'exosome', 'toner', 'weekly', 'targeted', 'protect'];
   for (const role of fallbackRoles) {
     if (selected.length >= count) break;
-    for (const candidate of roleCandidates(ranked, role)) {
+    for (const candidate of preferInterests(roleCandidates(ranked, role), interests)) {
       if (selected.length >= count) break;
       if (used.has(candidate.product.id)) continue;
-      selected.push({ entry: candidate, role });
-      used.add(candidate.product.id);
+      take(candidate, role);
     }
   }
   return selected;

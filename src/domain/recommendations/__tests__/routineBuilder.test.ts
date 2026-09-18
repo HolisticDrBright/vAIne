@@ -244,3 +244,125 @@ describe('routine builder protocol scheduling', () => {
     expect(routine.pm.some((step) => step.product?.id === 'alitura-the-clay-mask' && /Weekly clay mask/.test(step.title))).toBe(true);
   });
 });
+
+describe('routine builder shopping interests', () => {
+  const hydrateOil = {
+    ...approvedPrototypeCatalog.find((product) => product.id === 'synthetic-hydrate-02')!,
+    id: 'synthetic-hydrate-oil',
+    productName: 'Comfort Face Oil Sample',
+    productTypes: ['face_oil'] as const,
+  };
+  const withOil = [...approvedPrototypeCatalog, hydrateOil];
+
+  test('no interests leaves the routine unchanged and adds no picks', () => {
+    const plain = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog);
+    const empty = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: [] }, approvedPrototypeCatalog);
+    expect(empty.am.map((step) => step.product?.id)).toEqual(plain.am.map((step) => step.product?.id));
+    expect(empty.interestPicks).toEqual([]);
+    expect(plain.am.every((step) => step.interest === null)).toBe(true);
+  });
+
+  test('prefers an eligible product of a wanted type within a slot', () => {
+    const plain = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, withOil);
+    expect(plain.am.find((step) => step.slot === 'hydrate')?.product?.id).not.toBe('synthetic-hydrate-oil');
+
+    const wantsOil = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['face_oil'] }, withOil);
+    const hydrate = wantsOil.am.find((step) => step.slot === 'hydrate');
+    expect(hydrate?.product?.id).toBe('synthetic-hydrate-oil');
+    expect(hydrate?.interest).toBe('face_oil');
+    expect(wantsOil.pm.find((step) => step.slot === 'hydrate')?.product?.id).toBe('synthetic-hydrate-oil');
+  });
+
+  test('an interest never overrides safety or budget', () => {
+    const pricyOil = [...approvedPrototypeCatalog, { ...hydrateOil, listPriceCents: 9_000 }];
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, budgetPreference: 'up_to_25', productInterests: ['face_oil'] }, pricyOil);
+    expect(routine.am.find((step) => step.slot === 'hydrate')?.product?.id).toBe('synthetic-hydrate-01');
+    expect(routine.interestPicks).toEqual([
+      expect.objectContaining({ interest: 'face_oil', product: null, noProductReason: 'over_budget' }),
+    ]);
+
+    const allergic = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, knownAllergyOrReaction: 'yes', avoidIngredients: ['synthetic barrier lipid'], productInterests: ['face_oil'] },
+      withOil,
+    );
+    expect(allergic.interestPicks[0]).toEqual(expect.objectContaining({ product: null, noProductReason: 'safety_excluded' }));
+  });
+
+  test('adds one pick per wanted type, in the order chosen, and flags ones already in the routine', () => {
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, productInterests: ['sunscreen', 'cleanser', 'mask'] },
+      approvedPrototypeCatalog,
+    );
+    expect(routine.interestPicks.map((pick) => pick.interest)).toEqual(['sunscreen', 'cleanser', 'mask']);
+    expect(routine.interestPicks[0].product?.routineSlot).toBe('protect');
+    expect(routine.interestPicks[0].inRoutine).toBe(true);
+    expect(routine.interestPicks[1].product?.routineSlot).toBe('cleanse');
+    expect(routine.interestPicks[2]).toEqual(expect.objectContaining({ product: null, noProductReason: 'no_products_of_type' }));
+    expect(routine.notes.some((note) => /shopping for/.test(note))).toBe(true);
+  });
+
+  test('two checked types yield two different products when the list allows', () => {
+    const exfoliatingCleanser = {
+      ...approvedPrototypeCatalog.find((product) => product.id === 'synthetic-cleanse-01')!,
+      id: 'synthetic-cleanse-exfoliating',
+      productName: 'Exfoliating Cleanse Sample',
+      productTypes: ['cleanser', 'exfoliant'] as const,
+      observationTags: ['appearance.texture_irregular', 'appearance.hydration_look_low', 'appearance.dullness_visible'] as const,
+    };
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, productInterests: ['cleanser', 'exfoliant'] },
+      [...approvedPrototypeCatalog, exfoliatingCleanser],
+    );
+    const [cleanser, exfoliant] = routine.interestPicks;
+    expect(cleanser.product?.id).toBe('synthetic-cleanse-exfoliating');
+    expect(exfoliant.product?.id).toBe('synthetic-cleanse-exfoliating');
+
+    const withPolish = [...approvedPrototypeCatalog, exfoliatingCleanser, {
+      ...exfoliatingCleanser,
+      id: 'synthetic-weekly-polish',
+      productName: 'Weekly Polish Sample',
+      routineSlot: 'weekly' as const,
+      productTypes: ['exfoliant'] as const,
+      observationTags: ['appearance.texture_irregular'] as const,
+    }];
+    const distinct = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, productInterests: ['cleanser', 'exfoliant'] },
+      withPolish,
+    );
+    expect(distinct.interestPicks[0].product?.id).toBe('synthetic-cleanse-exfoliating');
+    expect(distinct.interestPicks[1].product?.id).toBe('synthetic-weekly-polish');
+  });
+
+  test('a pick may lack a goal match but still passes safety and budget', () => {
+    const untagged = approvedPrototypeCatalog.map((product) => (
+      product.routineSlot === 'cleanse' ? { ...product, observationTags: [] } : product
+    ));
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['cleanser'] }, untagged);
+    expect(routine.am.find((step) => step.slot === 'cleanse')?.noProductReason).toBe('no_goal_match');
+    expect(routine.interestPicks[0].product?.routineSlot).toBe('cleanse');
+    expect(routine.interestPicks[0].matchedTags).toEqual([]);
+    expect(routine.interestPicks[0].inRoutine).toBe(false);
+  });
+
+  test('picks respect a paused routine and hidden products', () => {
+    const paused = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, pregnancyOrNursing: 'yes', productInterests: ['serum', 'cleanser'] },
+      approvedPrototypeCatalog,
+    );
+    expect(paused.interestPicks[0]).toEqual(expect.objectContaining({ interest: 'serum', product: null, noProductReason: 'support_paused' }));
+    expect(paused.interestPicks[1].product).not.toBeNull();
+
+    const hidden = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, knownAllergyOrReaction: 'prefer_not_to_say', productInterests: ['cleanser'] },
+      approvedPrototypeCatalog,
+    );
+    expect(hidden.interestPicks[0]).toEqual(expect.objectContaining({ product: null, noProductReason: 'hidden_for_review' }));
+  });
+});
+
