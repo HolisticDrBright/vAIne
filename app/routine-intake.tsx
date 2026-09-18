@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
-import { PRODUCT_TYPE_OPTIONS, type ProductType } from '@/domain/recommendations/productTypes';
+import { MAX_SUGGESTED_TYPES, PRODUCT_TYPE_OPTIONS, type ProductInterestMode, type ProductType } from '@/domain/recommendations/productTypes';
 import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -108,6 +108,8 @@ function RoutineIntakeForm() {
   const [budgetPreference, setBudgetPreference] = useState<BudgetPreference | null>(() => routineProfile?.budgetPreference ?? null);
   const [routineProductCount, setRoutineProductCount] = useState<RoutineProductCount | null>(() => routineProfile?.routineProductCount ?? 4);
   const [productInterests, setProductInterests] = useState<readonly ProductType[]>(() => routineProfile?.productInterests ?? []);
+  const [productInterestMode, setProductInterestMode] = useState<ProductInterestMode>(() => routineProfile?.productInterestMode ?? 'manual');
+  const letAiPick = productInterestMode === 'auto';
 
   const complete = Boolean(
     sensitivity &&
@@ -124,6 +126,7 @@ function RoutineIntakeForm() {
   };
 
   const toggleInterest = (type: ProductType) => {
+    setProductInterestMode('manual');
     setProductInterests((current) => (current.includes(type) ? current.filter((item) => item !== type) : [...current, type]));
   };
 
@@ -150,7 +153,9 @@ function RoutineIntakeForm() {
       routineProductCount,
       avoidIngredients: knownAllergyOrReaction === 'yes' ? parseIngredientList(avoidIngredientsText) : [],
       currentActiveFamilies: currentStrongActives === 'yes' ? activeFamilies : [],
-      productInterests,
+      // In auto mode the list is derived per check-in, so nothing stale is kept.
+      productInterests: productInterestMode === 'auto' ? [] : productInterests,
+      productInterestMode,
     });
     router.replace('/routine');
   };
@@ -172,10 +177,25 @@ function RoutineIntakeForm() {
 
       <View style={styles.question}>
         <Text style={styles.questionTitle}>What are you shopping for?</Text>
-        <Text style={styles.questionBody}>Optional. Check everything you are interested in. Products of these types are chosen first for your routine and each gets its own pick, as long as they pass the same safety, goal, budget, and routine-size rules.</Text>
+        <Text style={styles.questionBody}>Optional. Let vAIne pick from your check-in, or check everything you are interested in. Products of these types are chosen first for your routine and each gets its own pick, as long as they pass the same safety, goal, budget, and routine-size rules.</Text>
         <View style={styles.checklist}>
+          <Pressable
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: letAiPick }}
+            accessibilityLabel="Let vAIne pick for me"
+            onPress={() => setProductInterestMode(letAiPick ? 'manual' : 'auto')}
+            style={[styles.checkRow, styles.aiRow, letAiPick && styles.aiRowSelected]}
+          >
+            <View style={[styles.checkbox, letAiPick && styles.checkboxSelected]}>
+              {letAiPick ? <Text style={styles.checkmark}>✓</Text> : null}
+            </View>
+            <View style={styles.checkCopy}>
+              <Text style={[styles.checkLabel, letAiPick && styles.optionTextSelected]}>Let vAIne pick for me</Text>
+              <Text style={styles.checkHint}>Chooses up to {MAX_SUGGESTED_TYPES} product types from what each check-in shows, for example fine lines → wrinkle treatment.</Text>
+            </View>
+          </Pressable>
           {PRODUCT_TYPE_OPTIONS.map((option) => {
-            const selected = productInterests.includes(option.value);
+            const selected = !letAiPick && productInterests.includes(option.value);
             return (
               <Pressable
                 accessibilityRole="checkbox"
@@ -183,7 +203,7 @@ function RoutineIntakeForm() {
                 accessibilityLabel={option.label}
                 key={option.value}
                 onPress={() => toggleInterest(option.value)}
-                style={[styles.checkRow, selected && styles.checkRowSelected]}
+                style={[styles.checkRow, selected && styles.checkRowSelected, letAiPick && styles.checkRowDimmed]}
               >
                 <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
                   {selected ? <Text style={styles.checkmark}>✓</Text> : null}
@@ -197,9 +217,11 @@ function RoutineIntakeForm() {
           })}
         </View>
         <Text style={styles.inputHint}>
-          {productInterests.length
-            ? `${productInterests.length} type${productInterests.length === 1 ? '' : 's'} selected. Leave all unchecked for no preference.`
-            : 'Nothing selected, so the routine is built from your check-in goals alone.'}
+          {letAiPick
+            ? 'vAIne will choose the types for each check-in. Check a type yourself to take over.'
+            : productInterests.length
+              ? `${productInterests.length} type${productInterests.length === 1 ? '' : 's'} selected. Leave all unchecked for no preference.`
+              : 'Nothing selected, so the routine is built from your check-in goals alone.'}
         </Text>
       </View>
 
@@ -331,6 +353,9 @@ const styles = StyleSheet.create({
   checklist: { marginTop: 11, gap: 6 },
   checkRow: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, paddingHorizontal: 10, paddingVertical: 7, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panelSoft },
   checkRowSelected: { borderColor: colors.blue, backgroundColor: `${colors.blue}14` },
+  checkRowDimmed: { opacity: 0.45 },
+  aiRow: { borderColor: `${colors.gold}66`, marginBottom: 4 },
+  aiRowSelected: { borderColor: colors.gold, backgroundColor: `${colors.gold}14` },
   checkbox: { width: 20, height: 20, borderRadius: 5, borderWidth: 1.5, borderColor: colors.line, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.panel },
   checkboxSelected: { borderColor: colors.blue, backgroundColor: colors.blue },
   checkmark: { color: colors.white, fontSize: 12, fontWeight: '800', lineHeight: 14 },

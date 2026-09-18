@@ -10,7 +10,7 @@ import {
   type RoutineSlot,
   type SafetyProfile,
 } from './eligibility';
-import { matchesInterest, pluralProductType, type ProductType } from './productTypes';
+import { matchesInterest, pluralProductType, suggestProductTypes, type ProductInterestMode, type ProductType } from './productTypes';
 
 export type SafetyAnswer = 'yes' | 'no' | 'prefer_not_to_say';
 export type RoutinePeriod = 'am' | 'pm';
@@ -80,6 +80,18 @@ export interface RoutineSafetyIntake {
    * safety, goal, budget, or routine-size rule.
    */
   productInterests?: readonly ProductType[];
+  /** 'auto' ignores `productInterests` and lets vAIne suggest types from the check-in. */
+  productInterestMode?: ProductInterestMode;
+}
+
+/** The shopping list in force for a check-in: chosen by the person, or suggested by vAIne. */
+export function resolveProductInterests(
+  intake: Pick<RoutineSafetyIntake, 'productInterests' | 'productInterestMode'>,
+  analysis: Pick<SkinAnalysis, 'observationTags' | 'routineGoals'>,
+): { interests: readonly ProductType[]; source: 'chosen' | 'suggested' | null } {
+  if (intake.productInterestMode === 'auto') return { interests: suggestProductTypes(analysis), source: 'suggested' };
+  const interests = intake.productInterests ?? [];
+  return { interests, source: interests.length ? 'chosen' : null };
 }
 
 /** Why a routine step shows category guidance instead of a listed product. */
@@ -129,8 +141,11 @@ export interface BuiltRoutine {
   eligibleCount: number;
   /** True when an offered product has no verified price. */
   pricesUnverified: boolean;
-  /** One pick per product type the person said they are shopping for, in the order chosen. */
+  /** One pick per product type on the shopping list, in list order. */
   interestPicks: readonly InterestPick[];
+  /** The shopping list this routine used and who decided it. */
+  interests: readonly ProductType[];
+  interestSource: 'chosen' | 'suggested' | null;
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -329,7 +344,7 @@ export function buildSyntheticRoutine(
   const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
   const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
   const productCount = intake.routineProductCount ?? 4;
-  const interests = intake.productInterests ?? [];
+  const { interests, source: interestSource } = resolveProductInterests(intake, analysis);
   const allowedSlots = new Set<RoutineSlot>(holdTargetedSupport
     ? ['cleanse', 'hydrate', 'protect']
     : ['cleanse', 'support', 'hydrate', 'protect', 'weekly']);
@@ -438,7 +453,9 @@ export function buildSyntheticRoutine(
       : explainMissingInterest(interest, catalog, allowedSlots, profile, requestedTags);
     return { interest, product: null, matchedTags: [], inRoutine: false, noProductReason: reason };
   });
-  if (interests.length) {
+  if (interestSource === 'suggested') {
+    notes.push(`vAIne picked the product types to shop for from this check-in: ${interests.map(pluralProductType).join(', ')}. They are chosen first whenever they pass the same safety, goal, budget, and routine-size rules.`);
+  } else if (interests.length) {
     notes.push('Products of the types you are shopping for are chosen first whenever they pass the same safety, goal, budget, and routine-size rules.');
   }
 
@@ -457,6 +474,8 @@ export function buildSyntheticRoutine(
     eligibleCount: ranked.length,
     pricesUnverified: offered.some((product) => product.listPriceCents === null),
     interestPicks,
+    interests,
+    interestSource,
   };
 }
 

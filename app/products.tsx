@@ -17,6 +17,7 @@ import {
   buildSafetyProfile,
   namedProductsHiddenFor,
   requestedTagsFor,
+  resolveProductInterests,
 } from '@/domain/recommendations/routineBuilder';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -146,7 +147,9 @@ export default function ProductsScreen() {
     hidden: 4,
     no_profile: 5,
   };
-  const interests = routineProfile?.productInterests ?? [];
+  const { interests, source: interestSource } = routineProfile && analysis.result
+    ? resolveProductInterests(routineProfile, analysis.result)
+    : { interests: [] as const, source: null };
   const evaluated = catalog.products
     .map((product) => {
       const status = evaluate(product);
@@ -195,8 +198,8 @@ export default function ProductsScreen() {
       ) : null}
       {interests.length ? (
         <InfoCard
-          title="Your shopping list"
-          body={`You are shopping for: ${interests.map((type) => describeProductType(type).toLowerCase()).join(', ')}. ${interestCount} listed product${interestCount === 1 ? '' : 's'} match those types and are marked below.`}
+          title={interestSource === 'suggested' ? 'vAIne’s shopping list for you' : 'Your shopping list'}
+          body={`${interestSource === 'suggested' ? 'From this check-in, vAIne is shopping for' : 'You are shopping for'}: ${interests.map((type) => describeProductType(type).toLowerCase()).join(', ')}. ${interestCount} listed product${interestCount === 1 ? '' : 's'} match those types and are marked below.`}
           tone="green"
         />
       ) : null}

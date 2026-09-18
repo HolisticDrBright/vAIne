@@ -144,8 +144,9 @@ offered.
 ### Shopping interests
 
 The routine preferences screen asks "What are you shopping for?" with one
-checkbox per product type. The answer is optional, remembered on the device
-with the other routine answers, and used in two places:
+checkbox per product type plus a "Let vAIne pick for me" option. The answer
+is optional, remembered on the device with the other routine answers, and
+used in two places:
 
 - **When a routine role is filled**, the first eligible, in-budget product of
   a checked type is chosen ahead of an equally acceptable product that is not.
@@ -160,6 +161,15 @@ with the other routine answers, and used in two places:
   nothing qualifies the pick explains why (no products of that type on the
   list, paused, excluded by safety answers, over budget, or hidden for
   review).
+
+**Let vAIne pick** derives the list from the check-in instead of the
+checkboxes (`suggestProductTypes`). Each observation tag and routine goal
+votes for the types that address it, goals count double, the most-voted
+types win up to a cap of four, ties keep the vocabulary order, and an
+exfoliant is never suggested while redness is visible. The mapping is a fixed
+table, so the same check-in always yields the same list; the routine and
+product-list screens say the list was vAIne's, and checking any type takes
+over.
 
 Product types come from the product name, the sheet's category, the routine
 slot, and reviewed active families. Ingredient-derived types only apply to

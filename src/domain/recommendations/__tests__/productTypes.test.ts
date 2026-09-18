@@ -1,10 +1,13 @@
 import { describe, expect, test } from 'vitest';
+import { syntheticSkinAnalysis } from '../../../data/syntheticAnalysis';
 import {
+  MAX_SUGGESTED_TYPES,
   PRODUCT_TYPE_OPTIONS,
   PRODUCT_TYPE_VALUES,
   deriveProductTypes,
   describeProductType,
   matchesInterest,
+  suggestProductTypes,
 } from '../productTypes';
 
 describe('product type vocabulary', () => {
@@ -62,5 +65,44 @@ describe('matchesInterest', () => {
     expect(matchesInterest(['serum'], ['cleanser'])).toBeNull();
     expect(matchesInterest(undefined, ['cleanser'])).toBeNull();
     expect(matchesInterest(['cleanser'], [])).toBeNull();
+  });
+});
+
+describe('suggestProductTypes (let vAIne pick)', () => {
+  test('turns the sample check-in into a short, deterministic shopping list', () => {
+    const suggested = suggestProductTypes(syntheticSkinAnalysis);
+    expect(suggested.length).toBeGreaterThan(0);
+    expect(suggested.length).toBeLessThanOrEqual(MAX_SUGGESTED_TYPES);
+    expect(suggested).toContain('moisturizer');
+    expect(suggested).toContain('exfoliant');
+    expect(suggested).toContain('sunscreen');
+    expect(suggestProductTypes(syntheticSkinAnalysis)).toEqual(suggested);
+  });
+
+  test('ranks the most-supported types first and never exceeds the cap', () => {
+    const suggested = suggestProductTypes({
+      observationTags: [
+        'appearance.fine_lines_visible',
+        'appearance.dark_circles_visible',
+        'appearance.tone_uneven',
+        'appearance.dullness_visible',
+        'appearance.sun_exposure_signs_visible',
+        'appearance.hydration_look_low',
+      ],
+      routineGoals: ['support_even_tone_look', 'support_radiance_look', 'support_hydration_look'],
+    });
+    expect(suggested).toHaveLength(MAX_SUGGESTED_TYPES);
+    expect(suggested[0]).toBe('brightening');
+    expect(suggested).toContain('moisturizer');
+  });
+
+  test('never suggests an exfoliant when redness is visible', () => {
+    const suggested = suggestProductTypes({
+      observationTags: ['appearance.visible_redness', 'appearance.texture_irregular'],
+      routineGoals: ['support_smoother_texture_look', 'support_comfort'],
+    });
+    expect(suggested).not.toContain('exfoliant');
+    expect(suggested).toContain('moisturizer');
+    expect(suggestProductTypes({ observationTags: [], routineGoals: [] })).toEqual([]);
   });
 });

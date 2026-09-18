@@ -20,7 +20,7 @@ export default function PrivacyScreen() {
     ['Temporary device storage', session.consent?.temporaryDeviceStorage ? 'ON' : 'OFF', `${session.captures.length} temporary photo${session.captures.length === 1 ? '' : 's'} currently referenced by this session.`],
     ['Progress tracking', baseline ? 'SAVED' : session.consent?.progressTracking ? 'ON' : 'OFF', baseline ? 'One three-photo baseline is stored in this app until you delete or replace it.' : 'No longer-term progress baseline is stored.'],
     ['Research use', 'OFF', 'Unavailable in this beta and always separate.'],
-    ['Routine answers', routineProfile ? 'SAVED' : 'OFF', routineProfile ? `Your safety, budget${routineProfile.productInterests?.length ? ', and shopping-list' : ''} answers are saved on this device so you do not repeat them each check-in.` : 'No routine answers are saved on this device.'],
+    ['Routine answers', routineProfile ? 'SAVED' : 'OFF', routineProfile ? `Your safety, budget${routineProfile.productInterests?.length || routineProfile.productInterestMode === 'auto' ? ', and shopping-list' : ''} answers are saved on this device so you do not repeat them each check-in.` : 'No routine answers are saved on this device.'],
     ['Last check-in', profile.lastCheckIn ? 'SAVED' : 'OFF', profile.lastCheckIn ? 'The last validated, photo-free result (scores and observations only) is saved on this device.' : 'No check-in result is saved on this device.'],
   ] as const;
 

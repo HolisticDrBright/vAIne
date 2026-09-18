@@ -44,6 +44,7 @@ describe('local profile', () => {
       avoidIngredients: ['lanolin'],
       currentActiveFamilies: [],
       productInterests: [],
+      productInterestMode: 'manual' as const,
     };
     let profile = withRoutineIntake(emptyLocalProfile, intake, NOW);
     profile = withLastCheckIn(profile, sampleRecord(), NOW);
@@ -94,6 +95,7 @@ describe('local profile', () => {
       currentActiveFamilies: [],
       routineProductCount: 4,
       productInterests: [],
+      productInterestMode: 'manual',
     });
   });
 
@@ -118,5 +120,11 @@ describe('local profile', () => {
     const tampered = JSON.parse(JSON.stringify(remembered));
     tampered.routineIntake.productInterests = ['nail polish'];
     expect(parseLocalProfile(tampered)).toBeNull();
+
+    const auto = withRoutineIntake(emptyLocalProfile, { ...intake, productInterestMode: 'auto' }, NOW);
+    expect(auto.routineIntake?.productInterestMode).toBe('auto');
+    const badMode = JSON.parse(JSON.stringify(auto));
+    badMode.routineIntake.productInterestMode = 'random';
+    expect(parseLocalProfile(badMode)).toBeNull();
   });
 });

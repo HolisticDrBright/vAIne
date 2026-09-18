@@ -30,7 +30,7 @@ const modeDescriptions = {
   cautious: 'A conservative routine that pauses targeted active support.',
 } as const;
 
-function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; index: number; fictional: boolean }) {
+function RoutineStepCard({ step, index, fictional, suggested }: { step: BuiltRoutineStep; index: number; fictional: boolean; suggested: boolean }) {
   const formattedPrice = step.product
     ? formatPrice(step.product.listPriceCents, step.product.currencyCode)
     : null;
@@ -61,7 +61,11 @@ function RoutineStepCard({ step, index, fictional }: { step: BuiltRoutineStep; i
               <Text style={styles.matchReason}>Matched on: {step.matchedTags.map(describeTag).join(', ')}</Text>
             ) : null}
             {step.interest ? (
-              <Text style={styles.interestReason}>Chosen first because you are shopping for a {describeProductType(step.interest).toLowerCase()}.</Text>
+              <Text style={styles.interestReason}>
+                {suggested
+                  ? `Chosen first because vAIne picked ${describeProductType(step.interest).toLowerCase()} for this check-in.`
+                  : `Chosen first because you are shopping for a ${describeProductType(step.interest).toLowerCase()}.`}
+              </Text>
             ) : null}
             {evidence && !fictional ? (
               <Text style={styles.evidence}>{ingredientEvidenceGradeLabels[evidence.grade]} · {evidence.effectivenessScore}/100</Text>
@@ -225,13 +229,17 @@ export default function RoutineScreen() {
       <InfoCard title="Evidence-based order" body="Scores compare the recorded ingredients with human clinical evidence for the goals in this check-in. They do not mean the finished product itself was clinically proven." tone="green" />
 
       <View style={styles.list}>
-        {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} />)}
+        {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} suggested={routine.interestSource === 'suggested'} />)}
       </View>
 
       {routine.interestPicks.length ? (
         <>
-          <Text style={styles.sectionTitle}>Picks for what you’re shopping for</Text>
-          <Text style={styles.sectionBody}>One product per type you checked, chosen with the same safety, goal, and budget rules as the routine. Change the list any time from routine preferences.</Text>
+          <Text style={styles.sectionTitle}>{routine.interestSource === 'suggested' ? 'Picks vAIne chose for you' : 'Picks for what you’re shopping for'}</Text>
+          <Text style={styles.sectionBody}>
+            {routine.interestSource === 'suggested'
+              ? `From this check-in, vAIne is shopping for: ${routine.interests.map((type) => describeProductType(type).toLowerCase()).join(', ')}. One product per type, chosen with the same safety, goal, and budget rules as the routine. Pick your own types any time from routine preferences.`
+              : 'One product per type you checked, chosen with the same safety, goal, and budget rules as the routine. Change the list any time from routine preferences.'}
+          </Text>
           <View style={styles.list}>
             {routine.interestPicks.map((pick) => <InterestPickCard key={pick.interest} pick={pick} fictional={fictional} />)}
           </View>

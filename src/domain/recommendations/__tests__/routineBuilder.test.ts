@@ -6,6 +6,7 @@ import {
   type RoutineSafetyIntake,
 } from '../routineBuilder';
 import type { ProductCandidate } from '../eligibility';
+import { suggestProductTypes } from '../productTypes';
 
 const standardIntake: RoutineSafetyIntake = {
   sensitivityPreference: 'standard',
@@ -364,5 +365,23 @@ describe('routine builder shopping interests', () => {
     );
     expect(hidden.interestPicks[0]).toEqual(expect.objectContaining({ product: null, noProductReason: 'hidden_for_review' }));
   });
-});
 
+  test('let vAIne pick derives the shopping list from the check-in and ignores checked types', () => {
+    const auto = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...standardIntake, productInterestMode: 'auto', productInterests: ['mask'] },
+      approvedPrototypeCatalog,
+    );
+    expect(auto.interestSource).toBe('suggested');
+    expect(auto.interests).toEqual(suggestProductTypes(syntheticSkinAnalysis));
+    expect(auto.interests).not.toContain('mask');
+    expect(auto.interestPicks.map((pick) => pick.interest)).toEqual(auto.interests);
+    expect(auto.interestPicks.find((pick) => pick.interest === 'moisturizer')?.product?.routineSlot).toBe('hydrate');
+    expect(auto.notes.some((note) => /vAIne picked the product types/.test(note))).toBe(true);
+
+    const manual = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['mask'] }, approvedPrototypeCatalog);
+    expect(manual.interestSource).toBe('chosen');
+    expect(manual.interests).toEqual(['mask']);
+    expect(buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog).interestSource).toBeNull();
+  });
+});

@@ -1,3 +1,5 @@
+import type { SkinObservationTag } from '../analysis/observationTaxonomy';
+import type { SkinAnalysis } from '../analysis/skinAnalysisSchema';
 import type { RoutineSlot } from './eligibility';
 
 /**
@@ -179,4 +181,56 @@ export function matchesInterest(productTypes: readonly ProductType[] | undefined
     if (productTypes.includes(interest)) return interest;
   }
   return null;
+}
+
+/** Who decided the shopping list: the person, or vAIne from the check-in. */
+export type ProductInterestMode = 'manual' | 'auto';
+
+export const MAX_SUGGESTED_TYPES = 4;
+
+const TAG_VOTES: Partial<Record<SkinObservationTag, readonly ProductType[]>> = {
+  'appearance.hydration_look_low': ['moisturizer', 'toner_mist'],
+  'appearance.visible_redness': ['moisturizer'],
+  'appearance.tone_uneven': ['brightening'],
+  'appearance.texture_irregular': ['exfoliant', 'serum'],
+  'appearance.pore_visibility_high': ['exfoliant', 'cleanser'],
+  'appearance.fine_lines_visible': ['wrinkle_treatment'],
+  'appearance.oiliness_visible': ['cleanser', 'exfoliant'],
+  'appearance.dullness_visible': ['brightening', 'exfoliant'],
+  'appearance.dark_circles_visible': ['eye_care'],
+  'appearance.blemishes_visible': ['cleanser', 'exfoliant'],
+  'appearance.sun_exposure_signs_visible': ['sunscreen', 'brightening'],
+};
+
+const GOAL_VOTES: Record<SkinAnalysis['routineGoals'][number], readonly ProductType[]> = {
+  support_hydration_look: ['moisturizer'],
+  support_even_tone_look: ['brightening'],
+  support_smoother_texture_look: ['exfoliant', 'serum'],
+  support_radiance_look: ['brightening'],
+  support_comfort: ['moisturizer'],
+  support_sun_protection_habit: ['sunscreen'],
+};
+
+/**
+ * "Let vAIne pick": turns a validated check-in into a short shopping list.
+ * Each observation tag and routine goal votes for the product types that
+ * address it (a goal counts double); the most-voted types win, ties keep the vocabulary order, and
+ * the list is capped so it stays a focus rather than the whole store.
+ * Exfoliants are never suggested when redness is visible. The mapping is a
+ * fixed table, so the same check-in always yields the same list.
+ */
+export function suggestProductTypes(analysis: Pick<SkinAnalysis, 'observationTags' | 'routineGoals'>): ProductType[] {
+  const votes = new Map<ProductType, number>();
+  const vote = (types: readonly ProductType[] | undefined, weight: number) => {
+    for (const type of types ?? []) votes.set(type, (votes.get(type) ?? 0) + weight);
+  };
+  // Routine goals are the check-in's own priorities, so they count double.
+  for (const tag of analysis.observationTags) vote(TAG_VOTES[tag], 1);
+  for (const goal of analysis.routineGoals) vote(GOAL_VOTES[goal], 2);
+  if (analysis.observationTags.includes('appearance.visible_redness')) votes.delete('exfoliant');
+
+  return PRODUCT_TYPE_VALUES
+    .filter((type) => (votes.get(type) ?? 0) > 0)
+    .sort((left, right) => (votes.get(right) ?? 0) - (votes.get(left) ?? 0))
+    .slice(0, MAX_SUGGESTED_TYPES);
 }

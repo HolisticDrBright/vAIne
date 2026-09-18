@@ -38,6 +38,8 @@ export const routineSafetyIntakeSchema = z.object({
   currentActiveFamilies: z.array(z.string().min(1).max(80)).max(10).default([]),
   /** Product types the person said they are shopping for; empty means no preference. */
   productInterests: z.array(z.enum(PRODUCT_TYPE_VALUES)).max(PRODUCT_TYPE_VALUES.length).default([]),
+  /** 'auto' lets vAIne derive the shopping list from each check-in instead. */
+  productInterestMode: z.enum(['manual', 'auto']).default('manual'),
 }).strict();
 
 const captureMetaSchema = z.object({
