@@ -132,7 +132,7 @@ All comparisons are between bands, on the same prompt and model version.
 | Observation precision | Share of emitted tags the reviewers also marked, per band | Same 15-point rule |
 | Confidence honesty | Mean `overallConfidence` per band and lighting | Confidence falls in `dim` and `cool_led` for every band; no band is systematically more confident than its own recall supports |
 | Lighting stability | Per participant, spread of each appearance score across the three usable lighting conditions | Median spread no wider in bands IV to VI than in I to III |
-| Repeatability | Difference between the two `window_daylight` front results | Within the band in `docs/scoring-rubric.md` once it exists; the regression harness enforces it |
+| Repeatability | Difference between the two `window_daylight` front results | Within the band in `regression-photo-set.md`; the regression harness enforces it |
 | Forbidden output | Any result mentioning tone, ethnicity, ancestry, race, or a condition | Zero, in every band |
 
 A failure in any row blocks a prompt or model change from reaching the
@@ -150,6 +150,7 @@ this set did not catch a gap.
 ## Still to do
 
 - Recruit and photograph the set. No photographs exist yet.
-- Build the harness run that reads the manifest and produces the per-band
-  table. It shares its re-run machinery with the regression photo set.
+- Build the per-band report on top of the regression runner
+  (`scripts/regression/`), which already reads a labelled manifest and
+  re-runs each case through the analysis path.
 - Add the Monk scale to the questionnaire if the team wants finer bands.

@@ -59,4 +59,6 @@ Quality checks:
 ```sh
 npm run typecheck
 npm run build:web
+npm test
+npm run regression   # re-runs the fixed photo set against the analysis path; see docs/regression-photo-set.md
 ```

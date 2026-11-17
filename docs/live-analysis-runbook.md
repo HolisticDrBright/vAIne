@@ -51,5 +51,6 @@ Auth server, so revoked sessions cannot analyze.
 
 - Invite allow-list enforcement (`beta_invites`) — quotas and the user cap apply, but anyone who can sign in can analyze.
 - Cloud history screen for past results (rows exist; the app shows only the last check-in it remembers locally).
-- The evaluation harness and repeatability validation the plan lists before numeric scores are treated as stable. The skin-tone photo set, its manifest, and the per-band pass criteria are specified in `skin-tone-testing.md`; the photographs do not exist yet.
+- The regression photo set itself. The runner and band exist (`regression-photo-set.md`, `npm run regression`); the photographs and the first recorded baseline do not. Numeric scores are not to be described as stable until a baseline has been recorded and re-run clean.
+- The skin-tone photo set, its manifest, and the per-band pass criteria are specified in `skin-tone-testing.md`; the photographs do not exist yet.
 - Redeploy `analyze-skin` after prompt version `consumer_skin_v1_2026-11-17` (skin-tone guidance, `exposure_hides_skin_detail`) so the live function sends the revised prompt. The app accepts results from both prompt versions in the meantime.
