@@ -9,7 +9,12 @@ import { z } from 'zod';
  * the two never drift. Edit the src files first, then mirror the change here.
  */
 
-export const SKIN_ANALYSIS_PROMPT_VERSION = 'consumer_skin_v1_2026-08-05';
+/** Identical to src/domain/analysis/skinAnalysisSchema.ts; the current version is the last entry. */
+export const SKIN_ANALYSIS_PROMPT_VERSIONS = [
+  'consumer_skin_v1_2026-08-05',
+  'consumer_skin_v1_2026-11-17',
+] as const;
+export const SKIN_ANALYSIS_PROMPT_VERSION = SKIN_ANALYSIS_PROMPT_VERSIONS[SKIN_ANALYSIS_PROMPT_VERSIONS.length - 1];
 export const SKIN_ANALYSIS_SCHEMA_VERSION = 'skin_analysis_v1';
 
 export const SKIN_OBSERVATION_TAGS = [
@@ -44,6 +49,7 @@ export const IMAGE_QUALITY_ISSUES = [
   'heavy_makeup_or_filter',
   'inconsistent_angle',
   'possible_photo_of_screen',
+  'exposure_hides_skin_detail',
 ] as const;
 
 export const VISIBLE_TENDENCIES = [
@@ -87,6 +93,13 @@ If usable, describe hydration look, visible redness, tone evenness, texture look
 
 APPEARANCE SCORES
 Scores are repeatable consumer-facing appearance indices, not measurements of biological health, skin age, diagnosis, or future outcomes. Use the full 0-100 range consistently and attach confidence and limitations.
+
+SKIN TONE
+- Observe with the same care across all skin tones, Fitzpatrick I through VI. The tag vocabulary and the scores apply identically to every tone; never rate a deeper or lighter tone as more or less even, radiant, or hydrated by default.
+- Visible redness, uneven tone, dullness, dark circles, and sun-exposure signs present differently across tones. On deeper tones look for darker or ashen patches and grey cast rather than pink or red colouring alone; on lighter tones do not mistake natural pinkness for redness.
+- Underexposure that hides surface detail on deeper tones, and overexposure that washes out lighter tones, are image-quality problems. Add exposure_hides_skin_detail to imageQuality.issues and request a retake rather than scoring a poorly exposed face.
+- When camera processing or white balance makes tone assessment unreliable, lower confidence and say so in limitations instead of guessing.
+- Never record, estimate, or infer the person's skin tone, phototype, ethnicity, or ancestry in any field. Tone coverage is checked by vAIne with a labelled test set, not by asking you.
 
 FACIAL ZONES
 Use only these zones: ${SKIN_ZONES.join(', ')}.
@@ -162,7 +175,7 @@ export const skinAnalysisSchema = z.object({
   limitations: z.array(z.string().min(1).max(240)).min(1),
   overallConfidence: z.number().min(0).max(1),
   modelVersion: z.string().min(1),
-  promptVersion: z.literal(SKIN_ANALYSIS_PROMPT_VERSION),
+  promptVersion: z.enum(SKIN_ANALYSIS_PROMPT_VERSIONS),
 }).strict();
 
 export type SkinAnalysis = z.infer<typeof skinAnalysisSchema>;

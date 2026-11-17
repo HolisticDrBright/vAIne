@@ -1,12 +1,14 @@
 import { describe, expect, test } from 'vitest';
 import { syntheticSkinAnalysis } from '../../../../src/data/syntheticAnalysis';
 import { SKIN_OBSERVATION_TAGS as APP_TAGS, SKIN_ZONES as APP_ZONES } from '../../../../src/domain/analysis/observationTaxonomy';
-import { SKIN_ANALYSIS_PROMPT_VERSION as APP_PROMPT_VERSION, SKIN_ANALYSIS_SCHEMA_VERSION as APP_SCHEMA_VERSION, skinAnalysisSchema as appSchema } from '../../../../src/domain/analysis/skinAnalysisSchema';
+import { IMAGE_QUALITY_ISSUES as APP_ISSUES, SKIN_ANALYSIS_PROMPT_VERSION as APP_PROMPT_VERSION, SKIN_ANALYSIS_PROMPT_VERSIONS as APP_PROMPT_VERSIONS, SKIN_ANALYSIS_SCHEMA_VERSION as APP_SCHEMA_VERSION, skinAnalysisSchema as appSchema } from '../../../../src/domain/analysis/skinAnalysisSchema';
 import { CONSUMER_SKIN_SYSTEM_PROMPT as APP_PROMPT, buildSkinPromptInput as appBuildInput } from '../../../../src/domain/analysis/skinPrompt';
 import {
   CONSUMER_SKIN_SYSTEM_PROMPT,
+  IMAGE_QUALITY_ISSUES,
   PROVIDER_OUTPUT_JSON_SCHEMA,
   SKIN_ANALYSIS_PROMPT_VERSION,
+  SKIN_ANALYSIS_PROMPT_VERSIONS,
   SKIN_ANALYSIS_SCHEMA_VERSION,
   SKIN_OBSERVATION_TAGS,
   SKIN_ZONES,
@@ -18,6 +20,8 @@ import {
 describe('server-side skin analysis contract stays in sync with the app', () => {
   test('versions, tags, zones, and prompt text are identical', () => {
     expect(SKIN_ANALYSIS_PROMPT_VERSION).toBe(APP_PROMPT_VERSION);
+    expect([...SKIN_ANALYSIS_PROMPT_VERSIONS]).toEqual([...APP_PROMPT_VERSIONS]);
+    expect([...IMAGE_QUALITY_ISSUES]).toEqual([...APP_ISSUES]);
     expect(SKIN_ANALYSIS_SCHEMA_VERSION).toBe(APP_SCHEMA_VERSION);
     expect([...SKIN_OBSERVATION_TAGS]).toEqual([...APP_TAGS]);
     expect([...SKIN_ZONES]).toEqual([...APP_ZONES]);
@@ -31,6 +35,12 @@ describe('server-side skin analysis contract stays in sync with the app', () => 
     const bad = { ...syntheticSkinAnalysis, observationTags: ['appearance.made_up'] };
     expect(skinAnalysisSchema.safeParse(bad).success).toBe(appSchema.safeParse(bad).success);
     expect(skinAnalysisSchema.safeParse(bad).success).toBe(false);
+  });
+
+  test('the provider JSON schema asks for no skin tone, ethnicity, or ancestry field', () => {
+    const keys = JSON.stringify(PROVIDER_OUTPUT_JSON_SCHEMA).match(/"([A-Za-z_]+)":\{/g) ?? [];
+    expect(keys.join(' ')).not.toMatch(/tone(?!Evenness)|ethnic|fitzpatrick|phototype|ancestry|race/i);
+    expect(JSON.stringify(PROVIDER_OUTPUT_JSON_SCHEMA)).toContain('exposure_hides_skin_detail');
   });
 
   test('the provider JSON schema uses no unsupported constraints', () => {

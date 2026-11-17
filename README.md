@@ -32,6 +32,7 @@ Signed-in beta testers get a real visible-appearance analysis: the phone re-enco
 - Skin is the only module. Nail, tongue, and iris ideas have been dropped and must not be reintroduced.
 - Real product recommendations are excluded until a separately governed catalog is verified.
 - Affiliate information must never influence eligibility or ranking.
+- Observations are held to the same standard across skin tones (Fitzpatrick I to VI). The prompt asks for equal care and treats exposure that hides skin detail as a retake; the result has no field for skin tone, ethnicity, or ancestry and never will. The labelled photo set and pass criteria are in `docs/skin-tone-testing.md`.
 
 ## Privacy boundaries
 

@@ -173,7 +173,9 @@ images — covering orientation/mirroring, lighting, blur/exposure, devices,
 diverse visible skin tones, makeup/facial hair, glasses/occlusion, no-face,
 multi-face, overconfidence, unsupported medical claims, repeatability,
 schema failures, and retake behavior. Synthetic testing is never described
-as proof of fairness or clinical validity.
+as proof of fairness or clinical validity. The skin-tone part of this
+harness (labelled photo set, lighting conditions, per-band pass criteria) is
+specified in `skin-tone-testing.md`.
 
 ## 5. Transition from synthetic to real validated results
 
