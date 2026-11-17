@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { LocalCaptureStrip } from '@/components/LocalCaptureStrip';
 import { assessFramingMatch, describeFramingMatch, framingMatchBadge, framingSnapshotFrom } from '@/domain/progress/framingMatch';
+import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
 import { useBaselineFraming } from '@/state/useBaselineFraming';
@@ -26,6 +27,7 @@ function ComparisonPhoto({ label, date, uri }: { label: string; date: string; ur
 
 export default function CompareScreen() {
   const { session } = useCaptureSession();
+  const { analysis } = useAnalysisSession();
   const { baseline, status, errorMessage, keepAsBaseline, clearBaseline } = useProgressBaseline();
   const currentFront = session.captures.find((capture) => capture.angle === 'front');
   const baselineFront = baseline?.captures.find((capture) => capture.angle === 'front');
@@ -140,6 +142,7 @@ export default function CompareScreen() {
         )
       ) : null}
 
+      {baseline || analysis.result ? <PrimaryButton label="Create a progress card" onPress={() => router.push('/progress-card')} /> : null}
       {baseline ? <SecondaryButton label="Delete saved baseline photos" onPress={() => { void clearBaseline(); }} /> : null}
       <SecondaryButton label="Privacy controls" onPress={() => router.push('/privacy')} />
       <SecondaryButton label="Back to home" onPress={() => router.replace('/')} />
