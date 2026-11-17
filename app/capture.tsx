@@ -20,9 +20,12 @@ import { summarizeCaptureAlignment } from '@/domain/capture/adaptiveCapture';
 import { DETAIL_GROUP_GUIDANCE, type DetailCaptureGroup } from '@/domain/capture/zoneCropQuality';
 import type { FaceDetectionOutcome } from '@/domain/zones/faceDetection';
 import type { SkinCaptureAngle } from '@/domain/analysis/observationTaxonomy';
+import { assessFramingMatch, describeFramingMatch, framingMatchBadge, framingSnapshotFrom } from '@/domain/progress/framingMatch';
 import { deleteLocalPhoto } from '@/services/localPhotoStorage';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useFaceDetector } from '@/state/FaceDetectorContext';
+import { useProgressBaseline } from '@/state/ProgressBaselineContext';
+import { useBaselineFraming } from '@/state/useBaselineFraming';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 const angleCopy = {
@@ -71,7 +74,9 @@ export default function CaptureScreen() {
   const [detailMode, setDetailMode] = useState(false);
   const [busy, setBusy] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [ghostVisible, setGhostVisible] = useState(true);
   const faceDetector = useFaceDetector();
+  const { baseline } = useProgressBaseline();
   const {
     session,
     acceptCapture,
@@ -89,6 +94,11 @@ export default function CaptureScreen() {
 
   const capturedAngles = new Set(session.captures.map((capture) => capture.angle));
   const currentAngle = REQUIRED_CAPTURE_ANGLES.find((angle) => !capturedAngles.has(angle));
+  // The saved baseline photo for the angle being captured, shown faintly over
+  // the live preview so the person can line up position and distance.
+  const ghostCapture = currentAngle ? baseline?.captures.find((capture) => capture.angle === currentAngle) : undefined;
+  const baselineFront = baseline?.captures.find((capture) => capture.angle === 'front');
+  const baselineFraming = useBaselineFraming(baselineFront);
   const frontCapture = session.captures.find((capture) => capture.angle === 'front');
   const alignmentSummary = useMemo(() => summarizeCaptureAlignment(frontCapture), [frontCapture]);
 
@@ -237,6 +247,15 @@ export default function CaptureScreen() {
     const title = pending.kind === 'angle'
       ? `Use this ${angleCopy[pending.angle].title.toLowerCase()} photo?`
       : `Use this ${detailGroupTitles[pending.group].toLowerCase()}?`;
+    // Framing is compared for the front photo only, in memory, against the
+    // baseline's geometry re-derived on this device.
+    const framing = pending.kind === 'angle' && pending.angle === 'front' && baselineFront && baselineFraming.status === 'ready'
+      ? assessFramingMatch(
+        baselineFraming.snapshot,
+        framingSnapshotFrom(pending.detection ?? undefined, { width: pending.photo.width, height: pending.photo.height }),
+      )
+      : null;
+    const framingBadge = framing ? framingMatchBadge(framing) : null;
     return (
       <Screen title="Review photo" back>
         <Text style={styles.step}>
@@ -252,7 +271,15 @@ export default function CaptureScreen() {
             body={describeDetectionForReview(pending.detection)}
             tone={pending.detection?.kind === 'detected' ? 'green' : 'lilac'}
           />
-        ) : (
+        ) : null}
+        {framing && framingBadge ? (
+          <InfoCard
+            title={framing.kind === 'matched' ? 'Framing matches your baseline' : framing.kind === 'not_matched' ? 'Framing differs from your baseline' : 'Framing not compared'}
+            body={`${describeFramingMatch(framing)}${framing.kind === 'not_matched' ? ' Retake with the faint baseline photo lined up if you want a fair comparison.' : ''}`}
+            tone={framingBadge.tone === 'green' ? 'green' : framingBadge.tone === 'gold' ? 'gold' : 'lilac'}
+          />
+        ) : null}
+        {pending.kind === 'angle' ? null : (
           <Text style={styles.subtitle}>Check that the area is sharp, evenly lit, and fills the frame.</Text>
         )}
         <PrimaryButton label="Use this photo" onPress={() => { void usePendingPhoto(); }} />
@@ -344,14 +371,42 @@ export default function CaptureScreen() {
             onMountError={() => setLocalError('The camera preview could not start on this device.')}
           />
         ) : null}
+        {ghostCapture && ghostVisible ? (
+          // Saved photos are not mirrored (CameraView `mirror` is off) while
+          // the front-camera preview is, so the ghost is flipped to line up.
+          <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+            <Image
+              accessibilityLabel="Faint baseline photo for lining up"
+              source={{ uri: ghostCapture.uri }}
+              style={[StyleSheet.absoluteFill, styles.ghost]}
+            />
+          </View>
+        ) : null}
         <View pointerEvents="none" style={styles.faceGuide} />
+        {ghostCapture ? (
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityState={{ checked: ghostVisible }}
+            onPress={() => setGhostVisible((current) => !current)}
+            style={styles.ghostToggle}
+          >
+            <Text style={styles.ghostToggleText}>{ghostVisible ? 'BASELINE GHOST ON' : 'BASELINE GHOST OFF'}</Text>
+          </Pressable>
+        ) : null}
         <View pointerEvents="none" style={styles.cameraHint}>
           <Text style={styles.cameraHintTitle}>{cameraReady ? 'Camera ready' : 'Starting camera…'}</Text>
           <Text style={styles.cameraHintBody}>
-            {currentAngle ? 'Keep your face fully inside the oval.' : 'Move closer so the area fills the oval.'}
+            {ghostCapture && ghostVisible
+              ? 'Line your face up with the faint baseline photo, in similar light.'
+              : currentAngle ? 'Keep your face fully inside the oval.' : 'Move closer so the area fills the oval.'}
           </Text>
         </View>
       </View>
+      <Text style={styles.privacyLine}>
+        {ghostCapture
+          ? 'Photos stay on this phone. The faint photo is your saved baseline, shown only to help you line up.'
+          : 'Photos stay on this phone and are deleted after your check-in unless you choose to keep a baseline.'}
+      </Text>
 
       {currentAngle ? (
         <View style={styles.readinessList}>
@@ -405,6 +460,10 @@ const styles = StyleSheet.create({
   subtitle: { color: colors.muted, fontSize: 14, lineHeight: 20, textAlign: 'center' },
   cameraStage: { height: 410, backgroundColor: '#D9D8CF', borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadows.card },
   faceGuide: { position: 'absolute', width: 230, height: 310, borderRadius: 116, borderWidth: 2, borderColor: colors.cream, alignSelf: 'center', top: 30 },
+  ghost: { opacity: 0.38, resizeMode: 'cover', transform: [{ scaleX: -1 }] },
+  ghostToggle: { position: 'absolute', top: 12, right: 12, minHeight: 32, justifyContent: 'center', paddingHorizontal: 10, borderRadius: radius.pill, backgroundColor: 'rgba(46,57,41,.78)' },
+  ghostToggleText: { color: colors.cream, fontSize: 8, fontWeight: '800', letterSpacing: 0.7 },
+  privacyLine: { color: colors.muted, fontSize: 10, lineHeight: 14, textAlign: 'center', marginTop: -6 },
   cameraHint: { position: 'absolute', bottom: 14, left: 14, right: 14, padding: 11, borderRadius: radius.small, backgroundColor: 'rgba(46,57,41,.78)' },
   cameraHintTitle: { color: colors.white, fontSize: 11, fontWeight: '700' },
   cameraHintBody: { color: colors.cream, fontSize: 11, marginTop: 3 },

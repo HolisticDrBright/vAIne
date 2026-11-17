@@ -2,8 +2,10 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { LocalCaptureStrip } from '@/components/LocalCaptureStrip';
+import { assessFramingMatch, describeFramingMatch, framingMatchBadge, framingSnapshotFrom } from '@/domain/progress/framingMatch';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
+import { useBaselineFraming } from '@/state/useBaselineFraming';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 function formatDate(iso: string): string {
@@ -28,6 +30,16 @@ export default function CompareScreen() {
   const currentFront = session.captures.find((capture) => capture.angle === 'front');
   const baselineFront = baseline?.captures.find((capture) => capture.angle === 'front');
   const currentIsBaseline = Boolean(baseline && baseline.sourceSessionId === session.id);
+  const comparing = Boolean(baselineFront && currentFront && !currentIsBaseline && session.consent?.progressTracking);
+  // Baseline geometry is re-derived on the device only while a comparison is shown.
+  const baselineFraming = useBaselineFraming(comparing ? baselineFront : undefined);
+  const framing = comparing && currentFront && baselineFraming.status === 'ready'
+    ? assessFramingMatch(
+      baselineFraming.snapshot,
+      framingSnapshotFrom(currentFront.faceDetection, { width: currentFront.width, height: currentFront.height }),
+    )
+    : null;
+  const framingBadge = framing ? framingMatchBadge(framing) : null;
   const canSave = Boolean(
     session.id
     && session.consent?.progressTracking
@@ -97,15 +109,28 @@ export default function CompareScreen() {
       {baseline && baselineFront && currentFront && !currentIsBaseline ? (
         session.consent?.progressTracking ? (
           <>
+            <View style={styles.badgeRow}>
+              <Text style={[styles.badge, framingBadge?.tone === 'green' && styles.badgeGreen, framingBadge?.tone === 'gold' && styles.badgeGold]}>
+                {framingBadge ? framingBadge.label : baselineFraming.status === 'locating' ? 'CHECKING FRAMING…' : 'FRAMING NOT CHECKED'}
+              </Text>
+              <Text style={styles.badgeNote}>Framing only. Lighting is confirmed by eye.</Text>
+            </View>
             <View style={styles.comparison}>
               <ComparisonPhoto label="Baseline" date={formatDate(baseline.savedAtIso)} uri={baselineFront.uri} />
               <Text style={styles.arrow}>→</Text>
               <ComparisonPhoto label="Current" date={formatDate(currentFront.capturedAtIso)} uri={currentFront.uri} />
             </View>
+            {framing ? (
+              <InfoCard
+                title={framing.kind === 'matched' ? 'Framing matched' : framing.kind === 'not_matched' ? 'Framing differs' : 'Framing not compared'}
+                body={describeFramingMatch(framing)}
+                tone={framing.kind === 'matched' ? 'green' : framing.kind === 'not_matched' ? 'gold' : 'lilac'}
+              />
+            ) : null}
             <View style={styles.checks}>
               <Text style={styles.checksTitle}>Before interpreting visible differences</Text>
-              <Text style={styles.check}>□ Lighting looks similar</Text>
-              <Text style={styles.check}>□ Face distance and angle look similar</Text>
+              <Text style={styles.check}>□ Lighting looks similar (not measured by the app)</Text>
+              <Text style={styles.check}>{framing?.kind === 'matched' ? '☑' : '□'} Face distance and angle look similar</Text>
               <Text style={styles.check}>□ Makeup, filters, and expression are comparable</Text>
             </View>
             <InfoCard title="No automatic conclusion" body="Differences can come from lighting, camera processing, positioning, products, or ordinary day-to-day variation. This beta does not calculate improvement." tone="lilac" />
@@ -127,6 +152,11 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1 },
   title: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -4 },
   subtitle: { color: colors.muted, lineHeight: 20, fontSize: 13, marginTop: -6 },
+  badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
+  badge: { color: colors.muted, fontSize: 8, fontWeight: '800', letterSpacing: 0.7, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 4 },
+  badgeGreen: { color: colors.green, borderColor: `${colors.green}66`, backgroundColor: `${colors.green}12` },
+  badgeGold: { color: colors.gold, borderColor: `${colors.gold}66`, backgroundColor: `${colors.gold}12` },
+  badgeNote: { color: colors.muted, fontSize: 9, flex: 1 },
   comparison: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   photoCard: { flex: 1, backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.line, borderRadius: radius.large, overflow: 'hidden', ...shadows.card },
   photoHeading: { padding: 10, gap: 2 },
