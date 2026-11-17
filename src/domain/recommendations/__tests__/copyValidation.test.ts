@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { validateRecommendationCopy } from '../copyValidation';
+import { validateRecommendationCopy, validateTechniqueCopy } from '../copyValidation';
 
 const catalog = [
   { brandName: 'Synthetic One', productName: 'Hydration Example' },
@@ -44,4 +44,37 @@ describe('recommendation copy validation', () => {
     });
     expect(result).toEqual({ ok: true, violations: [] });
   });
+
+  test('technique copy may use cautious looks language', () => {
+    for (const copy of [
+      'Gentle gua sha may help skin look less puffy for a short while.',
+      'Facial exercise may support a more rested look when done daily; results vary and fade when you stop.',
+      'Red light may help fine lines look softer over weeks of steady use.',
+      'Treat your skin gently and stop if anything feels uncomfortable.',
+    ]) {
+      expect(validateTechniqueCopy(copy), copy).toEqual({ ok: true, violations: [] });
+    }
+  });
+
+  test('technique copy may not claim reshaping, permanence, treatment, cure, or guaranteed results', () => {
+    for (const copy of [
+      'Gua sha reshapes your jawline.',
+      'This sculpts the jaw and defines the cheekbones.',
+      'Microcurrent lifts the face permanently.',
+      'A permanent lift after four weeks.',
+      'Cupping treats rosacea.',
+      'Red light cures acne.',
+      'Results are guaranteed in 30 days.',
+      'Proven to erase wrinkles.',
+      'Leaves you wrinkle-free.',
+    ]) {
+      expect(validateTechniqueCopy(copy).ok, copy).toBe(false);
+    }
+  });
+
+  test('the same technique rules apply to product copy', () => {
+    const result = validateRecommendationCopy({ copy: 'This serum reshapes the jawline and lifts the face permanently.', allowedProducts: [], knownProducts: catalog });
+    expect(result.ok).toBe(false);
+  });
 });
+

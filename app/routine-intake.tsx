@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
 import { MAX_SUGGESTED_TYPES, PRODUCT_TYPE_OPTIONS, type ProductInterestMode, type ProductType } from '@/domain/recommendations/productTypes';
 import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
+import { TECHNIQUE_TOOLS, techniqueToolLabels, type TechniqueTool } from '@/domain/techniques/technique';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
@@ -110,6 +111,15 @@ function RoutineIntakeForm() {
   const [productInterests, setProductInterests] = useState<readonly ProductType[]>(() => routineProfile?.productInterests ?? []);
   const [productInterestMode, setProductInterestMode] = useState<ProductInterestMode>(() => routineProfile?.productInterestMode ?? 'manual');
   const letAiPick = productInterestMode === 'auto';
+  const [implantedDevice, setImplantedDevice] = useState<SafetyAnswer | null>(() => routineProfile?.implantedDevice ?? null);
+  const [lightSensitisingMedication, setLightSensitisingMedication] = useState<SafetyAnswer | null>(() => routineProfile?.lightSensitisingMedication ?? null);
+  const [activeBreakouts, setActiveBreakouts] = useState<SafetyAnswer | null>(() => routineProfile?.activeBreakouts ?? null);
+  const [recentInjectables, setRecentInjectables] = useState<SafetyAnswer | null>(() => routineProfile?.recentInjectables ?? null);
+  const [fragileSkinOrBloodThinners, setFragileSkinOrBloodThinners] = useState<SafetyAnswer | null>(() => routineProfile?.fragileSkinOrBloodThinners ?? null);
+  const [toolsOwned, setToolsOwned] = useState<readonly TechniqueTool[]>(() => routineProfile?.toolsOwned ?? []);
+  const toggleTool = (tool: TechniqueTool) => {
+    setToolsOwned((current) => (current.includes(tool) ? current.filter((item) => item !== tool) : [...current, tool]));
+  };
 
   const complete = Boolean(
     sensitivity &&
@@ -118,7 +128,8 @@ function RoutineIntakeForm() {
     knownAllergyOrReaction &&
     currentStrongActives &&
     fragrancePreference &&
-    budgetPreference && routineProductCount,
+    budgetPreference && routineProductCount &&
+    implantedDevice && lightSensitisingMedication && activeBreakouts && recentInjectables && fragileSkinOrBloodThinners,
   );
 
   const toggleFamily = (family: string) => {
@@ -139,7 +150,12 @@ function RoutineIntakeForm() {
       !currentStrongActives ||
       !fragrancePreference ||
       !budgetPreference ||
-      !routineProductCount
+      !routineProductCount ||
+      !implantedDevice ||
+      !lightSensitisingMedication ||
+      !activeBreakouts ||
+      !recentInjectables ||
+      !fragileSkinOrBloodThinners
     ) return;
 
     saveRoutineProfile({
@@ -156,6 +172,12 @@ function RoutineIntakeForm() {
       // In auto mode the list is derived per check-in, so nothing stale is kept.
       productInterests: productInterestMode === 'auto' ? [] : productInterests,
       productInterestMode,
+      implantedDevice,
+      lightSensitisingMedication,
+      activeBreakouts,
+      recentInjectables,
+      fragileSkinOrBloodThinners,
+      toolsOwned,
     });
     router.replace('/routine');
   };
@@ -320,6 +342,64 @@ function RoutineIntakeForm() {
           </View>
         </View>
       ) : null}
+      <Text style={styles.sectionEyebrow}>FOR AT-HOME TECHNIQUES</Text>
+      <Text style={styles.sectionBody}>Gua sha, facial exercise, microcurrent, red light, and cupping are offered only when these answers allow. A yes or private answer simply leaves a technique out.</Text>
+      <ChoiceQuestion
+        title="Pacemaker or other implanted electrical device?"
+        body="Microcurrent is never offered with an implanted device."
+        value={implantedDevice}
+        options={answerOptions}
+        onSelect={setImplantedDevice}
+      />
+      <ChoiceQuestion
+        title="Taking a medication that makes skin more sensitive to light?"
+        body="Red light sessions are left out while you are."
+        value={lightSensitisingMedication}
+        options={answerOptions}
+        onSelect={setLightSensitisingMedication}
+      />
+      <ChoiceQuestion
+        title="Active breakouts or broken skin right now?"
+        body="Tools that glide over the skin are left out until the area has settled."
+        value={activeBreakouts}
+        options={answerOptions}
+        onSelect={setActiveBreakouts}
+      />
+      <ChoiceQuestion
+        title="Injectables in the last few weeks?"
+        body="Massage and device techniques are paused; follow your practitioner’s advice."
+        value={recentInjectables}
+        options={answerOptions}
+        onSelect={setRecentInjectables}
+      />
+      <ChoiceQuestion
+        title="Fragile or thin skin, or taking blood thinners?"
+        body="Cupping and firmer tools are left out because they can mark the skin."
+        value={fragileSkinOrBloodThinners}
+        options={answerOptions}
+        onSelect={setFragileSkinOrBloodThinners}
+      />
+      <View style={styles.question}>
+        <Text style={styles.questionTitle}>Which tools do you own?</Text>
+        <Text style={styles.questionBody}>Optional. Techniques that need a tool you own come first in your plan. Facial exercise needs no tool at all.</Text>
+        <View style={styles.options}>
+          {TECHNIQUE_TOOLS.map((tool) => {
+            const selected = toolsOwned.includes(tool);
+            return (
+              <Pressable
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
+                key={tool}
+                onPress={() => toggleTool(tool)}
+                style={[styles.option, selected && styles.optionSelected]}
+              >
+                <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{techniqueToolLabels[tool]}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
       <ChoiceQuestion
         title="Fragrance preference"
         body="Avoiding fragrance excludes products that contain fragrance or whose fragrance status is unknown."
@@ -350,6 +430,8 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: colors.text },
   input: { marginTop: 11, minHeight: 64, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panelSoft, color: colors.text, fontSize: 13, paddingHorizontal: 12, paddingVertical: 10, textAlignVertical: 'top' },
   inputHint: { color: colors.green, fontSize: 10, fontWeight: '700', marginTop: 7 },
+  sectionEyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1.1, marginTop: 6 },
+  sectionBody: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: -8 },
   checklist: { marginTop: 11, gap: 6 },
   checkRow: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, paddingHorizontal: 10, paddingVertical: 7, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panelSoft },
   checkRowSelected: { borderColor: colors.blue, backgroundColor: `${colors.blue}14` },

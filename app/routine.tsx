@@ -22,6 +22,10 @@ import { describeProductType } from '@/domain/recommendations/productTypes';
 import { formatReminderTime } from '@/domain/profile/checkInReminder';
 import { withPlanDayDone } from '@/domain/profile/localProfile';
 import { computeStreak, emptyPlanLog, toDateKey } from '@/domain/profile/planStreak';
+import { techniqueLibrary } from '@/data/techniqueLibrary';
+import { noTechniqueReasonCopy } from '@/domain/techniques/dailyTechnique';
+import { PLACEHOLDER_REVIEW_LABEL, techniqueToolLabels } from '@/domain/techniques/technique';
+import { techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
@@ -171,7 +175,9 @@ export default function RoutineScreen() {
     );
   }
 
-  const routine = buildSyntheticRoutine(analysis.result, routineProfile, catalog.products);
+  const routine = buildSyntheticRoutine(analysis.result, routineProfile, catalog.products, { techniques: techniqueLibrary, dateKey: todayKey });
+  const techniqueAnswered = techniqueQuestionsAnswered(routineProfile);
+  const session = routine.technique.session;
   const steps = routine[period];
   const modeCopy = modeDescriptions[routine.mode];
   const fictional = catalog.source === 'synthetic_samples';
@@ -238,6 +244,33 @@ export default function RoutineScreen() {
         >
           <Text style={[styles.planButtonText, streak.doneToday && styles.planButtonTextDone]}>{streak.doneToday ? '✓ Today’s plan done' : 'Mark today’s plan done'}</Text>
         </Pressable>
+        <View style={styles.techniqueBlock}>
+          <View style={styles.techniqueHeading}>
+            <Text style={styles.planEyebrow}>TODAY’S TECHNIQUE</Text>
+            {session ? <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text> : null}
+          </View>
+          {session ? (
+            <>
+              <Text style={styles.techniqueName}>{session.technique.name}</Text>
+              <Text style={styles.planBody}>
+                {Math.round(session.technique.durationSeconds / 60)} min · {session.technique.requiredTool ? techniqueToolLabels[session.technique.requiredTool] : 'No tool needed'}
+                {session.eligibility.matchedTags.length ? ` · supports ${session.eligibility.matchedTags.map(describeTag).join(', ')}` : ''}
+              </Text>
+              <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/technique-session', params: { id: session.technique.id } })} style={styles.techniqueButton}>
+                <Text style={styles.techniqueButtonText}>Start guided session</Text>
+              </Pressable>
+            </>
+          ) : (
+            <Text style={styles.planBody}>
+              {!techniqueAnswered
+                ? 'Answer the five technique safety questions in routine preferences to add a technique step.'
+                : routine.technique.reason ? noTechniqueReasonCopy[routine.technique.reason] : 'No technique today.'}
+            </Text>
+          )}
+          <Pressable accessibilityRole="button" onPress={() => router.push('/techniques')} style={styles.planLink}>
+            <Text style={styles.planLinkText}>Browse all techniques →</Text>
+          </Pressable>
+        </View>
         <Pressable accessibilityRole="button" onPress={() => router.push('/reminder')} style={styles.planLink}>
           <Text style={styles.planLinkText}>
             {profile.reminder?.enabled ? `Daily reminder at ${formatReminderTime(profile.reminder.hour, profile.reminder.minute)} · change` : 'Set a daily reminder →'}
@@ -337,6 +370,12 @@ const styles = StyleSheet.create({
   planButtonDone: { backgroundColor: `${colors.green}18`, borderWidth: 1, borderColor: `${colors.green}66` },
   planButtonText: { color: colors.white, fontSize: 12, fontWeight: '700' },
   planButtonTextDone: { color: colors.green },
+  techniqueBlock: { borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 11, gap: 6 },
+  techniqueHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
+  placeholderBadge: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.gold}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  techniqueName: { color: colors.text, fontSize: 14, fontWeight: '700' },
+  techniqueButton: { minHeight: 40, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.blue, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
+  techniqueButtonText: { color: colors.oliveDark, fontSize: 12, fontWeight: '700' },
   planLink: { minHeight: 36, justifyContent: 'center', alignItems: 'center' },
   planLinkText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
   catalogCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 5, ...shadows.card },

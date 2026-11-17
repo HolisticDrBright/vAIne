@@ -20,6 +20,7 @@ CONSTRAINTS
 - Do not prescribe. Do not provide supplement, procedure, or medical advice.
 - Include application order, gradual introduction, patch testing, and a clear stopping rule when relevant.
 - Do not compare commissions, affiliate availability, discounts, or commercial terms.
+- When an at-home technique (gua sha, facial exercise, microcurrent, red light, cupping) is mentioned, describe only temporary appearance effects in cautious words such as "may help skin look less puffy". Never say it reshapes, sculpts, lifts permanently, treats, or cures anything, or that results are guaranteed.
 
 Return strict JSON matching { "copy": string }. No markdown.`;
 
@@ -32,7 +33,29 @@ const forbiddenClaimPatterns = [
   /\bguaranteed\b/i,
   /\bclinically proven for you\b/i,
   /\bwill reverse\b/i,
+  // Technique claims: reshaping, permanence, treatment, and guarantees are out.
+  /\bre-?shap(?:e|es|ed|ing)\b/i,
+  /\bre-?sculpt|\bsculpt(?:s|ed|ing)?\s+(?:your|the)\s+(?:jaw|jawline|face|cheekbones?|bone)/i,
+  /\b(?:jaw|cheek|facial|nasal)\s*bone(?:s)?\b.*\b(?:change|move|reshape|define)/i,
+  /\b(?:permanent(?:ly)?|lasting|forever)\s+(?:lift|lifts|lifted|lifting|tighten|tightens|tightened|result|results|change|changes)\b/i,
+  /\blift(?:s|ed|ing)?\s+(?:your|the)\s+(?:face|jawline|cheeks?|brows?|skin)\s+permanently\b/i,
+  /\btreats?\b(?!\s+(?:yourself|your skin|it)\s+gently)/i,
+  /\bguarantee(?:s|d)?\b|\bresults?\s+(?:are\s+)?guaranteed\b|\bproven to\b/i,
+  /\bwrinkle[- ]free\b|\berases?\s+wrinkles?\b|\bremoves?\s+(?:wrinkles?|fine lines)\b/i,
 ];
+
+/**
+ * Validates technique copy (steps, cues, evidence and skip notes). Cautious
+ * "looks" language passes; reshaping, permanence, treatment, and guarantees
+ * do not. Shares the claim patterns with product copy so the vocabulary
+ * stays in one place.
+ */
+export function validateTechniqueCopy(copy: string): CopyValidationResult {
+  const violations = forbiddenClaimPatterns
+    .filter((pattern) => pattern.test(copy))
+    .map((pattern) => `Contains prohibited claim: ${pattern.source}`);
+  return { ok: violations.length === 0, violations: [...new Set(violations)] };
+}
 
 export interface CopyValidationResult {
   ok: boolean;

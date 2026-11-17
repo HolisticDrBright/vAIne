@@ -11,6 +11,9 @@ import {
   type SafetyProfile,
 } from './eligibility';
 import { matchesInterest, pluralProductType, suggestProductTypes, type ProductInterestMode, type ProductType } from './productTypes';
+import type { Technique, TechniqueTool } from '../techniques/technique';
+import type { TechniqueSafetyProfile } from '../techniques/techniqueEligibility';
+import { pickDailyTechnique, type DailyTechniquePick } from '../techniques/dailyTechnique';
 
 export type SafetyAnswer = 'yes' | 'no' | 'prefer_not_to_say';
 export type RoutinePeriod = 'am' | 'pm';
@@ -82,6 +85,37 @@ export interface RoutineSafetyIntake {
   productInterests?: readonly ProductType[];
   /** 'auto' ignores `productInterests` and lets vAIne suggest types from the check-in. */
   productInterestMode?: ProductInterestMode;
+  /**
+   * Technique safety answers. Each defaults to the cautious answer when a
+   * profile saved before these questions existed is loaded, so techniques
+   * stay paused until the person has answered.
+   */
+  implantedDevice?: SafetyAnswer;
+  lightSensitisingMedication?: SafetyAnswer;
+  activeBreakouts?: SafetyAnswer;
+  recentInjectables?: SafetyAnswer;
+  fragileSkinOrBloodThinners?: SafetyAnswer;
+  /** Tools the person owns; only affects which techniques are doable today. */
+  toolsOwned?: readonly TechniqueTool[];
+}
+
+/** True once every technique safety question has an answer other than the default. */
+export function techniqueQuestionsAnswered(intake: RoutineSafetyIntake): boolean {
+  return [intake.implantedDevice, intake.lightSensitisingMedication, intake.activeBreakouts, intake.recentInjectables, intake.fragileSkinOrBloodThinners]
+    .every((answer) => answer !== undefined);
+}
+
+export function buildTechniqueSafetyProfile(intake: RoutineSafetyIntake): TechniqueSafetyProfile {
+  // An unanswered question is treated like "prefer not to say": cautious.
+  const cautious = (answer: SafetyAnswer | undefined) => answer !== 'no';
+  return {
+    ...buildSafetyProfile(intake),
+    implantedDevice: cautious(intake.implantedDevice),
+    photosensitisingMedication: cautious(intake.lightSensitisingMedication),
+    activeBreakouts: cautious(intake.activeBreakouts),
+    recentInjectables: cautious(intake.recentInjectables),
+    fragileSkinOrBloodThinners: cautious(intake.fragileSkinOrBloodThinners),
+  };
 }
 
 /** The shopping list in force for a check-in: chosen by the person, or suggested by vAIne. */
@@ -146,6 +180,8 @@ export interface BuiltRoutine {
   /** The shopping list this routine used and who decided it. */
   interests: readonly ProductType[];
   interestSource: 'chosen' | 'suggested' | null;
+  /** Today's technique session, chosen by rules from the technique library; null with a reason when none fits. */
+  technique: DailyTechniquePick;
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -327,10 +363,18 @@ function explainMissingInterest(
   return 'over_budget';
 }
 
+export interface RoutineBuildOptions {
+  /** Technique library to draw today's session from; empty means no technique step. */
+  techniques?: readonly Technique[];
+  /** Device-local calendar date (YYYY-MM-DD) used to rotate the technique session. */
+  dateKey?: string;
+}
+
 export function buildSyntheticRoutine(
   analysis: SkinAnalysis,
   intake: RoutineSafetyIntake,
   catalog: readonly ProductCandidate[],
+  options: RoutineBuildOptions = {},
 ): BuiltRoutine {
   const mode = routineModeFor(intake);
   const namedSamplesHidden = namedProductsHiddenFor(intake);
@@ -464,6 +508,17 @@ export function buildSyntheticRoutine(
     ...interestPicks.flatMap((pick) => (pick.product ? [pick.product] : [])),
   ];
 
+  const technique = pickDailyTechnique(
+    options.techniques ?? [],
+    buildTechniqueSafetyProfile(intake),
+    requestedTags,
+    intake.toolsOwned ?? [],
+    options.dateKey ?? '1970-01-01',
+  );
+  if (technique.session) {
+    notes.push(`Today’s technique is ${technique.session.technique.name.toLowerCase()}, chosen by the same safety answers as the products. It is placeholder content awaiting practitioner review and describes temporary appearance effects only.`);
+  }
+
   return {
     mode,
     am,
@@ -476,6 +531,7 @@ export function buildSyntheticRoutine(
     interestPicks,
     interests,
     interestSource,
+    technique,
   };
 }
 

@@ -45,6 +45,7 @@ describe('local profile', () => {
       currentActiveFamilies: [],
       productInterests: [],
       productInterestMode: 'manual' as const,
+      toolsOwned: [],
     };
     let profile = withRoutineIntake(emptyLocalProfile, intake, NOW);
     profile = withLastCheckIn(profile, sampleRecord(), NOW);
@@ -96,7 +97,28 @@ describe('local profile', () => {
       routineProductCount: 4,
       productInterests: [],
       productInterestMode: 'manual',
+      toolsOwned: [],
     });
+    expect(parseLocalProfile(legacy)?.routineIntake?.implantedDevice).toBeUndefined();
+  });
+
+  test('remembers technique answers and owned tools, rejecting unknown tools', () => {
+    const base = parseLocalProfile({
+      version: LOCAL_PROFILE_VERSION,
+      updatedAtIso: NOW,
+      routineIntake: {
+        sensitivityPreference: 'standard', pregnancyOrNursing: 'no', recentProcedure: 'no', knownAllergyOrReaction: 'no',
+        currentStrongActives: 'no', avoidFragrance: false, budgetPreference: 'no_limit',
+        implantedDevice: 'no', lightSensitisingMedication: 'yes', activeBreakouts: 'prefer_not_to_say', recentInjectables: 'no', fragileSkinOrBloodThinners: 'no',
+        toolsOwned: ['gua_sha_tool', 'red_light_device'],
+      },
+      lastCheckIn: null,
+      consentDefaults: null,
+    });
+    expect(base?.routineIntake).toMatchObject({ lightSensitisingMedication: 'yes', activeBreakouts: 'prefer_not_to_say', toolsOwned: ['gua_sha_tool', 'red_light_device'] });
+    const bad = JSON.parse(JSON.stringify(base));
+    bad.routineIntake.toolsOwned = ['scalpel'];
+    expect(parseLocalProfile(bad)).toBeNull();
   });
 
   test('remembers shopping interests and rejects unknown product types', () => {

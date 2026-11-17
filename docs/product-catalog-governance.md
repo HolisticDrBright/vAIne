@@ -20,6 +20,11 @@ The source package's `clinically_approved` and `imported` values are preserved a
 
 ## Commercial separation
 
+The same boundary covers tools for at-home techniques. A "get the tool"
+entry is a synthetic placeholder until a link passes `attachCommercialLinks`
+(linked, approved, HTTPS, disclosed); tool ownership affects only which
+techniques are doable today, never which are eligible.
+
 Commercial links remain outside product eligibility and ranking. A link attaches only after the product result exists and only when:
 
 - the research package marks the clean destination `linked`;

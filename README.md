@@ -22,6 +22,7 @@ The interface uses a warm premium clinical-spa direction with ivory surfaces, bo
 9. An optional, consent-controlled local baseline with real-photo comparison and no invented progress score
 10. A remembered, photo-free local profile: the last validated result and the routine answers survive relaunch, the home screen welcomes the person back with shortcuts, and privacy controls show and delete everything remembered
 11. Working privacy status and deletion for temporary photos, saved baseline photos, the remembered result, routine answers, the reminder, and plan days
+12b. An at-home technique library (gua sha, facial exercise, microcurrent, red light, cupping) modelled like products: zones, observation tags, required tool, exclusion flags, and an evidence note. Techniques are matched by fixed rules from the same intake answers plus five technique questions (implanted device, light-sensitising medication, active breakouts, recent injectables, fragile skin or blood thinners) and the tools owned; the AI never recommends them. One session joins the daily plan with a guided timer. Every entry is placeholder content labelled as awaiting practitioner review, and copy validation rejects reshaping, permanent-lift, treatment, cure, and guaranteed-result claims
 12a. A shareable progress card that shows consistency (streak, period, focus areas, framing match) and never a score; the person's photos appear only when they switch them on, sample content is labelled fictional on the card, and the image is rendered on demand, handed to the system share sheet, and deleted afterwards
 12. An optional once-a-day local reminder with a warm-up screen before the system permission prompt, fixed wording that never mentions skin, scores, or photos, and no push token or server; plus a simple streak of days the plan was marked done, kept as calendar dates only
 
@@ -30,6 +31,7 @@ Signed-in beta testers get a real visible-appearance analysis: the phone re-enco
 ## Safety boundaries
 
 - Cosmetic observations only; no diagnosis of any kind, and no treatment advice.
+- At-home cosmetic techniques are allowed and matched by rules, described in cautious appearance language only. Procedures, prescriptions, and supplements stay excluded everywhere, including the analysis prompt.
 - No disease, deficiency, organ, systemic-health, or traditional-pattern conclusions from images.
 - Skin is the only module. Nail, tongue, and iris ideas have been dropped and must not be reintroduced.
 - Real product recommendations are excluded until a separately governed catalog is verified.

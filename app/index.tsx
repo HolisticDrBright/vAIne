@@ -67,6 +67,7 @@ export default function ScanSelectionScreen() {
           {canOpenResults ? <ShortcutButton label={routineProfile ? 'Today’s plan' : 'Build today’s routine'} onPress={() => router.push(routineProfile ? '/routine' : '/routine-intake')} /> : null}
           <ShortcutButton label={profile.reminder?.enabled ? 'Daily reminder (on)' : 'Set a daily reminder'} onPress={() => router.push('/reminder')} />
           <ShortcutButton label="Browse the product list" onPress={() => router.push('/products')} />
+          <ShortcutButton label="At-home techniques" onPress={() => router.push('/techniques')} />
         </View>
       ) : null}
 

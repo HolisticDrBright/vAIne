@@ -7,6 +7,8 @@ import {
 } from '../routineBuilder';
 import type { ProductCandidate } from '../eligibility';
 import { suggestProductTypes } from '../productTypes';
+import { techniqueLibrary } from '../../../data/techniqueLibrary';
+import { buildTechniqueSafetyProfile, techniqueQuestionsAnswered } from '../routineBuilder';
 
 const standardIntake: RoutineSafetyIntake = {
   sensitivityPreference: 'standard',
@@ -385,3 +387,47 @@ describe('routine builder shopping interests', () => {
     expect(buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog).interestSource).toBeNull();
   });
 });
+
+describe('routine builder technique session', () => {
+  const answered = {
+    ...standardIntake,
+    implantedDevice: 'no' as const,
+    lightSensitisingMedication: 'no' as const,
+    activeBreakouts: 'no' as const,
+    recentInjectables: 'no' as const,
+    fragileSkinOrBloodThinners: 'no' as const,
+    toolsOwned: ['gua_sha_tool'] as const,
+  };
+
+  test('unanswered technique questions are treated cautiously and add no session', () => {
+    expect(techniqueQuestionsAnswered(standardIntake)).toBe(false);
+    const profile = buildTechniqueSafetyProfile(standardIntake);
+    expect(profile).toMatchObject({ implantedDevice: true, photosensitisingMedication: true, activeBreakouts: true, recentInjectables: true, fragileSkinOrBloodThinners: true });
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
+    expect(routine.technique.session).toBeNull();
+    expect(routine.technique.reason).toBe('no_eligible_technique');
+  });
+
+  test('answered questions add one doable session chosen by date, with a placeholder note', () => {
+    expect(techniqueQuestionsAnswered(answered)).toBe(true);
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
+    expect(routine.technique.session).not.toBeNull();
+    expect(routine.technique.session?.toolOwned).toBe(true);
+    expect(routine.notes.some((note) => /placeholder content awaiting practitioner review/.test(note))).toBe(true);
+    const again = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
+    expect(again.technique.session?.technique.id).toBe(routine.technique.session?.technique.id);
+  });
+
+  test('a safety answer removes the matching technique without touching products', () => {
+    const withDevice = { ...answered, implantedDevice: 'yes' as const, toolsOwned: ['microcurrent_device'] as const };
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, withDevice, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
+    expect(routine.technique.session?.technique.category).not.toBe('microcurrent');
+    expect(routine.am.length).toBeGreaterThan(0);
+  });
+
+  test('without a technique library the routine has no technique step', () => {
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog);
+    expect(routine.technique).toEqual({ session: null, reason: 'library_empty', needsTool: [] });
+  });
+});
+

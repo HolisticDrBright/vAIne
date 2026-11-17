@@ -3,6 +3,7 @@ import { skinAnalysisSchema } from '../analysis/skinAnalysisSchema';
 import type { AnalysisRecord } from '../analysis/analysisService';
 import type { RoutineSafetyIntake } from '../recommendations/routineBuilder';
 import { PRODUCT_TYPE_VALUES } from '../recommendations/productTypes';
+import { TECHNIQUE_TOOLS } from '../techniques/technique';
 import { reminderPreferenceSchema, type ReminderPreference } from './checkInReminder';
 import { markPlanDayDone, planLogSchema, type PlanLog } from './planStreak';
 
@@ -42,6 +43,16 @@ export const routineSafetyIntakeSchema = z.object({
   productInterests: z.array(z.enum(PRODUCT_TYPE_VALUES)).max(PRODUCT_TYPE_VALUES.length).default([]),
   /** 'auto' lets vAIne derive the shopping list from each check-in instead. */
   productInterestMode: z.enum(['manual', 'auto']).default('manual'),
+  /**
+   * Technique safety answers. Optional so profiles saved before they existed
+   * still load; an absent answer is treated as the cautious one.
+   */
+  implantedDevice: safetyAnswerSchema.optional(),
+  lightSensitisingMedication: safetyAnswerSchema.optional(),
+  activeBreakouts: safetyAnswerSchema.optional(),
+  recentInjectables: safetyAnswerSchema.optional(),
+  fragileSkinOrBloodThinners: safetyAnswerSchema.optional(),
+  toolsOwned: z.array(z.enum(TECHNIQUE_TOOLS)).max(TECHNIQUE_TOOLS.length).default([]),
 }).strict();
 
 const captureMetaSchema = z.object({
