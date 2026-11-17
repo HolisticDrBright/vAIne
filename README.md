@@ -1,6 +1,6 @@
 # vAIne
 
-vAIne is an early, standalone mobile prototype for visual skin wellness check-ins. It is intentionally separate from AI Longevity Pro and every other existing product repository.
+vAIne is an early, standalone mobile prototype for visual skin wellness check-ins. Skin is its only module: it describes visible skin appearance, builds a daily routine, and tracks progress with matched photos. It never diagnoses anything. It is intentionally separate from AI Longevity Pro and every other existing product repository.
 
 ## Current prototype
 
@@ -27,9 +27,9 @@ Signed-in beta testers get a real visible-appearance analysis: the phone re-enco
 
 ## Safety boundaries
 
-- Cosmetic observations only; not medical diagnosis or treatment.
-- No disease, deficiency, organ, or systemic-health conclusions from images.
-- Nail, tongue, and iris modules are future concepts and are not enabled.
+- Cosmetic observations only; no diagnosis of any kind, and no treatment advice.
+- No disease, deficiency, organ, systemic-health, or traditional-pattern conclusions from images.
+- Skin is the only module. Nail, tongue, and iris ideas have been dropped and must not be reintroduced.
 - Real product recommendations are excluded until a separately governed catalog is verified.
 - Affiliate information must never influence eligibility or ranking.
 

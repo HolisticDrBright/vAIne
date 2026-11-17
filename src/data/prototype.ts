@@ -7,9 +7,3 @@ export const appearanceMetrics = [
   { label: 'Radiance', value: syntheticSkinAnalysis.appearanceScores.radianceLook },
   { label: 'Pore visibility', value: syntheticSkinAnalysis.appearanceScores.poreVisibilityLook },
 ];
-
-export const futureModules = [
-  { title: 'Nails', subtitle: 'Appearance check-ins', mark: '◌' },
-  { title: 'Tongue', subtitle: 'TCM wellness observations', mark: '◒' },
-  { title: 'Iris wellness', subtitle: 'Traditional wellness view', mark: '◉' },
-];

@@ -2,7 +2,6 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { BotanicalAccent } from '@/components/BotanicalAccent';
 import { LegalNote, Screen } from '@/components/AppChrome';
-import { futureModules } from '@/data/prototype';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useAnalysisRuntime } from '@/state/AnalysisRuntime';
 import { useAuth } from '@/state/AuthContext';
@@ -95,19 +94,6 @@ export default function ScanSelectionScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.moduleRow}>
-        {futureModules.map((module) => (
-          <View key={module.title} style={styles.moduleItem}>
-            <View style={styles.moduleCircle}>
-              <Text style={styles.moduleMark}>{module.mark}</Text>
-              <View style={styles.lock}><Text style={styles.lockText}>⌑</Text></View>
-            </View>
-            <Text style={styles.moduleTitle}>{module.title}</Text>
-            <Text style={styles.moduleSubtitle}>Coming soon</Text>
-          </View>
-        ))}
-      </View>
-
       {!remembered ? (
         <Pressable accessibilityRole="button" style={styles.privacyLink} onPress={() => router.push('/products')}>
           <Text style={styles.privacyText}>Browse the product list  →</Text>
@@ -149,14 +135,6 @@ const styles = StyleSheet.create({
   arrowCircle: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.sageWash },
   arrow: { color: colors.oliveDark, fontSize: 18 },
   pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
-  moduleRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginTop: 4 },
-  moduleItem: { flex: 1, alignItems: 'center' },
-  moduleCircle: { width: 88, height: 88, borderRadius: 44, borderWidth: 1, borderColor: colors.gold, backgroundColor: colors.panel, alignItems: 'center', justifyContent: 'center', ...shadows.card },
-  moduleMark: { color: colors.oliveDark, fontSize: 30 },
-  lock: { position: 'absolute', right: -1, bottom: -1, width: 25, height: 25, borderRadius: 13, backgroundColor: colors.panel, borderWidth: 1, borderColor: colors.gold, alignItems: 'center', justifyContent: 'center' },
-  lockText: { color: colors.oliveDark, fontSize: 12 },
-  moduleTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 13, marginTop: 9 },
-  moduleSubtitle: { color: colors.muted, fontSize: 9, marginTop: 2 },
   privacyLink: { minHeight: 42, justifyContent: 'center', alignItems: 'center' },
   privacyText: { color: colors.green, fontSize: 11, fontWeight: '600' },
 });
