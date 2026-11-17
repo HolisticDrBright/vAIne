@@ -3,6 +3,8 @@ import { skinAnalysisSchema } from '../analysis/skinAnalysisSchema';
 import type { AnalysisRecord } from '../analysis/analysisService';
 import type { RoutineSafetyIntake } from '../recommendations/routineBuilder';
 import { PRODUCT_TYPE_VALUES } from '../recommendations/productTypes';
+import { reminderPreferenceSchema, type ReminderPreference } from './checkInReminder';
+import { markPlanDayDone, planLogSchema, type PlanLog } from './planStreak';
 
 /**
  * The on-device profile that lets vAIne remember a person between launches.
@@ -74,6 +76,10 @@ export const localProfileSchema = z.object({
   routineIntake: routineSafetyIntakeSchema.nullable(),
   lastCheckIn: rememberedAnalysisRecordSchema.nullable(),
   consentDefaults: consentDefaultsSchema.nullable(),
+  /** Daily reminder time and whether it is on; null until the person chooses. */
+  reminder: reminderPreferenceSchema.nullable().default(null),
+  /** Calendar dates on which today's plan was marked done; null until the first. */
+  planLog: planLogSchema.nullable().default(null),
 }).strict();
 
 export type LocalProfile = z.infer<typeof localProfileSchema>;
@@ -84,6 +90,8 @@ export const emptyLocalProfile: LocalProfile = {
   routineIntake: null,
   lastCheckIn: null,
   consentDefaults: null,
+  reminder: null,
+  planLog: null,
 };
 
 /** Text that would indicate an image reference leaked into the profile. */
@@ -103,7 +111,11 @@ export function parseLocalProfile(input: unknown): LocalProfile | null {
 }
 
 export function isProfileEmpty(profile: LocalProfile): boolean {
-  return profile.routineIntake === null && profile.lastCheckIn === null && profile.consentDefaults === null;
+  return profile.routineIntake === null
+    && profile.lastCheckIn === null
+    && profile.consentDefaults === null
+    && profile.reminder === null
+    && profile.planLog === null;
 }
 
 export function withRoutineIntake(
@@ -128,6 +140,20 @@ export function withLastCheckIn(
   // remembered in the allow-listed shape.
   const lastCheckIn = record ? rememberedAnalysisRecordSchema.parse(record) : null;
   return { ...profile, lastCheckIn, updatedAtIso: nowIso };
+}
+
+export function withReminder(
+  profile: LocalProfile,
+  reminder: ReminderPreference | null,
+  nowIso: string,
+): LocalProfile {
+  return { ...profile, reminder: reminder ? reminderPreferenceSchema.parse(reminder) : null, updatedAtIso: nowIso };
+}
+
+/** Records that today's plan was done; `dateKey` is the device-local calendar date. */
+export function withPlanDayDone(profile: LocalProfile, dateKey: string, nowIso: string): LocalProfile {
+  const current: PlanLog = profile.planLog ?? { completedDays: [] };
+  return { ...profile, planLog: markPlanDayDone(current, dateKey), updatedAtIso: nowIso };
 }
 
 export function withConsentDefaults(

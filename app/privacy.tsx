@@ -6,6 +6,8 @@ import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { useProgressBaseline } from '@/state/ProgressBaselineContext';
+import { formatReminderTime } from '@/domain/profile/checkInReminder';
+import { checkInReminderService } from '@/services/checkInReminderService';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 export default function PrivacyScreen() {
@@ -14,7 +16,7 @@ export default function PrivacyScreen() {
   const { routineProfile } = useRoutineProfile();
   const { profile, forgetProfile } = useLocalProfile();
   const { baseline, clearBaseline } = useProgressBaseline();
-  const hasLocalData = Boolean(session.captures.length || baseline || analysis.result || routineProfile || profile.lastCheckIn || profile.consentDefaults);
+  const hasLocalData = Boolean(session.captures.length || baseline || analysis.result || routineProfile || profile.lastCheckIn || profile.consentDefaults || profile.reminder || profile.planLog);
   const controls = [
     ['Analysis consent', session.consent?.analysis ? 'ON' : 'OFF', 'Required before starting a local capture session.'],
     ['Temporary device storage', session.consent?.temporaryDeviceStorage ? 'ON' : 'OFF', `${session.captures.length} temporary photo${session.captures.length === 1 ? '' : 's'} currently referenced by this session.`],
@@ -22,12 +24,15 @@ export default function PrivacyScreen() {
     ['Research use', 'OFF', 'Unavailable in this beta and always separate.'],
     ['Routine answers', routineProfile ? 'SAVED' : 'OFF', routineProfile ? `Your safety, budget${routineProfile.productInterests?.length || routineProfile.productInterestMode === 'auto' ? ', and shopping-list' : ''} answers are saved on this device so you do not repeat them each check-in.` : 'No routine answers are saved on this device.'],
     ['Last check-in', profile.lastCheckIn ? 'SAVED' : 'OFF', profile.lastCheckIn ? 'The last validated, photo-free result (scores and observations only) is saved on this device.' : 'No check-in result is saved on this device.'],
+    ['Daily reminder', profile.reminder?.enabled ? 'ON' : 'OFF', profile.reminder?.enabled ? `A local notification at ${formatReminderTime(profile.reminder.hour, profile.reminder.minute)} with fixed wording that never mentions your skin. No push token or server is involved.` : 'No reminder is scheduled on this device.'],
+    ['Plan days', profile.planLog?.completedDays.length ? 'SAVED' : 'OFF', profile.planLog?.completedDays.length ? `${profile.planLog.completedDays.length} calendar date${profile.planLog.completedDays.length === 1 ? '' : 's'} on which you marked the plan done, used only for the streak count.` : 'No plan days are recorded on this device.'],
   ] as const;
 
   const deleteSession = async () => {
     await clearSession();
     await clearBaseline();
     resetAnalysis();
+    await checkInReminderService.cancel();
     await forgetProfile();
     router.replace('/');
   };

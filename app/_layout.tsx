@@ -8,6 +8,10 @@ import { AnalysisRuntime } from '@/state/AnalysisRuntime';
 import { FaceDetectorProvider } from '@/state/FaceDetectorContext';
 import { RoutineProfileProvider } from '@/state/RoutineProfileContext';
 import { ProgressBaselineProvider } from '@/state/ProgressBaselineContext';
+import { installForegroundReminderHandler } from '@/services/checkInReminderService';
+
+// A reminder that fires while the app is open shows as a quiet banner.
+installForegroundReminderHandler();
 
 export default function RootLayout() {
   return (

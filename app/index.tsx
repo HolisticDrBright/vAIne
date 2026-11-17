@@ -7,6 +7,7 @@ import { useAnalysisRuntime } from '@/state/AnalysisRuntime';
 import { useAuth } from '@/state/AuthContext';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
+import { computeStreak, emptyPlanLog, toDateKey } from '@/domain/profile/planStreak';
 import { colors, fonts, radius, shadows } from '@/theme';
 
 const homePortrait = require('../assets/home-portrait-woman.jpg');
@@ -33,6 +34,7 @@ export default function ScanSelectionScreen() {
   const { auth } = useAuth();
   const { route: analysisRoute, demoReason } = useAnalysisRuntime();
   const remembered = status === 'ready' && (profile.lastCheckIn !== null || routineProfile !== null);
+  const streak = computeStreak(profile.planLog ?? emptyPlanLog, toDateKey(new Date()));
   const lastCheckIn = profile.lastCheckIn;
   const canOpenResults = analysis.status === 'ready' && analysis.result !== null;
 
@@ -61,7 +63,9 @@ export default function ScanSelectionScreen() {
               : 'Your routine answers are saved. Start a check-in to build today’s routine from the product list.'}
           </Text>
           {canOpenResults ? <ShortcutButton label="View last snapshot" onPress={() => router.push('/overview')} /> : null}
-          {canOpenResults ? <ShortcutButton label={routineProfile ? 'Today’s routine' : 'Build today’s routine'} onPress={() => router.push(routineProfile ? '/routine' : '/routine-intake')} /> : null}
+          {streak.current > 0 ? <Text style={styles.memoryStreak}>{streak.doneToday ? `✓ Today’s plan done · ${streak.current}-day streak` : `${streak.current}-day streak · today’s plan is still open`}</Text> : null}
+          {canOpenResults ? <ShortcutButton label={routineProfile ? 'Today’s plan' : 'Build today’s routine'} onPress={() => router.push(routineProfile ? '/routine' : '/routine-intake')} /> : null}
+          <ShortcutButton label={profile.reminder?.enabled ? 'Daily reminder (on)' : 'Set a daily reminder'} onPress={() => router.push('/reminder')} />
           <ShortcutButton label="Browse the product list" onPress={() => router.push('/products')} />
         </View>
       ) : null}
@@ -121,6 +125,7 @@ const styles = StyleSheet.create({
   memoryBadge: { color: colors.green, fontSize: 8, letterSpacing: 0.6, fontWeight: '800' },
   memoryTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 19 },
   memoryBody: { color: colors.muted, fontSize: 12, lineHeight: 17 },
+  memoryStreak: { color: colors.green, fontSize: 11, fontWeight: '700', marginTop: 2 },
   shortcut: { minHeight: 44, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 },
   shortcutText: { color: colors.text, fontSize: 13, fontWeight: '600' },
   shortcutArrow: { color: colors.oliveDark, fontSize: 16 },

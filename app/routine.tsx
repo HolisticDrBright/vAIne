@@ -19,6 +19,10 @@ import {
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
 import { describeProductType } from '@/domain/recommendations/productTypes';
+import { formatReminderTime } from '@/domain/profile/checkInReminder';
+import { withPlanDayDone } from '@/domain/profile/localProfile';
+import { computeStreak, emptyPlanLog, toDateKey } from '@/domain/profile/planStreak';
+import { useLocalProfile } from '@/state/LocalProfileContext';
 import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -130,7 +134,11 @@ export default function RoutineScreen() {
   const [period, setPeriod] = useState<RoutinePeriod>('am');
   const { analysis } = useAnalysisSession();
   const { routineProfile, loading } = useRoutineProfile();
+  const { profile, updateProfile } = useLocalProfile();
   const catalog = useMemo(() => getRoutineCatalog(), []);
+  const todayKey = toDateKey(new Date());
+  const streak = computeStreak(profile.planLog ?? emptyPlanLog, todayKey);
+  const markTodayDone = () => { void updateProfile((current, nowIso) => withPlanDayDone(current, todayKey, nowIso)); };
 
   if (analysis.status !== 'ready' || !analysis.result) {
     return (
@@ -203,6 +211,38 @@ export default function RoutineScreen() {
             <Text style={styles.goalText}>{goal.replace(/^support_/, '').replaceAll('_', ' ')}</Text>
           </View>
         ))}
+      </View>
+
+      <View style={styles.planCard}>
+        <View style={styles.planHeading}>
+          <View style={styles.planCopy}>
+            <Text style={styles.planEyebrow}>TODAY’S PLAN</Text>
+            <Text style={styles.planTitle}>{streak.doneToday ? 'Done for today' : 'Mark it done when you finish'}</Text>
+            <Text style={styles.planBody}>
+              {streak.current > 0
+                ? `${streak.current}-day streak${streak.longest > streak.current ? ` · best ${streak.longest}` : ''}. Missing a day just starts the count again.`
+                : 'Finish the morning or evening steps and tap done to start a streak. Missing a day just starts the count again.'}
+            </Text>
+          </View>
+          <View style={styles.streakRing}>
+            <Text style={styles.streakNumber}>{streak.current}</Text>
+            <Text style={styles.streakLabel}>{streak.current === 1 ? 'DAY' : 'DAYS'}</Text>
+          </View>
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: streak.doneToday }}
+          disabled={streak.doneToday}
+          onPress={markTodayDone}
+          style={[styles.planButton, streak.doneToday && styles.planButtonDone]}
+        >
+          <Text style={[styles.planButtonText, streak.doneToday && styles.planButtonTextDone]}>{streak.doneToday ? '✓ Today’s plan done' : 'Mark today’s plan done'}</Text>
+        </Pressable>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/reminder')} style={styles.planLink}>
+          <Text style={styles.planLinkText}>
+            {profile.reminder?.enabled ? `Daily reminder at ${formatReminderTime(profile.reminder.hour, profile.reminder.minute)} · change` : 'Set a daily reminder →'}
+          </Text>
+        </Pressable>
       </View>
 
       <Pressable accessibilityRole="button" onPress={() => router.push('/products')} style={({ pressed }) => [styles.catalogCard, pressed && styles.pressed]}>
@@ -284,6 +324,21 @@ const styles = StyleSheet.create({
   goalRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   goalPill: { backgroundColor: `${colors.lilac}14`, borderRadius: radius.pill, borderWidth: 1, borderColor: `${colors.lilac}3A`, paddingHorizontal: 9, paddingVertical: 6 },
   goalText: { color: colors.lilac, fontSize: 8, fontWeight: '700', textTransform: 'capitalize' },
+  planCard: { borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 15, gap: 11, ...shadows.card },
+  planHeading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  planCopy: { flex: 1 },
+  planEyebrow: { color: colors.gold, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
+  planTitle: { color: colors.text, fontSize: 15, fontWeight: '700', marginTop: 4 },
+  planBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 4 },
+  streakRing: { width: 62, height: 62, borderRadius: 31, borderWidth: 1, borderColor: colors.gold, alignItems: 'center', justifyContent: 'center', backgroundColor: `${colors.gold}10` },
+  streakNumber: { color: colors.text, fontSize: 20, fontWeight: '800' },
+  streakLabel: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.8 },
+  planButton: { minHeight: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.blue },
+  planButtonDone: { backgroundColor: `${colors.green}18`, borderWidth: 1, borderColor: `${colors.green}66` },
+  planButtonText: { color: colors.white, fontSize: 12, fontWeight: '700' },
+  planButtonTextDone: { color: colors.green },
+  planLink: { minHeight: 36, justifyContent: 'center', alignItems: 'center' },
+  planLinkText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
   catalogCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 5, ...shadows.card },
   catalogHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   catalogEyebrow: { color: colors.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
