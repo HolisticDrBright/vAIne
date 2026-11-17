@@ -1,10 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, fonts } from '@/theme';
 
-export function ScoreRing({ score, compact = false }: { score: number; compact?: boolean }) {
+/**
+ * `size`: 'small' is the overview's demoted ring, shown beside its confidence
+ * rather than as the headline; 'compact' is the zone list's inline ring.
+ */
+export function ScoreRing({ score, compact = false, size }: { score: number; compact?: boolean; size?: 'small' }) {
+  const small = size === 'small';
   return (
-    <View style={[styles.outer, compact && styles.outerCompact]}>
-      <Text style={[styles.number, compact && styles.numberCompact]}>{score}</Text>
+    <View style={[styles.outer, compact && styles.outerCompact, small && styles.outerSmall]}>
+      <Text style={[styles.number, compact && styles.numberCompact, small && styles.numberSmall]}>{score}</Text>
       <Text style={styles.label}>/100</Text>
     </View>
   );
@@ -13,6 +18,8 @@ export function ScoreRing({ score, compact = false }: { score: number; compact?:
 const styles = StyleSheet.create({
   outer: { width: 116, height: 116, borderRadius: 60, borderWidth: 7, borderColor: colors.gold, backgroundColor: colors.cream, justifyContent: 'center', alignItems: 'center' },
   outerCompact: { width: 70, height: 70, borderRadius: 36, borderWidth: 4 },
+  outerSmall: { width: 78, height: 78, borderRadius: 40, borderWidth: 4 },
+  numberSmall: { fontSize: 24 },
   number: { color: colors.text, fontFamily: fonts.display, fontWeight: '400', fontSize: 35 },
   numberCompact: { fontSize: 22 },
   label: { color: colors.muted, fontSize: 10 },

@@ -6,6 +6,7 @@ import { LocalCaptureStrip } from '@/components/LocalCaptureStrip';
 import { MetricBar } from '@/components/MetricBar';
 import { ScoreRing } from '@/components/ScoreRing';
 import { getConfidenceBand } from '@/domain/analysis/analysisExperience';
+import { formatObservationConfidence, leadObservations } from '@/domain/analysis/leadObservations';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useCaptureSession } from '@/state/CaptureSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -38,6 +39,8 @@ export default function OverviewScreen() {
   const remembered = analysis.source === 'remembered';
   const live = analysis.record?.mode === 'live';
   const confidenceBand = getConfidenceBand(result.overallConfidence);
+  const confidencePercent = Math.round(result.overallConfidence * 100);
+  const lead = leadObservations(result);
   const metrics = [
     { label: 'Hydration look', value: result.appearanceScores.hydrationLook },
     { label: 'Tone appearance', value: result.appearanceScores.toneEvennessLook },
@@ -83,15 +86,34 @@ export default function OverviewScreen() {
         <Text style={styles.demoDividerText}>{live ? 'VISIBLE APPEARANCE · NOT A DIAGNOSIS' : 'DEMONSTRATION REPORT · NOT PHOTO ANALYSIS'}</Text>
       </View>
 
+      <View style={styles.observations}>
+        <Text style={styles.eyebrow}>WHAT WE NOTICED</Text>
+        <Text style={styles.observationsTitle}>{live ? 'In this check-in' : 'In this sample'}</Text>
+        {lead.map((item, index) => {
+          const confidence = formatObservationConfidence(item.confidence);
+          return (
+            <View key={item.id} style={styles.observationRow} accessibilityRole="text">
+              <Text style={styles.observationNumber}>{index + 1}</Text>
+              <View style={styles.observationCopy}>
+                <Text style={styles.observationText}>{item.text}</Text>
+                {confidence ? <Text style={styles.observationMeta}>{confidence}{item.source === 'zone' ? ' · from this zone' : ''}</Text> : null}
+              </View>
+            </View>
+          );
+        })}
+        <Text style={styles.observationsFoot}>Visible appearance in these photographs only. Lighting, angle, and camera processing can change what shows.</Text>
+      </View>
+
       <View style={styles.lead}>
-        <ScoreRing score={result.appearanceScores.overall} />
+        <View style={styles.ringColumn}>
+          <ScoreRing score={result.appearanceScores.overall} size="small" />
+          <Text style={styles.ringCaption}>{confidenceBand.toUpperCase()} CONFIDENCE · {confidencePercent}%</Text>
+        </View>
         <View style={styles.copy}>
-          <Text style={styles.eyebrow}>APPEARANCE SNAPSHOT</Text>
-          <Text style={styles.snapshotTitle}>{live ? 'Your snapshot' : 'Balanced, with two support opportunities'}</Text>
+          <Text style={styles.eyebrow}>APPEARANCE INDEX</Text>
+          <Text style={styles.snapshotTitle}>{live ? 'A rough overall index' : 'Balanced, with two support opportunities'}</Text>
           <Text style={styles.body}>{result.summary}</Text>
-          <View style={styles.confidence}>
-            <Text style={styles.confidenceText}>● {confidenceBand.toUpperCase()} PRESENTATION CONFIDENCE</Text>
-          </View>
+          <Text style={styles.body}>The index summarises the five appearance areas below. It is not a health measure and moves with lighting, so read it with its confidence, not on its own.</Text>
         </View>
       </View>
 
@@ -135,13 +157,21 @@ const styles = StyleSheet.create({
   prototypeNoticeBody: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
   demoDivider: { borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 13, alignItems: 'center' },
   demoDividerText: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
-  lead: { flexDirection: 'row', alignItems: 'center', gap: 17, backgroundColor: colors.panel, padding: 18, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, ...shadows.card },
+  observations: { backgroundColor: colors.panel, padding: 18, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, gap: 10, ...shadows.card },
+  observationsTitle: { color: colors.text, fontFamily: fonts.display, fontWeight: '400', fontSize: 22, lineHeight: 27, marginTop: -4 },
+  observationRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.line },
+  observationNumber: { width: 26, height: 26, borderRadius: 13, borderWidth: 1, borderColor: colors.gold, color: colors.gold, fontSize: 11, fontWeight: '800', textAlign: 'center', lineHeight: 24, overflow: 'hidden' },
+  observationCopy: { flex: 1 },
+  observationText: { color: colors.text, fontSize: 15, lineHeight: 21, fontWeight: '600' },
+  observationMeta: { color: colors.green, fontSize: 9, fontWeight: '800', letterSpacing: 0.4, marginTop: 3 },
+  observationsFoot: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 2 },
+  lead: { flexDirection: 'row', alignItems: 'center', gap: 15, backgroundColor: colors.panelSoft, padding: 16, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line },
+  ringColumn: { alignItems: 'center', gap: 6, width: 92 },
+  ringCaption: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.4, textAlign: 'center' },
   copy: { flex: 1 },
   eyebrow: { color: colors.gold, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
   snapshotTitle: { color: colors.text, fontFamily: fonts.display, fontWeight: '400', fontSize: 18, lineHeight: 22, marginTop: 5 },
   body: { color: colors.muted, fontSize: 11, lineHeight: 16, marginTop: 5 },
-  confidence: { backgroundColor: `${colors.green}14`, borderRadius: radius.pill, paddingVertical: 5, paddingHorizontal: 8, marginTop: 10, alignSelf: 'flex-start' },
-  confidenceText: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.4 },
   focusRow: { flexDirection: 'row', gap: 10 },
   focusCard: { flex: 1, minHeight: 148, backgroundColor: colors.panelSoft, borderRadius: radius.large, padding: 14, borderWidth: 1, borderColor: colors.line },
   focusNumber: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
