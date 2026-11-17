@@ -25,7 +25,8 @@ import { computeStreak, emptyPlanLog, toDateKey } from '@/domain/profile/planStr
 import { techniqueLibrary } from '@/data/techniqueLibrary';
 import { noTechniqueReasonCopy } from '@/domain/techniques/dailyTechnique';
 import { PLACEHOLDER_REVIEW_LABEL, techniqueToolLabels } from '@/domain/techniques/technique';
-import { techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
+import { budgetMaximumCents, buildSafetyProfile, requestedTagsFor, techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
+import { describeExclusions, summarizeExclusions } from '@/domain/recommendations/governance';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { describeTag, formatPrice } from '@/domain/recommendations/presentation';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
@@ -182,6 +183,8 @@ export default function RoutineScreen() {
   const modeCopy = modeDescriptions[routine.mode];
   const fictional = catalog.source === 'synthetic_samples';
   const productsOffered = new Set([...routine.am, ...routine.pm].flatMap((step) => (step.product ? [step.product.id] : []))).size;
+  const exclusions = summarizeExclusions(catalog.products, buildSafetyProfile(routineProfile), requestedTagsFor(analysis.result), budgetMaximumCents[routineProfile.budgetPreference]);
+  const exclusionLines = describeExclusions(exclusions);
 
   return (
     <Screen title="Routine" back>
@@ -289,6 +292,17 @@ export default function RoutineScreen() {
         </Text>
       </Pressable>
 
+      <View style={styles.governanceCard}>
+        <Text style={styles.catalogEyebrow}>WHY SOME PRODUCTS ARE NOT HERE</Text>
+        {exclusionLines.map((line) => <Text key={line} style={styles.governanceLine}>• {line}</Text>)}
+        {catalog.blocked.length ? <Text style={styles.governanceLine}>• {catalog.blocked.length} on the list are held back from everyone, each with the reviewer’s reason.</Text> : null}
+        <View style={styles.governanceLinks}>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/how-we-pick')} style={styles.governanceLink}><Text style={styles.catalogLink}>How we pick →</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/products')} style={styles.governanceLink}><Text style={styles.catalogLink}>Reasons per product →</Text></Pressable>
+          {catalog.blocked.length ? <Pressable accessibilityRole="button" onPress={() => router.push('/held-back')} style={styles.governanceLink}><Text style={styles.catalogLink}>Held-back list →</Text></Pressable> : null}
+        </View>
+      </View>
+
       <InfoCard
         title="Your price preference"
         body={routineProfile.budgetPreference === 'no_limit'
@@ -379,6 +393,10 @@ const styles = StyleSheet.create({
   planLink: { minHeight: 36, justifyContent: 'center', alignItems: 'center' },
   planLinkText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
   catalogCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 5, ...shadows.card },
+  governanceCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 6, ...shadows.card },
+  governanceLine: { color: colors.muted, fontSize: 11, lineHeight: 16 },
+  governanceLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 4 },
+  governanceLink: { minHeight: 32, justifyContent: 'center' },
   catalogHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   catalogEyebrow: { color: colors.green, fontSize: 8, fontWeight: '800', letterSpacing: 0.9 },
   catalogLink: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },

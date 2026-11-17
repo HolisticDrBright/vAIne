@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen, SecondaryButton } from '@/components/AppChrome';
 import { ProductPurchaseLink } from '@/components/ProductPurchaseLink';
@@ -12,6 +12,7 @@ import type { SkinObservationTag } from '@/domain/analysis/observationTaxonomy';
 import type { CatalogEntry } from '@/domain/catalog/catalogEntry';
 import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
 import { evaluateProductEligibility, rankEligibleProducts, type IneligibilityReason, type ProductCandidate } from '@/domain/recommendations/eligibility';
+import { ineligibilityReasonCopy } from '@/domain/recommendations/governance';
 import {
   budgetMaximumCents,
   buildSafetyProfile,
@@ -42,17 +43,7 @@ const kindLabels: Record<CatalogEntry['productKind'], string> = {
   supplement: 'Supplement',
 };
 
-const reasonCopy: Record<IneligibilityReason, string> = {
-  not_verified: 'Not yet verified',
-  catalog_not_approved: 'Catalog review incomplete',
-  prescription_only: 'Prescription only',
-  pregnancy_exclusion: 'Excluded for pregnancy or trying to conceive',
-  nursing_exclusion: 'Excluded while nursing',
-  recent_procedure_exclusion: 'Excluded after a recent procedure',
-  sensitivity_exclusion: 'Excluded by your sensitivity or fragrance preference',
-  allergy_match: 'Contains an ingredient you avoid',
-  duplicate_active_family: 'Same active family you already use',
-};
+const reasonCopy: Record<IneligibilityReason, string> = ineligibilityReasonCopy;
 
 type MatchStatus =
   | { kind: 'no_profile' }
@@ -193,6 +184,11 @@ export default function ProductsScreen() {
         <View style={styles.summaryItem}><Text style={styles.summaryNumber}>{catalog.blocked.length + catalog.invalid.length}</Text><Text style={styles.summaryLabel}>HELD BACK</Text></View>
       </View>
 
+      <View style={styles.linkRow}>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/how-we-pick')} style={styles.linkChip}><Text style={styles.linkChipText}>How we pick products →</Text></Pressable>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/held-back')} style={styles.linkChip}><Text style={styles.linkChipText}>Held back ({catalog.blocked.length}) →</Text></Pressable>
+      </View>
+
       {!routineProfile || analysis.status !== 'ready' ? (
         <InfoCard title="See your matches" body="Complete a check-in and the short safety questions; each product then shows whether it matches your goals, budget, and safety answers." tone="lilac" />
       ) : null}
@@ -314,6 +310,9 @@ const styles = StyleSheet.create({
   title: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -4 },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -6 },
   summary: { flexDirection: 'row', gap: 10 },
+  linkRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  linkChip: { minHeight: 36, justifyContent: 'center', paddingHorizontal: 12, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel },
+  linkChipText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
   summaryItem: { flex: 1, backgroundColor: colors.panel, borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, padding: 12, alignItems: 'center', ...shadows.card },
   summaryNumber: { color: colors.text, fontSize: 22, fontWeight: '800' },
   summaryLabel: { color: colors.muted, fontSize: 7, fontWeight: '800', letterSpacing: 0.8, marginTop: 3 },
