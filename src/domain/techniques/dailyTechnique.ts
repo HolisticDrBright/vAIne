@@ -11,7 +11,7 @@ import { rankEligibleTechniques, type RankedTechnique, type TechniqueSafetyProfi
  * store, and the same date always yields the same session.
  */
 
-export type NoTechniqueReason = 'no_eligible_technique' | 'no_owned_tool' | 'library_empty';
+export type NoTechniqueReason = 'no_eligible_technique' | 'no_owned_tool' | 'library_empty' | 'professional_review_pending';
 
 export interface DailyTechniquePick {
   session: RankedTechnique | null;
@@ -33,6 +33,7 @@ export function pickDailyTechnique(
   dateKey: string,
 ): DailyTechniquePick {
   if (!techniques.length) return { session: null, reason: 'library_empty', needsTool: [] };
+  if (profile.professionalReviewRecommended) return { session: null, reason: 'professional_review_pending', needsTool: [] };
   const ranked = rankEligibleTechniques(techniques, profile, requestedTags, toolsOwned);
   if (!ranked.length) return { session: null, reason: 'no_eligible_technique', needsTool: [] };
   const doable = ranked.filter((entry) => entry.toolOwned);
@@ -48,4 +49,5 @@ export const noTechniqueReasonCopy: Record<NoTechniqueReason, string> = {
   no_eligible_technique: 'No technique is offered with your current safety answers. Products and daily protection continue as usual.',
   no_owned_tool: 'The techniques that fit you need a tool you have not marked as owned. Facial exercise needs none; others show a tool placeholder.',
   library_empty: 'No techniques are available yet.',
+  professional_review_pending: 'Your latest check-in suggested having an area looked at by a professional, so every technique is paused until that has happened. Products and daily protection continue as usual.',
 };

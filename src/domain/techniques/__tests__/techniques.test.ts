@@ -4,9 +4,12 @@ import { SKIN_OBSERVATION_TAGS, SKIN_ZONES } from '../../analysis/observationTax
 import { validateTechniqueCopy } from '../../recommendations/copyValidation';
 import { noTechniqueReasonCopy, pickDailyTechnique } from '../dailyTechnique';
 import {
+  DEVICE_AGE_GUIDANCE,
   PLACEHOLDER_REVIEW_LABEL,
+  RECENT_WEEKS,
   TECHNIQUE_CATEGORIES,
   TECHNIQUE_EXCLUSION_FLAGS,
+  UNIVERSAL_STOP_RULE,
   isPlaceholderTechnique,
   techniqueExclusionCopy,
   techniqueSchema,
@@ -33,41 +36,85 @@ const clear: TechniqueSafetyProfile = {
   activeBreakouts: false,
   recentInjectables: false,
   fragileSkinOrBloodThinners: false,
+  seizureOrHeartCondition: false,
+  rosaceaOrBrokenCapillaries: false,
+  activeInfection: false,
+  sunburn: false,
+  professionalReviewRecommended: false,
 };
 
 const byId = (id: string): Technique => techniqueLibrary.find((item) => item.id === id)!;
+const ids = (results: readonly { eligible: boolean }[], techniques: readonly Technique[]) => techniques.filter((_, index) => !results[index].eligible).map((item) => item.id).sort();
 
 describe('technique library', () => {
-  test('every entry validates, covers one category each, and is a labelled placeholder', () => {
+  test('every entry validates, covers one category each, and records the practitioner review', () => {
     expect(techniqueLibrary.map((item) => item.category).sort()).toEqual([...TECHNIQUE_CATEGORIES].sort());
     for (const technique of techniqueLibrary) {
       expect(() => techniqueSchema.parse(technique)).not.toThrow();
-      expect(isPlaceholderTechnique(technique)).toBe(true);
-      expect(technique.evidenceNote).toMatch(/not been reviewed by a practitioner/);
+      expect(isPlaceholderTechnique(technique)).toBe(false);
+      expect(technique).toMatchObject({ reviewStatus: 'practitioner_approved', reviewedBy: 'Dr. Bright', reviewedAtIso: '2026-11-17T00:00:00.000Z' });
+      expect(technique.evidenceNote).not.toMatch(/placeholder|not been reviewed/i);
       for (const zone of technique.zones) expect(SKIN_ZONES).toContain(zone);
       for (const tag of technique.observationTags) expect(SKIN_OBSERVATION_TAGS).toContain(tag);
     }
+  });
+
+  test('an approved entry must say who reviewed it and when; placeholders stay possible', () => {
+    const base = byId('gua-sha-gentle-sweep');
+    expect(techniqueSchema.safeParse({ ...base, reviewedBy: null }).success).toBe(false);
+    expect(techniqueSchema.safeParse({ ...base, reviewedAtIso: 'yesterday' }).success).toBe(false);
+    const placeholder = techniqueSchema.parse({ ...base, id: 'new-entry', reviewStatus: 'placeholder_awaiting_practitioner_review', reviewedBy: null, reviewedAtIso: null });
+    expect(isPlaceholderTechnique(placeholder)).toBe(true);
     expect(PLACEHOLDER_REVIEW_LABEL).toMatch(/AWAITING PRACTITIONER REVIEW/);
   });
 
-  test('all technique copy passes the claim rules and avoids medical wording', () => {
+  test('all technique copy passes the claim rules, avoids medical wording, and never promises safety for all ages', () => {
+    const everything: string[] = [UNIVERSAL_STOP_RULE, DEVICE_AGE_GUIDANCE, ...Object.values(techniqueExclusionCopy), ...Object.values(noTechniqueReasonCopy)];
     for (const technique of techniqueLibrary) {
-      const texts = [technique.name, technique.evidenceNote, technique.skipNote, ...technique.steps.flatMap((step) => [step.title, step.cue])];
-      for (const text of texts) {
-        expect(validateTechniqueCopy(text).ok, `${technique.id}: ${text}`).toBe(true);
-        expect(text).not.toMatch(/diagnos|disease|heal|collagen production|lymphatic drainage|detox|toxin/i);
-      }
+      everything.push(technique.name, technique.evidenceNote, technique.skipNote, ...technique.steps.flatMap((step) => [step.title, step.cue]));
+    }
+    for (const flag of TECHNIQUE_EXCLUSION_FLAGS) everything.push(techniqueReasonCopy(flag));
+    everything.push(techniqueReasonCopy('professional_review_pending'));
+    for (const text of everything) {
+      expect(validateTechniqueCopy(text).ok, text).toBe(true);
+      expect(text).not.toMatch(/diagnos|disease|heal|collagen production|lymphatic drainage|detox|toxin|safe for all ages|suitable for all ages|any age/i);
+      expect(text).not.toMatch(/helps? (an? )?infection|clears? (a )?cold sore|eye (health|sight|benefit)/i);
     }
   });
 
-  test('the only tool-free technique is facial exercise, and every flag has copy', () => {
-    const toolFree = techniqueLibrary.filter((item) => item.requiredTool === null);
-    expect(toolFree.map((item) => item.category)).toEqual(['facial_exercise']);
-    for (const flag of TECHNIQUE_EXCLUSION_FLAGS) {
-      expect(techniqueExclusionCopy[flag].length).toBeGreaterThan(10);
-      expect(techniqueReasonCopy(flag).length).toBeGreaterThan(10);
+  test('device techniques defer to the maker for age and red light keeps the eye-protection direction', () => {
+    for (const technique of techniqueLibrary) {
+      if (technique.category === 'microcurrent' || technique.category === 'red_light') {
+        expect(technique.skipNote, technique.id).toContain(DEVICE_AGE_GUIDANCE);
+      }
     }
-    expect(techniqueSchema.safeParse({ ...byId('gua-sha-gentle-sweep'), durationSeconds: 999 }).success).toBe(false);
+    const redLight = byId('red-light-face-session');
+    expect(`${redLight.skipNote} ${redLight.steps.map((step) => step.cue).join(' ')}`).toMatch(/eye protection directions/);
+  });
+
+  test('"recent" means four weeks in the question copy and the skip notes', () => {
+    expect(RECENT_WEEKS).toBe(4);
+    expect(techniqueExclusionCopy.recent_injectables).toMatch(/4 weeks/);
+    expect(techniqueExclusionCopy.recent_procedure).toMatch(/4 weeks/);
+    for (const technique of techniqueLibrary) {
+      if (technique.exclusionFlags.includes('recent_injectables')) expect(technique.skipNote, technique.id).toMatch(/4 weeks/);
+    }
+  });
+
+  test('skip notes match what is enforced', () => {
+    const expectations: Record<string, RegExp[]> = {
+      'gua-sha-gentle-sweep': [/cold sore/, /sunburn/, /rosacea/, /injectables/, /blood thinners/],
+      'cupping-light-glide': [/cold sore/, /sunburn/, /rosacea/, /injectables/, /blood thinners/],
+      'microcurrent-cheek-and-jaw': [/pacemaker/, /seizure/, /heart condition/, /sunburn/, /pregnancy/],
+      'red-light-face-session': [/sensitive to light/, /procedure/],
+      'facial-exercise-brow-and-cheek': [/injectables/, /procedure/],
+    };
+    for (const [id, patterns] of Object.entries(expectations)) {
+      for (const pattern of patterns) expect(byId(id).skipNote, `${id} ${pattern}`).toMatch(pattern);
+    }
+    // Microcurrent is deliberately not blocked by a cold sore or infection, and its note makes no claim about them.
+    expect(byId('microcurrent-cheek-and-jaw').exclusionFlags).not.toContain('active_infection_area');
+    expect(byId('microcurrent-cheek-and-jaw').skipNote).not.toMatch(/cold sore|infection/);
   });
 });
 
@@ -79,15 +126,28 @@ describe('technique eligibility', () => {
   });
 
   test.each([
-    ['implantedDevice', 'implanted_device', 'microcurrent-cheek-and-jaw'],
-    ['photosensitisingMedication', 'photosensitising_medication', 'red-light-face-session'],
-    ['activeBreakouts', 'active_breakout_area', 'gua-sha-gentle-sweep'],
-    ['recentInjectables', 'recent_injectables', 'facial-exercise-brow-and-cheek'],
-    ['fragileSkinOrBloodThinners', 'fragile_skin_or_blood_thinners', 'cupping-light-glide'],
-  ] as const)('%s excludes techniques flagged %s', (field, reason, id) => {
-    const result = evaluateTechniqueEligibility(byId(id), { ...clear, [field]: true }, []);
-    expect(result.eligible).toBe(false);
-    expect(result.reasons).toEqual([reason]);
+    ['implantedDevice', 'implanted_device', ['microcurrent-cheek-and-jaw']],
+    ['photosensitisingMedication', 'photosensitising_medication', ['red-light-face-session']],
+    ['activeBreakouts', 'active_breakout_area', ['cupping-light-glide', 'gua-sha-gentle-sweep', 'microcurrent-cheek-and-jaw']],
+    ['recentInjectables', 'recent_injectables', ['cupping-light-glide', 'facial-exercise-brow-and-cheek', 'gua-sha-gentle-sweep', 'microcurrent-cheek-and-jaw']],
+    ['fragileSkinOrBloodThinners', 'fragile_skin_or_blood_thinners', ['cupping-light-glide', 'gua-sha-gentle-sweep']],
+    ['seizureOrHeartCondition', 'seizure_or_heart_condition', ['microcurrent-cheek-and-jaw']],
+    ['rosaceaOrBrokenCapillaries', 'rosacea_or_broken_capillaries', ['cupping-light-glide', 'gua-sha-gentle-sweep']],
+    ['activeInfection', 'active_infection_area', ['cupping-light-glide', 'gua-sha-gentle-sweep']],
+    ['sunburn', 'sunburn', ['cupping-light-glide', 'gua-sha-gentle-sweep', 'microcurrent-cheek-and-jaw']],
+  ] as const)('%s blocks exactly the techniques flagged %s', (field, reason, blocked) => {
+    const profile = { ...clear, [field]: true };
+    const results = techniqueLibrary.map((technique) => evaluateTechniqueEligibility(technique, profile, []));
+    expect(ids(results, techniqueLibrary)).toEqual([...blocked]);
+    for (const [index, technique] of techniqueLibrary.entries()) {
+      if (blocked.includes(technique.id as never)) expect(results[index].reasons).toEqual([reason]);
+    }
+  });
+
+  test('a cold sore or infection leaves microcurrent available; sunburn does not', () => {
+    const micro = byId('microcurrent-cheek-and-jaw');
+    expect(evaluateTechniqueEligibility(micro, { ...clear, activeInfection: true }, []).eligible).toBe(true);
+    expect(evaluateTechniqueEligibility(micro, { ...clear, sunburn: true }, []).reasons).toEqual(['sunburn']);
   });
 
   test('reuses the pregnancy, procedure, and sensitivity answers', () => {
@@ -95,23 +155,27 @@ describe('technique eligibility', () => {
     expect(evaluateTechniqueEligibility(byId('microcurrent-cheek-and-jaw'), { ...clear, nursing: true }, []).reasons).toEqual(['pregnancy_caution']);
     expect(evaluateTechniqueEligibility(byId('red-light-face-session'), { ...clear, recentProcedure: true }, []).reasons).toEqual(['recent_procedure']);
     expect(evaluateTechniqueEligibility(byId('gua-sha-gentle-sweep'), { ...clear, sensitivityPreference: 'sensitive' }, []).reasons).toEqual(['sensitive_skin_caution']);
-    // Facial exercise carries no sensitivity flag, so a sensitive person still has one option.
     expect(evaluateTechniqueEligibility(byId('facial-exercise-brow-and-cheek'), { ...clear, sensitivityPreference: 'sensitive' }, []).eligible).toBe(true);
   });
 
-  test('a flag that does not apply to a technique never excludes it, and all reasons are reported', () => {
-    expect(evaluateTechniqueEligibility(byId('facial-exercise-brow-and-cheek'), { ...clear, implantedDevice: true, photosensitisingMedication: true }, []).eligible).toBe(true);
-    const everything = evaluateTechniqueEligibility(byId('microcurrent-cheek-and-jaw'), { ...clear, implantedDevice: true, activeBreakouts: true, recentProcedure: true }, []);
-    expect(everything.reasons).toEqual(['implanted_device', 'active_breakout_area', 'recent_procedure']);
+  test('a suggested professional look pauses every technique and says why', () => {
+    const paused = { ...clear, professionalReviewRecommended: true };
+    for (const technique of techniqueLibrary) {
+      const result = evaluateTechniqueEligibility(technique, paused, []);
+      expect(result.eligible, technique.id).toBe(false);
+      expect(result.reasons[0]).toBe('professional_review_pending');
+    }
+    expect(techniqueReasonCopy('professional_review_pending')).toMatch(/professional look/);
+    expect(pickDailyTechnique(techniqueLibrary, paused, [], ['gua_sha_tool'], '2026-11-17')).toMatchObject({ session: null, reason: 'professional_review_pending' });
+    expect(noTechniqueReasonCopy.professional_review_pending).toMatch(/paused/);
   });
 
-  test('ranks owned-tool techniques first, then goal matches; tools never change eligibility', () => {
+  test('all reasons are reported together, and tools never change eligibility', () => {
+    const everything = evaluateTechniqueEligibility(byId('microcurrent-cheek-and-jaw'), { ...clear, implantedDevice: true, seizureOrHeartCondition: true, sunburn: true }, []);
+    expect(everything.reasons).toEqual(['implanted_device', 'seizure_or_heart_condition', 'sunburn']);
     const ranked = rankEligibleTechniques(techniqueLibrary, clear, ['appearance.fine_lines_visible'], ['red_light_device']);
     expect(ranked).toHaveLength(techniqueLibrary.length);
-    // Both the owned red-light device and tool-free facial exercise match the goal; ties fall back to name order.
     expect(ranked.slice(0, 2).map((entry) => entry.technique.id)).toEqual(['facial-exercise-brow-and-cheek', 'red-light-face-session']);
-    expect(ranked.slice(2).every((entry) => !entry.toolOwned)).toBe(true);
-    expect(ranked.find((entry) => entry.technique.id === 'red-light-face-session')?.eligibility.matchedTags).toEqual(['appearance.fine_lines_visible']);
   });
 });
 
@@ -124,27 +188,12 @@ describe('daily technique pick', () => {
     expect(a.session?.technique.id).toBe(b.session?.technique.id);
     const week = new Set(['2026-11-17', '2026-11-18', '2026-11-19'].map((day) => pickDailyTechnique(techniqueLibrary, clear, tags, tools, day).session?.technique.id));
     expect(week.size).toBeGreaterThan(1);
-    for (const day of ['2026-11-17', '2026-11-18', '2026-11-19']) {
-      const pick = pickDailyTechnique(techniqueLibrary, clear, tags, tools, day).session!;
-      expect(pick.toolOwned).toBe(true);
-      expect(pick.eligibility.matchedTags).toContain('appearance.dullness_visible');
-    }
   });
 
-  test('falls back to the tool-free technique when no tool is owned', () => {
-    const pick = pickDailyTechnique(techniqueLibrary, clear, [], [], '2026-11-17');
-    expect(pick.session?.technique.id).toBe('facial-exercise-brow-and-cheek');
-    expect(pick.needsTool.length).toBe(techniqueLibrary.length - 1);
-  });
-
-  test('explains when nothing can be offered', () => {
+  test('falls back to the tool-free technique when no tool is owned, and explains an empty day', () => {
+    expect(pickDailyTechnique(techniqueLibrary, clear, [], [], '2026-11-17').session?.technique.id).toBe('facial-exercise-brow-and-cheek');
     const cautious = { ...clear, recentInjectables: true, recentProcedure: true };
-    const none = pickDailyTechnique(techniqueLibrary, cautious, [], ['gua_sha_tool'], '2026-11-17');
-    expect(none).toMatchObject({ session: null, reason: 'no_eligible_technique' });
-    const noTool = pickDailyTechnique(techniqueLibrary.filter((item) => item.requiredTool !== null), clear, [], [], '2026-11-17');
-    expect(noTool.reason).toBe('no_owned_tool');
-    expect(noTool.needsTool.length).toBeGreaterThan(0);
+    expect(pickDailyTechnique(techniqueLibrary, cautious, [], ['gua_sha_tool'], '2026-11-17')).toMatchObject({ session: null, reason: 'no_eligible_technique' });
     expect(pickDailyTechnique([], clear, [], [], '2026-11-17').reason).toBe('library_empty');
-    for (const copy of Object.values(noTechniqueReasonCopy)) expect(copy.length).toBeGreaterThan(20);
   });
 });

@@ -11,9 +11,9 @@ import { SKIN_OBSERVATION_TAGS } from '../analysis/observationTaxonomy';
  * - Unknown compatibility data stays unknown (`'unknown'` / `null`) — it is
  *   never guessed, and preference filters treat unknown conservatively.
  * - Prices are approximate and time-limited: a listed price carries a
- *   verification timestamp and goes stale after 90 days. A product with no
- *   verified price stays visible but is shown without one and is never
- *   assumed to fit a budget ceiling.
+ *   verification timestamp and goes stale after 90 days, after which it is
+ *   no longer shown. A product with no current price stays visible but is
+ *   shown without one and is never assumed to fit a budget ceiling.
  * - Affiliate URLs are never fabricated: they must be clean HTTPS with no
  *   template placeholders, and every affiliate link requires a non-affiliate
  *   fallback URL and disclosure.
@@ -148,7 +148,6 @@ export type VisibilityBlockReason =
   | 'out_of_scope'
   | 'evidence_not_approved'
   | 'review_stale'
-  | 'price_stale'
   | 'not_available'
   | 'affiliate_without_fallback';
 
@@ -171,15 +170,22 @@ export function assessConsumerVisibility(entry: CatalogEntry, nowIso: string): V
   if (!Number.isFinite(now) || now - Date.parse(entry.lastReviewedAtIso) > MAX_REVIEW_AGE_DAYS * DAY_MS) {
     reasons.push('review_stale');
   }
-  if (entry.approximatePriceCents !== null && entry.priceVerifiedAtIso !== null
-    && (!Number.isFinite(now) || now - Date.parse(entry.priceVerifiedAtIso) > MAX_PRICE_AGE_DAYS * DAY_MS)) {
-    reasons.push('price_stale');
-  }
   if (entry.affiliate && !entry.nonAffiliateFallbackUrl) {
     reasons.push('affiliate_without_fallback');
   }
 
   return reasons;
+}
+
+/**
+ * A verified price older than MAX_PRICE_AGE_DAYS is no longer shown. The
+ * product itself stays visible: it is offered without a price and is never
+ * assumed to fit a budget ceiling, exactly like a product never priced.
+ */
+export function isPriceStale(entry: Pick<CatalogEntry, 'approximatePriceCents' | 'priceVerifiedAtIso'>, nowIso: string): boolean {
+  if (entry.approximatePriceCents === null || entry.priceVerifiedAtIso === null) return false;
+  const now = Date.parse(nowIso);
+  return !Number.isFinite(now) || now - Date.parse(entry.priceVerifiedAtIso) > MAX_PRICE_AGE_DAYS * DAY_MS;
 }
 
 export function isConsumerVisible(entry: CatalogEntry, nowIso: string): boolean {

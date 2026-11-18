@@ -5,6 +5,7 @@ import {
   catalogEntrySchema,
   deriveBudgetTier,
   isConsumerVisible,
+  isPriceStale,
   MAX_PRICE_AGE_DAYS,
   MAX_REVIEW_AGE_DAYS,
   type CatalogEntry,
@@ -139,14 +140,19 @@ describe('consumer visibility gate', () => {
     expect(assessConsumerVisibility(validEntry({ availabilityStatus: 'limited' }), NOW)).toEqual([]);
   });
 
-  test('blocks stale reviews and stale prices at their exact boundaries', () => {
+  test('blocks stale reviews at the exact boundary', () => {
     const reviewStale = new Date(Date.parse(NOW) - (MAX_REVIEW_AGE_DAYS + 1) * 24 * 3600 * 1000).toISOString();
     expect(assessConsumerVisibility(validEntry({ lastReviewedAtIso: reviewStale }), NOW)).toContain('review_stale');
-
-    const priceStale = new Date(Date.parse(NOW) - (MAX_PRICE_AGE_DAYS + 1) * 24 * 3600 * 1000).toISOString();
-    expect(assessConsumerVisibility(validEntry({ priceVerifiedAtIso: priceStale }), NOW)).toContain('price_stale');
-
     expect(isConsumerVisible(validEntry(), NOW)).toBe(true);
+  });
+
+  test('a stale price withholds the price but keeps the product visible', () => {
+    const priceStale = new Date(Date.parse(NOW) - (MAX_PRICE_AGE_DAYS + 1) * 24 * 3600 * 1000).toISOString();
+    const priceFresh = new Date(Date.parse(NOW) - (MAX_PRICE_AGE_DAYS - 1) * 24 * 3600 * 1000).toISOString();
+    expect(isPriceStale(validEntry({ priceVerifiedAtIso: priceStale }), NOW)).toBe(true);
+    expect(isPriceStale(validEntry({ priceVerifiedAtIso: priceFresh }), NOW)).toBe(false);
+    expect(isPriceStale(validEntry({ approximatePriceCents: null, priceVerifiedAtIso: null }), NOW)).toBe(false);
+    expect(assessConsumerVisibility(validEntry({ priceVerifiedAtIso: priceStale }), NOW)).toEqual([]);
   });
 
   test('an affiliate link without a non-affiliate fallback is not visible', () => {

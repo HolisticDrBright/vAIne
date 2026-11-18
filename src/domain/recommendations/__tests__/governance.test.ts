@@ -29,7 +29,8 @@ describe('how we pick', () => {
     expect(text).toMatch(/safety answers come first/i);
     expect(text).toMatch(/Affiliate relationships, commissions, discounts, and merchant placement are not available to the matching code/);
     expect(text).toMatch(/never sees the product list/);
-    expect(text).toMatch(/placeholder content awaiting practitioner review/);
+    expect(text).toMatch(/A suggested professional look pauses every technique/);
+    expect(text).toMatch(/unreviewed entries are labelled as placeholders/);
     expect(text).not.toMatch(/Young Goose|Vitali|Alitura|INBLUEM|Augustinus|Medik8/);
     for (const step of HOW_WE_PICK_STEPS) {
       expect(validateRecommendationCopy({ copy: step.body, allowedProducts: [], knownProducts: [] }).ok, step.title).toBe(true);

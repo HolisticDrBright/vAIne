@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { skinAnalysisSchema } from '../analysis/skinAnalysisSchema';
 import type { AnalysisRecord } from '../analysis/analysisService';
-import type { RoutineSafetyIntake } from '../recommendations/routineBuilder';
+import type { ProductDecisions, RoutineSafetyIntake } from '../recommendations/routineBuilder';
 import { PRODUCT_TYPE_VALUES } from '../recommendations/productTypes';
 import { TECHNIQUE_TOOLS } from '../techniques/technique';
 import { reminderPreferenceSchema, type ReminderPreference } from './checkInReminder';
@@ -52,6 +52,9 @@ export const routineSafetyIntakeSchema = z.object({
   activeBreakouts: safetyAnswerSchema.optional(),
   recentInjectables: safetyAnswerSchema.optional(),
   fragileSkinOrBloodThinners: safetyAnswerSchema.optional(),
+  seizureOrHeartCondition: safetyAnswerSchema.optional(),
+  rosaceaOrBrokenCapillaries: safetyAnswerSchema.optional(),
+  facialSkinRightNow: z.enum(['none', 'cold_sore_or_infection', 'sunburn', 'both', 'prefer_not_to_say']).optional(),
   toolsOwned: z.array(z.enum(TECHNIQUE_TOOLS)).max(TECHNIQUE_TOOLS.length).default([]),
 }).strict();
 
@@ -77,6 +80,19 @@ export const rememberedAnalysisRecordSchema = z.object({
   result: skinAnalysisSchema,
 }).strict();
 
+/**
+ * What the person decided about listed products: added to their protocol
+ * (scheduled first in its step while it still passes their safety and budget
+ * answers) or set aside (never offered). Product ids only; a product can be
+ * in one list at a time, and a decision is undone from the routine screen.
+ */
+export const productDecisionsSchema = z.object({
+  inProtocol: z.array(z.string().min(1).max(120)).max(60).default([]),
+  notForMe: z.array(z.string().min(1).max(120)).max(200).default([]),
+}).strict();
+
+export type ProductDecision = 'in_protocol' | 'not_for_me' | 'clear';
+
 export const consentDefaultsSchema = z.object({
   progressTracking: z.boolean(),
 }).strict();
@@ -91,6 +107,8 @@ export const localProfileSchema = z.object({
   reminder: reminderPreferenceSchema.nullable().default(null),
   /** Calendar dates on which today's plan was marked done; null until the first. */
   planLog: planLogSchema.nullable().default(null),
+  /** Products added to the protocol or set aside; null until the first decision. */
+  productDecisions: productDecisionsSchema.nullable().default(null),
 }).strict();
 
 export type LocalProfile = z.infer<typeof localProfileSchema>;
@@ -103,6 +121,7 @@ export const emptyLocalProfile: LocalProfile = {
   consentDefaults: null,
   reminder: null,
   planLog: null,
+  productDecisions: null,
 };
 
 /** Text that would indicate an image reference leaked into the profile. */
@@ -126,7 +145,33 @@ export function isProfileEmpty(profile: LocalProfile): boolean {
     && profile.lastCheckIn === null
     && profile.consentDefaults === null
     && profile.reminder === null
-    && profile.planLog === null;
+    && profile.planLog === null
+    && profile.productDecisions === null;
+}
+
+export const emptyDecisions: ProductDecisions = { inProtocol: [], notForMe: [] };
+
+/** The person's product decisions, empty when none have been made. */
+export function productDecisionsOf(profile: LocalProfile): ProductDecisions {
+  return profile.productDecisions ?? emptyDecisions;
+}
+
+/** Moves a product into one list (removing it from the other) or clears it from both. */
+export function withProductDecision(profile: LocalProfile, productId: string, decision: ProductDecision, nowIso: string): LocalProfile {
+  const current = productDecisionsOf(profile);
+  const inProtocol = current.inProtocol.filter((id) => id !== productId);
+  const notForMe = current.notForMe.filter((id) => id !== productId);
+  if (decision === 'in_protocol') inProtocol.push(productId);
+  if (decision === 'not_for_me') notForMe.push(productId);
+  const next = productDecisionsSchema.parse({ inProtocol, notForMe });
+  const empty = next.inProtocol.length === 0 && next.notForMe.length === 0;
+  return { ...profile, productDecisions: empty ? null : next, updatedAtIso: nowIso };
+}
+
+/** Puts `replacementId` into the protocol in place of `replacedId`, which is set aside. */
+export function withProductSwap(profile: LocalProfile, replacedId: string | null, replacementId: string, nowIso: string): LocalProfile {
+  const withReplacement = withProductDecision(profile, replacementId, 'in_protocol', nowIso);
+  return replacedId && replacedId !== replacementId ? withProductDecision(withReplacement, replacedId, 'not_for_me', nowIso) : withReplacement;
 }
 
 export function withRoutineIntake(

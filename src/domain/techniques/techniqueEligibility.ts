@@ -14,21 +14,26 @@ import type { Technique, TechniqueExclusionFlag, TechniqueTool } from './techniq
 
 export interface TechniqueSafetyProfile extends SafetyProfile {
   implantedDevice: boolean;
+  /** A medication or a condition that makes skin more sensitive to light. */
   photosensitisingMedication: boolean;
   activeBreakouts: boolean;
   recentInjectables: boolean;
   fragileSkinOrBloodThinners: boolean;
+  seizureOrHeartCondition: boolean;
+  rosaceaOrBrokenCapillaries: boolean;
+  /** A cold sore or other skin infection on the face right now. */
+  activeInfection: boolean;
+  sunburn: boolean;
+  /**
+   * The latest result suggested a professional look. The result carries no
+   * zone, so every technique is paused until it has been reviewed.
+   */
+  professionalReviewRecommended: boolean;
 }
 
 export type TechniqueIneligibilityReason =
-  | 'implanted_device'
-  | 'photosensitising_medication'
-  | 'active_breakout_area'
-  | 'recent_injectables'
-  | 'fragile_skin_or_blood_thinners'
-  | 'pregnancy_caution'
-  | 'recent_procedure'
-  | 'sensitive_skin_caution';
+  | TechniqueExclusionFlag
+  | 'professional_review_pending';
 
 export interface TechniqueEligibilityResult {
   eligible: boolean;
@@ -42,6 +47,10 @@ const FLAG_CHECKS: readonly [flag: TechniqueExclusionFlag, applies: (profile: Te
   ['active_breakout_area', (profile) => profile.activeBreakouts],
   ['recent_injectables', (profile) => profile.recentInjectables],
   ['fragile_skin_or_blood_thinners', (profile) => profile.fragileSkinOrBloodThinners],
+  ['seizure_or_heart_condition', (profile) => profile.seizureOrHeartCondition],
+  ['rosacea_or_broken_capillaries', (profile) => profile.rosaceaOrBrokenCapillaries],
+  ['active_infection_area', (profile) => profile.activeInfection],
+  ['sunburn', (profile) => profile.sunburn],
   ['pregnancy_caution', (profile) => profile.pregnantOrTrying || profile.nursing],
   ['recent_procedure', (profile) => profile.recentProcedure],
   ['sensitive_skin_caution', (profile) => profile.sensitivityPreference === 'sensitive'],
@@ -54,6 +63,8 @@ export function evaluateTechniqueEligibility(
 ): TechniqueEligibilityResult {
   const flags = new Set(technique.exclusionFlags);
   const reasons: TechniqueIneligibilityReason[] = [];
+  // A suggested professional look pauses every technique, whatever its flags.
+  if (profile.professionalReviewRecommended) reasons.push('professional_review_pending');
   for (const [flag, applies] of FLAG_CHECKS) {
     if (flags.has(flag) && applies(profile)) reasons.push(flag);
   }
@@ -96,12 +107,17 @@ export function rankEligibleTechniques(
 export function techniqueReasonCopy(reason: TechniqueIneligibilityReason): string {
   switch (reason) {
     case 'implanted_device': return 'Not offered because of an implanted electrical device.';
-    case 'photosensitising_medication': return 'Not offered while a light-sensitising medication is in use.';
+    case 'photosensitising_medication': return 'Not offered while a medication or condition makes your skin more sensitive to light.';
     case 'active_breakout_area': return 'Not offered while breakouts are active in the area.';
-    case 'recent_injectables': return 'Not offered in the weeks after injectables.';
+    case 'recent_injectables': return 'Not offered within 4 weeks of injectables.';
     case 'fragile_skin_or_blood_thinners': return 'Not offered with fragile skin or blood thinners.';
+    case 'seizure_or_heart_condition': return 'Not offered with a seizure history or a heart condition.';
+    case 'rosacea_or_broken_capillaries': return 'Not offered with rosacea or visible broken capillaries.';
+    case 'active_infection_area': return 'Not offered while a cold sore or skin infection is present.';
+    case 'sunburn': return 'Not offered on sunburned skin.';
     case 'pregnancy_caution': return 'Paused during pregnancy, trying to conceive, or nursing.';
-    case 'recent_procedure': return 'Paused after a recent procedure.';
+    case 'recent_procedure': return 'Paused for 4 weeks after a peel, laser, or other procedure.';
     case 'sensitive_skin_caution': return 'Paused for a sensitive-skin preference.';
+    case 'professional_review_pending': return 'Paused because your latest check-in suggested a professional look. Techniques resume once that has been reviewed.';
   }
 }

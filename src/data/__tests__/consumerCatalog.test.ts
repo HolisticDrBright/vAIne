@@ -89,13 +89,14 @@ describe('imported Longevity Skincare product database', () => {
     const blockedSunscreen = catalogEntrySchema.parse(generatedEntries.find((entry) => entry.productId === 'young-goose-bio-shield-spf-40'));
     expect(applyBetaCatalogTestingOverride(blockedSunscreen)).toEqual(blockedSunscreen);
 
+    // A face sunscreen still under review is previewed like other topicals (see the TestFlight override tests).
     const unreviewedSunscreen = catalogEntrySchema.parse(generatedEntries.find((entry) => entry.productId === 'oneskin-os-01-shield-spf-30'));
-    expect(applyBetaCatalogTestingOverride(unreviewedSunscreen)).toEqual(unreviewedSunscreen);
+    expect(catalogEntrySchema.parse(applyBetaCatalogTestingOverride(unreviewedSunscreen)).evidenceReviewStatus).toBe('approved');
 
     const betaEntries = generatedEntries.map((entry) => applyBetaCatalogTestingOverride(entry));
     const betaCatalog = resolveRoutineCatalog(betaEntries, approvedPrototypeCatalog, NOW);
     expect(betaCatalog.products.length).toBeGreaterThan(70);
-    expect(betaCatalog.products.every((product) => product.routineSlot !== 'protect')).toBe(true);
+    expect(betaCatalog.products.filter((product) => product.routineSlot === 'protect')).toHaveLength(5);
     expect(betaCatalog.products.some((product) => product.id === 'young-goose-vampire-exosomes')).toBe(false);
   });
 
@@ -177,6 +178,30 @@ describe('imported Longevity Skincare product database', () => {
     // "no products of this type" rather than guessing.
     const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['sunscreen'] }, catalog.products);
     expect(routine.interestPicks[0]).toEqual(expect.objectContaining({ product: null, noProductReason: 'no_products_of_type' }));
+  });
+
+  test('in the TestFlight preview, face sunscreens under review fill the protection step', () => {
+    const previewRows = consumerCatalogEntries.map(applyBetaCatalogTestingOverride);
+    const catalog = resolveRoutineCatalog(previewRows, approvedPrototypeCatalog, NOW);
+    const sunscreens = catalog.products.filter((product) => product.routineSlot === 'protect');
+    expect(sunscreens.map((product) => product.brandName).sort()).toEqual(['Cocokind', 'Marie Veronique', 'OneSkin', 'The INKEY List', 'Versed']);
+    // Reviewer-blocked sunscreens stay held back even in the preview.
+    expect(catalog.blocked.some(({ entry }) => entry.productName === 'BIO-SHIELD SPF 40')).toBe(true);
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...standardIntake, productInterests: ['sunscreen'] }, catalog.products);
+    const protect = routine.am.find((step) => step.slot === 'protect');
+    expect(protect?.product?.routineSlot).toBe('protect');
+    expect(protect?.product?.note).toMatch(/Drug Facts panel/);
+    expect(routine.interestPicks[0]?.product?.productTypes).toContain('sunscreen');
+  });
+
+  test('today, prices verified in August are withheld but their products stay offered', () => {
+    const today = '2026-11-18T12:00:00.000Z';
+    const catalog = resolveRoutineCatalog(consumerCatalogEntries.map(applyBetaCatalogTestingOverride), approvedPrototypeCatalog, today);
+    const inkey = catalog.products.find((product) => product.brandName === 'The INKEY List');
+    expect(inkey).toBeDefined();
+    expect(inkey?.listPriceCents).toBeNull();
+    // Vitali prices were verified in September and are still current.
+    expect(catalog.products.find((product) => product.brandName === 'Vitali')?.listPriceCents).toBeGreaterThan(0);
   });
 
   test('a shopping interest adds a pick of that type from the real list', () => {

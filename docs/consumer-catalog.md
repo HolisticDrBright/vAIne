@@ -137,9 +137,13 @@ eligibility engine's `ProductCandidate`:
 
 Entries that fail the visibility gate (blocked or out-of-scope catalog state,
 inactive, evidence not approved, discontinued or unknown availability, stale
-review, stale price, affiliate link without a fallback) are listed under
-"Held back" on the product-list screen with the reviewer's reason and never
-offered.
+review, affiliate link without a fallback) are listed under "Held back" on the
+product-list screen with the reviewer's reason and never offered. A price
+verified more than 90 days ago is withheld rather than shown; the product
+stays offered without a price and is never assumed to fit a budget ceiling.
+When a routine step or shopping pick has no product only because every
+candidate is held back, the routine says so ("held back until their review is
+complete") instead of "none yet".
 
 ### Shopping interests
 

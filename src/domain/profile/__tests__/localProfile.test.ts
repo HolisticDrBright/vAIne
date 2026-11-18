@@ -6,8 +6,11 @@ import {
   isProfileEmpty,
   LOCAL_PROFILE_VERSION,
   parseLocalProfile,
+  productDecisionsOf,
   withConsentDefaults,
   withLastCheckIn,
+  withProductDecision,
+  withProductSwap,
   withRoutineIntake,
 } from '../localProfile';
 
@@ -110,15 +113,19 @@ describe('local profile', () => {
         sensitivityPreference: 'standard', pregnancyOrNursing: 'no', recentProcedure: 'no', knownAllergyOrReaction: 'no',
         currentStrongActives: 'no', avoidFragrance: false, budgetPreference: 'no_limit',
         implantedDevice: 'no', lightSensitisingMedication: 'yes', activeBreakouts: 'prefer_not_to_say', recentInjectables: 'no', fragileSkinOrBloodThinners: 'no',
+        seizureOrHeartCondition: 'no', rosaceaOrBrokenCapillaries: 'yes', facialSkinRightNow: 'sunburn',
         toolsOwned: ['gua_sha_tool', 'red_light_device'],
       },
       lastCheckIn: null,
       consentDefaults: null,
     });
-    expect(base?.routineIntake).toMatchObject({ lightSensitisingMedication: 'yes', activeBreakouts: 'prefer_not_to_say', toolsOwned: ['gua_sha_tool', 'red_light_device'] });
+    expect(base?.routineIntake).toMatchObject({ lightSensitisingMedication: 'yes', activeBreakouts: 'prefer_not_to_say', rosaceaOrBrokenCapillaries: 'yes', facialSkinRightNow: 'sunburn', toolsOwned: ['gua_sha_tool', 'red_light_device'] });
     const bad = JSON.parse(JSON.stringify(base));
     bad.routineIntake.toolsOwned = ['scalpel'];
     expect(parseLocalProfile(bad)).toBeNull();
+    const badSkin = JSON.parse(JSON.stringify(base));
+    badSkin.routineIntake.facialSkinRightNow = 'rash';
+    expect(parseLocalProfile(badSkin)).toBeNull();
   });
 
   test('remembers shopping interests and rejects unknown product types', () => {
@@ -148,5 +155,28 @@ describe('local profile', () => {
     const badMode = JSON.parse(JSON.stringify(auto));
     badMode.routineIntake.productInterestMode = 'random';
     expect(parseLocalProfile(badMode)).toBeNull();
+  });
+
+  test('remembers product decisions, keeps a product in one list, and clears to empty', () => {
+    let profile = withProductDecision(emptyLocalProfile, 'serum-a', 'in_protocol', NOW);
+    profile = withProductDecision(profile, 'cream-b', 'not_for_me', NOW);
+    expect(productDecisionsOf(profile)).toEqual({ inProtocol: ['serum-a'], notForMe: ['cream-b'] });
+    expect(isProfileEmpty(profile)).toBe(false);
+    expect(parseLocalProfile(JSON.parse(JSON.stringify(profile)))).toEqual(profile);
+
+    // A product moves between lists rather than appearing in both.
+    profile = withProductDecision(profile, 'serum-a', 'not_for_me', NOW);
+    expect(productDecisionsOf(profile)).toEqual({ inProtocol: [], notForMe: ['cream-b', 'serum-a'] });
+
+    // A swap puts the replacement in the protocol and sets the replaced product aside.
+    profile = withProductSwap(profile, 'cream-b', 'cream-c', NOW);
+    expect(productDecisionsOf(profile)).toEqual({ inProtocol: ['cream-c'], notForMe: ['serum-a', 'cream-b'] });
+
+    for (const id of ['serum-a', 'cream-b', 'cream-c']) profile = withProductDecision(profile, id, 'clear', NOW);
+    expect(profile.productDecisions).toBeNull();
+    expect(productDecisionsOf(profile)).toEqual({ inProtocol: [], notForMe: [] });
+
+    // Profiles saved before decisions existed load with none.
+    expect(parseLocalProfile({ ...emptyLocalProfile, productDecisions: undefined })?.productDecisions).toBeNull();
   });
 });

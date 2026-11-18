@@ -9,6 +9,8 @@ import { attachCommercialLinks, type CommercialLink } from '@/domain/recommendat
 import { buildTechniqueSafetyProfile, requestedTagsFor, techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
 import {
   PLACEHOLDER_REVIEW_LABEL,
+  UNIVERSAL_STOP_RULE,
+  isPlaceholderTechnique,
   techniqueCategoryLabels,
   techniqueExclusionCopy,
   techniqueToolLabels,
@@ -55,7 +57,9 @@ function TechniqueCard({ technique, eligibility, toolOwned, answered }: { techni
     <View style={styles.card}>
       <View style={styles.cardHeading}>
         <Text style={styles.category}>{techniqueCategoryLabels[technique.category].toUpperCase()}</Text>
-        <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text>
+        {isPlaceholderTechnique(technique)
+          ? <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text>
+          : <Text style={styles.reviewedBadge}>REVIEWED {technique.reviewedAtIso ? new Date(technique.reviewedAtIso).getFullYear() : ''}</Text>}
       </View>
       <Text style={styles.name}>{technique.name}</Text>
       <Text style={styles.meta}>
@@ -90,7 +94,7 @@ export default function TechniquesScreen() {
   const owned = new Set<TechniqueTool>(routineProfile?.toolsOwned ?? []);
 
   const evaluated = useMemo(() => {
-    const profile = routineProfile ? buildTechniqueSafetyProfile(routineProfile) : null;
+    const profile = routineProfile ? buildTechniqueSafetyProfile(routineProfile, analysis.result) : null;
     const tags = analysis.result ? requestedTagsFor(analysis.result) : [];
     return techniqueLibrary.map((technique) => ({
       technique,
@@ -111,9 +115,11 @@ export default function TechniquesScreen() {
     <Screen title="Techniques" back>
       <Text style={styles.eyebrow}>AT-HOME COSMETIC TECHNIQUES</Text>
       <Text style={styles.title}>Gentle techniques, matched by rules</Text>
-      <Text style={styles.subtitle}>Gua sha, facial exercise, microcurrent, red light, and cupping are matched to your safety answers and owned tools by fixed rules, never by the AI. Every entry below is placeholder content awaiting practitioner review and describes temporary appearance effects only.</Text>
+      <Text style={styles.subtitle}>Gua sha, facial exercise, microcurrent, red light, and cupping are matched to your safety answers and owned tools by fixed rules, never by the AI. Each entry describes temporary appearance effects only and shows who reviewed it. {UNIVERSAL_STOP_RULE}</Text>
 
-      <InfoCard title="Placeholder content" body="These sessions are synthetic samples. Steps, cues, skip lists, and evidence notes will be replaced by a reviewing practitioner before they are presented as guidance." tone="gold" />
+      {techniqueLibrary.some(isPlaceholderTechnique) ? (
+        <InfoCard title="Some entries await review" body="Entries marked as placeholders are synthetic samples whose steps, cues, skip lists, and evidence notes will be replaced by a reviewing practitioner before they are presented as guidance." tone="gold" />
+      ) : null}
 
       {!routineProfile ? (
         <>
@@ -122,7 +128,7 @@ export default function TechniquesScreen() {
         </>
       ) : !answered ? (
         <>
-          <InfoCard title="Five quick questions to add" body="Your saved answers predate the technique questions. Until they are answered, every technique is treated cautiously and none is added to your plan." tone="lilac" />
+          <InfoCard title="A few quick questions to add" body="Your saved answers predate some of the technique questions. Until they are answered, every technique is treated cautiously and none is added to your plan." tone="lilac" />
           <PrimaryButton label="Update routine preferences" onPress={() => router.push('/routine-intake')} />
         </>
       ) : (
@@ -155,6 +161,7 @@ const styles = StyleSheet.create({
   cardHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   category: { color: colors.blue, fontSize: 8, fontWeight: '800', letterSpacing: 0.8 },
   placeholderBadge: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.gold}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  reviewedBadge: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.green}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
   name: { color: colors.text, fontSize: 16, fontWeight: '700' },
   meta: { color: colors.muted, fontSize: 10 },
   body: { color: colors.muted, fontSize: 11, lineHeight: 16 },

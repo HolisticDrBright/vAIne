@@ -3,13 +3,13 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { InfoCard, LegalNote, PrimaryButton, Screen } from '@/components/AppChrome';
 import { MAX_SUGGESTED_TYPES, PRODUCT_TYPE_OPTIONS, type ProductInterestMode, type ProductType } from '@/domain/recommendations/productTypes';
-import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
+import { ACTIVE_FAMILY_OPTIONS, parseIngredientList, type BudgetPreference, type FacialSkinRightNow, type RoutineProductCount, type SafetyAnswer } from '@/domain/recommendations/routineBuilder';
 import { TECHNIQUE_TOOLS, techniqueToolLabels, type TechniqueTool } from '@/domain/techniques/technique';
 import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
 import { colors, fonts, radius, shadows } from '@/theme';
 
-type ChoiceValue = SafetyAnswer | BudgetPreference | RoutineProductCount | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
+type ChoiceValue = SafetyAnswer | BudgetPreference | RoutineProductCount | FacialSkinRightNow | 'standard' | 'sensitive' | 'avoid' | 'no_preference';
 
 interface ChoiceOption<T extends ChoiceValue> {
   label: string;
@@ -38,6 +38,14 @@ const sensitivityOptions: readonly ChoiceOption<'standard' | 'sensitive'>[] = [
 const fragranceOptions: readonly ChoiceOption<'avoid' | 'no_preference'>[] = [
   { label: 'No preference', value: 'no_preference' },
   { label: 'Avoid fragrance', value: 'avoid' },
+];
+
+const facialSkinOptions: readonly ChoiceOption<FacialSkinRightNow>[] = [
+  { label: 'No', value: 'none' },
+  { label: 'Cold sore or infection', value: 'cold_sore_or_infection' },
+  { label: 'Sunburn', value: 'sunburn' },
+  { label: 'Both', value: 'both' },
+  { label: 'Prefer not to say', value: 'prefer_not_to_say' },
 ];
 
 const budgetOptions: readonly ChoiceOption<BudgetPreference>[] = [
@@ -116,6 +124,9 @@ function RoutineIntakeForm() {
   const [activeBreakouts, setActiveBreakouts] = useState<SafetyAnswer | null>(() => routineProfile?.activeBreakouts ?? null);
   const [recentInjectables, setRecentInjectables] = useState<SafetyAnswer | null>(() => routineProfile?.recentInjectables ?? null);
   const [fragileSkinOrBloodThinners, setFragileSkinOrBloodThinners] = useState<SafetyAnswer | null>(() => routineProfile?.fragileSkinOrBloodThinners ?? null);
+  const [seizureOrHeartCondition, setSeizureOrHeartCondition] = useState<SafetyAnswer | null>(() => routineProfile?.seizureOrHeartCondition ?? null);
+  const [rosaceaOrBrokenCapillaries, setRosaceaOrBrokenCapillaries] = useState<SafetyAnswer | null>(() => routineProfile?.rosaceaOrBrokenCapillaries ?? null);
+  const [facialSkinRightNow, setFacialSkinRightNow] = useState<FacialSkinRightNow | null>(() => routineProfile?.facialSkinRightNow ?? null);
   const [toolsOwned, setToolsOwned] = useState<readonly TechniqueTool[]>(() => routineProfile?.toolsOwned ?? []);
   const toggleTool = (tool: TechniqueTool) => {
     setToolsOwned((current) => (current.includes(tool) ? current.filter((item) => item !== tool) : [...current, tool]));
@@ -129,7 +140,8 @@ function RoutineIntakeForm() {
     currentStrongActives &&
     fragrancePreference &&
     budgetPreference && routineProductCount &&
-    implantedDevice && lightSensitisingMedication && activeBreakouts && recentInjectables && fragileSkinOrBloodThinners,
+    implantedDevice && lightSensitisingMedication && activeBreakouts && recentInjectables && fragileSkinOrBloodThinners &&
+    seizureOrHeartCondition && rosaceaOrBrokenCapillaries && facialSkinRightNow,
   );
 
   const toggleFamily = (family: string) => {
@@ -155,7 +167,10 @@ function RoutineIntakeForm() {
       !lightSensitisingMedication ||
       !activeBreakouts ||
       !recentInjectables ||
-      !fragileSkinOrBloodThinners
+      !fragileSkinOrBloodThinners ||
+      !seizureOrHeartCondition ||
+      !rosaceaOrBrokenCapillaries ||
+      !facialSkinRightNow
     ) return;
 
     saveRoutineProfile({
@@ -177,6 +192,9 @@ function RoutineIntakeForm() {
       activeBreakouts,
       recentInjectables,
       fragileSkinOrBloodThinners,
+      seizureOrHeartCondition,
+      rosaceaOrBrokenCapillaries,
+      facialSkinRightNow,
       toolsOwned,
     });
     router.replace('/routine');
@@ -278,8 +296,8 @@ function RoutineIntakeForm() {
         onSelect={setPregnancyOrNursing}
       />
       <ChoiceQuestion
-        title="Recent peel, laser, injection, or other procedure?"
-        body="A yes or private answer keeps the routine conservative and defers to your aftercare instructions."
+        title="Peel, laser, injection, or other procedure in the last 4 weeks?"
+        body="A yes or private answer keeps the routine conservative, pauses techniques, and defers to your aftercare instructions."
         value={recentProcedure}
         options={answerOptions}
         onSelect={setRecentProcedure}
@@ -343,7 +361,7 @@ function RoutineIntakeForm() {
         </View>
       ) : null}
       <Text style={styles.sectionEyebrow}>FOR AT-HOME TECHNIQUES</Text>
-      <Text style={styles.sectionBody}>Gua sha, facial exercise, microcurrent, red light, and cupping are offered only when these answers allow. A yes or private answer simply leaves a technique out.</Text>
+      <Text style={styles.sectionBody}>Gua sha, facial exercise, microcurrent, red light, and cupping are offered only when these answers allow. A yes or private answer simply leaves a technique out. The app sets no age limit of its own; device techniques follow each maker’s age guidance.</Text>
       <ChoiceQuestion
         title="Pacemaker or other implanted electrical device?"
         body="Microcurrent is never offered with an implanted device."
@@ -352,7 +370,7 @@ function RoutineIntakeForm() {
         onSelect={setImplantedDevice}
       />
       <ChoiceQuestion
-        title="Taking a medication that makes skin more sensitive to light?"
+        title="Taking a medication, or living with a condition, that makes your skin more sensitive to light?"
         body="Red light sessions are left out while you are."
         value={lightSensitisingMedication}
         options={answerOptions}
@@ -366,8 +384,8 @@ function RoutineIntakeForm() {
         onSelect={setActiveBreakouts}
       />
       <ChoiceQuestion
-        title="Injectables in the last few weeks?"
-        body="Massage and device techniques are paused; follow your practitioner’s advice."
+        title="Injectables in the last 4 weeks?"
+        body="Massage and device techniques are paused for 4 weeks; follow your practitioner’s advice."
         value={recentInjectables}
         options={answerOptions}
         onSelect={setRecentInjectables}
@@ -378,6 +396,27 @@ function RoutineIntakeForm() {
         value={fragileSkinOrBloodThinners}
         options={answerOptions}
         onSelect={setFragileSkinOrBloodThinners}
+      />
+      <ChoiceQuestion
+        title="Seizure history or a heart condition?"
+        body="Microcurrent is never offered with either."
+        value={seizureOrHeartCondition}
+        options={answerOptions}
+        onSelect={setSeizureOrHeartCondition}
+      />
+      <ChoiceQuestion
+        title="Rosacea, or visible broken capillaries on the face?"
+        body="Gua sha and cupping are left out; they can aggravate both."
+        value={rosaceaOrBrokenCapillaries}
+        options={answerOptions}
+        onSelect={setRosaceaOrBrokenCapillaries}
+      />
+      <ChoiceQuestion
+        title="A cold sore, infection, or sunburn on the face right now?"
+        body="A cold sore or infection pauses gua sha and cupping. Sunburn also pauses microcurrent. Answers are remembered, so update this when it clears."
+        value={facialSkinRightNow}
+        options={facialSkinOptions}
+        onSelect={setFacialSkinRightNow}
       />
       <View style={styles.question}>
         <Text style={styles.questionTitle}>Which tools do you own?</Text>

@@ -52,11 +52,11 @@ export const HOW_WE_PICK_STEPS: readonly HowWePickStep[] = [
   },
   {
     title: 'Research preview and held-back products',
-    body: 'During the beta, products with an official product page that have not yet completed catalog approval are offered as a labelled research preview. Products with a reviewer’s blocker, out-of-scope items, unverified sunscreens, stale reviews, and missing products are held back from everyone, with the reason shown.',
+    body: 'During the beta, products with an official product page that have not yet completed catalog approval are offered as a labelled research preview; that includes sunscreens still under review, each shown with a reminder to check the Drug Facts panel on the pack. Products with a reviewer’s blocker, out-of-scope items, stale reviews, and missing products are held back from everyone, with the reason shown. A price verified more than 90 days ago is withheld; the product stays listed without it.'
   },
   {
     title: 'Techniques follow the same rules',
-    body: 'At-home techniques are matched from the same safety answers plus five technique questions and the tools you own. Every technique entry is placeholder content awaiting practitioner review, and tools you do not own show only a disclosed placeholder, never a live link.',
+    body: 'At-home techniques are matched from the same safety answers plus the technique questions (implanted device, light sensitivity, breakouts, injectables within 4 weeks, fragile skin or blood thinners, seizure history or heart condition, rosacea or broken capillaries, and a cold sore, infection, or sunburn right now) and the tools you own. A suggested professional look pauses every technique. Each entry shows who reviewed it; unreviewed entries are labelled as placeholders. Tools you do not own show only a disclosed placeholder, never a live link.',
   },
 ];
 
@@ -78,7 +78,6 @@ export const visibilityReasonCopy: Record<VisibilityBlockReason, string> = {
   out_of_scope: 'Outside the scope of daily face care',
   evidence_not_approved: 'Evidence review not yet approved',
   review_stale: 'Review older than the allowed window',
-  price_stale: 'Price verification older than the allowed window',
   not_available: 'Availability unknown or discontinued',
   affiliate_without_fallback: 'Affiliate link without a plain product page',
 };

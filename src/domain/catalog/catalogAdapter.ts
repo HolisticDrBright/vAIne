@@ -1,6 +1,8 @@
 import type { ExclusionFlag, ProductCandidate } from '../recommendations/eligibility';
 import { deriveProductTypes } from '../recommendations/productTypes';
-import { assessConsumerVisibility, catalogEntrySchema, type CatalogEntry } from './catalogEntry';
+import { assessConsumerVisibility, catalogEntrySchema, isPriceStale, type CatalogEntry } from './catalogEntry';
+import type { RoutineSlot } from '../recommendations/eligibility';
+import type { ProductType } from '../recommendations/productTypes';
 
 /**
  * Bridges the reviewed consumer catalog (`CatalogEntry`, the shape a real
@@ -29,8 +31,10 @@ export interface CatalogConversion {
   invalid: { index: number; message: string }[];
 }
 
-export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null {
+export function toProductCandidate(entry: CatalogEntry, nowIso?: string): ProductCandidate | null {
   if (entry.routineSlot === null) return null;
+  // A stale price is withheld rather than shown; the product stays offered without one.
+  const priceCurrent = nowIso === undefined || !isPriceStale(entry, nowIso);
   const flags = new Set<ExclusionFlag>();
   if (entry.pregnancyNursingStatus !== 'reviewed_acceptable') {
     flags.add('pregnancy_exclude');
@@ -49,9 +53,9 @@ export function toProductCandidate(entry: CatalogEntry): ProductCandidate | null
     catalogReviewState: 'catalog_approved',
     catalogSource: entry.source,
     routineSlot: entry.routineSlot,
-    listPriceCents: entry.approximatePriceCents,
+    listPriceCents: priceCurrent ? entry.approximatePriceCents : null,
     currencyCode: entry.currencyCode,
-    priceVerifiedAtIso: entry.priceVerifiedAtIso,
+    priceVerifiedAtIso: priceCurrent ? entry.priceVerifiedAtIso : null,
     catalogState: entry.catalogState,
     whenToUse: entry.sourceNotes?.whenToUse ?? null,
     cautionNote: entry.sourceNotes?.caution ?? null,
@@ -95,6 +99,24 @@ export function deriveActiveFamilies(entry: Pick<CatalogEntry, 'keyIngredients'>
   return [...families];
 }
 
+/** What a held-back row would have been, so a routine gap can say "held back" rather than "none yet". */
+export interface HeldBackProduct {
+  routineSlot: RoutineSlot | null;
+  productTypes: readonly ProductType[];
+}
+
+export function summarizeHeldBack(blocked: readonly { entry: CatalogEntry }[]): HeldBackProduct[] {
+  return blocked.map(({ entry }) => ({
+    routineSlot: entry.routineSlot,
+    productTypes: entry.routineSlot === null ? [] : deriveProductTypes({
+      productName: entry.productName,
+      category: entry.category,
+      routineSlot: entry.routineSlot,
+      activeFamilies: deriveActiveFamilies(entry),
+    }),
+  }));
+}
+
 /**
  * Validates raw catalog rows (for example a JSON list) and converts the
  * consumer-visible ones. Invalid rows are reported, never silently dropped
@@ -114,7 +136,7 @@ export function convertCatalogEntries(rows: readonly unknown[], nowIso: string):
       conversion.blocked.push({ entry: parsed.data, reasons });
       return;
     }
-    const candidate = toProductCandidate(parsed.data);
+    const candidate = toProductCandidate(parsed.data, nowIso);
     if (candidate) conversion.candidates.push(candidate);
     else conversion.outsideRoutine.push(parsed.data);
   });

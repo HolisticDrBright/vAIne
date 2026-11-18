@@ -9,22 +9,28 @@ import { catalogSourceLabels, getRoutineCatalog } from '@/data/routineCatalog';
 import { betaCatalogTestingEnabled } from '@/data/betaCatalogTesting';
 import { assessProductEvidence, ingredientEvidenceGradeLabels } from '@/domain/recommendations/evidenceRanking';
 import {
+  alternativeProductsFor,
   buildSyntheticRoutine,
   budgetPreferenceLabels,
   interestReasonCopy,
   noProductReasonCopy,
   routineProductCountLabels,
+  selectionRoleLabels,
+  type AlternativeProduct,
+  type AlternativeTarget,
   type BuiltRoutineStep,
   type InterestPick,
+  type ProductDecisions,
   type RoutinePeriod,
 } from '@/domain/recommendations/routineBuilder';
-import { describeProductType } from '@/domain/recommendations/productTypes';
+import { describeProductType, pluralProductType } from '@/domain/recommendations/productTypes';
+import { summarizeHeldBack } from '@/domain/catalog/catalogAdapter';
 import { formatReminderTime } from '@/domain/profile/checkInReminder';
-import { withPlanDayDone } from '@/domain/profile/localProfile';
+import { productDecisionsOf, withPlanDayDone, withProductDecision, withProductSwap, type ProductDecision } from '@/domain/profile/localProfile';
 import { computeStreak, emptyPlanLog, toDateKey } from '@/domain/profile/planStreak';
 import { techniqueLibrary } from '@/data/techniqueLibrary';
 import { noTechniqueReasonCopy } from '@/domain/techniques/dailyTechnique';
-import { PLACEHOLDER_REVIEW_LABEL, techniqueToolLabels } from '@/domain/techniques/technique';
+import { PLACEHOLDER_REVIEW_LABEL, isPlaceholderTechnique, techniqueToolLabels } from '@/domain/techniques/technique';
 import { budgetMaximumCents, buildSafetyProfile, requestedTagsFor, techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
 import { describeExclusions, summarizeExclusions } from '@/domain/recommendations/governance';
 import { useLocalProfile } from '@/state/LocalProfileContext';
@@ -39,11 +45,125 @@ const modeDescriptions = {
   cautious: 'A conservative routine that pauses targeted active support.',
 } as const;
 
-function RoutineStepCard({ step, index, fictional, suggested }: { step: BuiltRoutineStep; index: number; fictional: boolean; suggested: boolean }) {
+type Decide = (productId: string, decision: ProductDecision) => void;
+
+interface ChoiceProps {
+  decisions: ProductDecisions;
+  onDecide: Decide;
+  /** Puts a product into the protocol in place of the current one (which is set aside). */
+  onUseInstead: (replacementId: string, replacingId: string | null) => void;
+  /** Other listed products for this step or pick; null until the person asks. */
+  alternatives: readonly AlternativeProduct[] | null;
+  exploring: boolean;
+  onExplore: () => void;
+  /** Plural noun for the explore button ("sunscreens"). */
+  exploreLabel: string;
+}
+
+/**
+ * Add to protocol / not for me / explore. Decisions are remembered on this
+ * device and never relax a safety, budget, or routine-size rule: a protocol
+ * product is only scheduled while it still passes them.
+ */
+function DecisionBar({ productId, decisions, onDecide, exploreLabel, exploring, onExplore, canExplore }: {
+  productId: string | null;
+  decisions: ProductDecisions;
+  onDecide: Decide;
+  exploreLabel: string;
+  exploring: boolean;
+  onExplore: () => void;
+  canExplore: boolean;
+}) {
+  const inProtocol = productId ? decisions.inProtocol.includes(productId) : false;
+  return (
+    <View style={styles.decisionBar}>
+      {productId ? (
+        <>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ selected: inProtocol }}
+            onPress={() => onDecide(productId, inProtocol ? 'clear' : 'in_protocol')}
+            style={[styles.decisionButton, inProtocol && styles.decisionButtonActive]}
+          >
+            <Text style={[styles.decisionText, inProtocol && styles.decisionTextActive]}>{inProtocol ? '✓ In my protocol' : 'Add to my protocol'}</Text>
+          </Pressable>
+          <Pressable accessibilityRole="button" onPress={() => onDecide(productId, 'not_for_me')} style={styles.decisionButton}>
+            <Text style={styles.decisionText}>Not for me</Text>
+          </Pressable>
+        </>
+      ) : null}
+      {canExplore ? (
+        <Pressable accessibilityRole="button" accessibilityState={{ expanded: exploring }} onPress={onExplore} style={styles.decisionGhost}>
+          <Text style={styles.decisionGhostText}>{exploring ? 'Hide other options' : `Explore other ${exploreLabel} →`}</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+function AlternativesList({ alternatives, replacingId, decisions, onUseInstead, onDecide }: {
+  alternatives: readonly AlternativeProduct[];
+  replacingId: string | null;
+  decisions: ProductDecisions;
+  onUseInstead: ChoiceProps['onUseInstead'];
+  onDecide: Decide;
+}) {
+  if (!alternatives.length) {
+    return <Text style={styles.altEmpty}>No other listed product fits this step under your safety, budget, and routine answers.</Text>;
+  }
+  return (
+    <View style={styles.altList}>
+      <Text style={styles.altHeading}>OTHER LISTED OPTIONS · SAME SAFETY, BUDGET AND ROUTINE RULES</Text>
+      {alternatives.map((item) => {
+        const inProtocol = decisions.inProtocol.includes(item.product.id);
+        return (
+          <View key={item.product.id} style={styles.altRow}>
+            <View style={styles.productMeta}>
+              <Text style={styles.productBrand}>{item.product.brandName}</Text>
+              <Text style={styles.productPrice}>{formatPrice(item.product.listPriceCents, item.product.currencyCode)}</Text>
+            </View>
+            <Text style={styles.productName}>{item.product.productName}</Text>
+            <Text style={styles.matchReason}>
+              {item.matchedTags.length
+                ? `Matched on: ${item.matchedTags.map(describeTag).join(', ')}`
+                : 'Passes your safety and budget rules; no direct match to a goal from this check-in.'}
+            </Text>
+            {item.sharedActives.length ? (
+              <Text style={styles.productCaution}>Shares {item.sharedActives.map((active) => active.label).join(', ')} with a product already in this routine.</Text>
+            ) : null}
+            {item.inRoutine ? <Text style={styles.productNote}>Already a step in today’s routine.</Text> : null}
+            {item.product.cautionNote ? <Text style={styles.productCaution}>Caution: {item.product.cautionNote}</Text> : null}
+            <View style={styles.decisionBar}>
+              {replacingId ? (
+                <Pressable accessibilityRole="button" onPress={() => onUseInstead(item.product.id, replacingId)} style={[styles.decisionButton, styles.decisionButtonPrimary]}>
+                  <Text style={styles.decisionTextPrimary}>Use this instead</Text>
+                </Pressable>
+              ) : null}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected: inProtocol }}
+                onPress={() => onDecide(item.product.id, inProtocol ? 'clear' : 'in_protocol')}
+                style={[styles.decisionButton, inProtocol && styles.decisionButtonActive]}
+              >
+                <Text style={[styles.decisionText, inProtocol && styles.decisionTextActive]}>{inProtocol ? '✓ In my protocol' : replacingId ? 'Add as well' : 'Add to my protocol'}</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" onPress={() => onDecide(item.product.id, 'not_for_me')} style={styles.decisionButton}>
+                <Text style={styles.decisionText}>Not for me</Text>
+              </Pressable>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+function RoutineStepCard({ step, index, fictional, suggested, choice }: { step: BuiltRoutineStep; index: number; fictional: boolean; suggested: boolean; choice: ChoiceProps }) {
   const formattedPrice = step.product
     ? formatPrice(step.product.listPriceCents, step.product.currencyCode)
     : null;
   const evidence = step.product ? assessProductEvidence(step.product, step.matchedTags) : null;
+  const inProtocol = step.product ? choice.decisions.inProtocol.includes(step.product.id) : false;
 
   return (
     <View style={styles.row}>
@@ -56,6 +176,7 @@ function RoutineStepCard({ step, index, fictional, suggested }: { step: BuiltRou
               {fictional ? 'FICTIONAL SAMPLE' : step.product.catalogState === 'catalog_approved' ? 'FROM YOUR LIST' : 'RESEARCH PREVIEW'}
             </Text>
           ) : null}
+          {inProtocol ? <Text style={styles.protocolBadge}>IN MY PROTOCOL</Text> : null}
         </View>
         <Text style={styles.purpose}>{step.purpose}</Text>
         <Text style={styles.instruction}>{step.instruction}</Text>
@@ -94,13 +215,26 @@ function RoutineStepCard({ step, index, fictional, suggested }: { step: BuiltRou
             <Text style={styles.categoryOnlyBody}>{step.noProductReason ? noProductReasonCopy[step.noProductReason] : 'No listed product was selected for this step.'}</Text>
           </View>
         )}
+        <DecisionBar
+          productId={step.product?.id ?? null}
+          decisions={choice.decisions}
+          onDecide={choice.onDecide}
+          exploreLabel={choice.exploreLabel}
+          exploring={choice.exploring}
+          onExplore={choice.onExplore}
+          canExplore={step.product !== null || (choice.alternatives?.length ?? 0) > 0}
+        />
+        {choice.exploring && choice.alternatives ? (
+          <AlternativesList alternatives={choice.alternatives} replacingId={step.product?.id ?? null} decisions={choice.decisions} onUseInstead={choice.onUseInstead} onDecide={choice.onDecide} />
+        ) : null}
       </View>
     </View>
   );
 }
 
-function InterestPickCard({ pick, fictional }: { pick: InterestPick; fictional: boolean }) {
+function InterestPickCard({ pick, fictional, choice }: { pick: InterestPick; fictional: boolean; choice: ChoiceProps }) {
   const label = describeProductType(pick.interest);
+  const inProtocol = pick.product ? choice.decisions.inProtocol.includes(pick.product.id) : false;
   return (
     <View style={styles.pickRow}>
       <View style={styles.nameLine}>
@@ -110,6 +244,7 @@ function InterestPickCard({ pick, fictional }: { pick: InterestPick; fictional: 
             {fictional ? 'FICTIONAL SAMPLE' : pick.product.catalogState === 'catalog_approved' ? 'FROM YOUR LIST' : 'RESEARCH PREVIEW'}
           </Text>
         ) : null}
+        {inProtocol ? <Text style={styles.protocolBadge}>IN MY PROTOCOL</Text> : null}
       </View>
       {pick.product ? (
         <View style={styles.pickBody}>
@@ -131,16 +266,39 @@ function InterestPickCard({ pick, fictional }: { pick: InterestPick; fictional: 
       ) : (
         <Text style={styles.categoryOnlyBody}>{pick.noProductReason ? interestReasonCopy(pick.interest, pick.noProductReason) : 'No listed product was selected.'}</Text>
       )}
+      <DecisionBar
+        productId={pick.product?.id ?? null}
+        decisions={choice.decisions}
+        onDecide={choice.onDecide}
+        exploreLabel={choice.exploreLabel}
+        exploring={choice.exploring}
+        onExplore={choice.onExplore}
+        canExplore={pick.product !== null || (choice.alternatives?.length ?? 0) > 0}
+      />
+      {choice.exploring && choice.alternatives ? (
+        <AlternativesList alternatives={choice.alternatives} replacingId={pick.product?.id ?? null} decisions={choice.decisions} onUseInstead={choice.onUseInstead} onDecide={choice.onDecide} />
+      ) : null}
     </View>
   );
 }
 
 export default function RoutineScreen() {
   const [period, setPeriod] = useState<RoutinePeriod>('am');
+  /** Which step or pick currently shows its alternatives (step id or `pick:<type>`). */
+  const [exploring, setExploring] = useState<string | null>(null);
   const { analysis } = useAnalysisSession();
   const { routineProfile, loading } = useRoutineProfile();
   const { profile, updateProfile } = useLocalProfile();
   const catalog = useMemo(() => getRoutineCatalog(), []);
+  const heldBack = useMemo(() => summarizeHeldBack(catalog.blocked), [catalog.blocked]);
+  const decisions = productDecisionsOf(profile);
+  const decide: Decide = (productId, decision) => {
+    void updateProfile((current, nowIso) => withProductDecision(current, productId, decision, nowIso));
+  };
+  const useInstead = (replacementId: string, replacingId: string | null) => {
+    void updateProfile((current, nowIso) => withProductSwap(current, replacingId, replacementId, nowIso));
+    setExploring(null);
+  };
   const todayKey = toDateKey(new Date());
   const streak = computeStreak(profile.planLog ?? emptyPlanLog, todayKey);
   const markTodayDone = () => { void updateProfile((current, nowIso) => withPlanDayDone(current, todayKey, nowIso)); };
@@ -176,7 +334,22 @@ export default function RoutineScreen() {
     );
   }
 
-  const routine = buildSyntheticRoutine(analysis.result, routineProfile, catalog.products, { techniques: techniqueLibrary, dateKey: todayKey });
+  const routine = buildSyntheticRoutine(analysis.result, routineProfile, catalog.products, { techniques: techniqueLibrary, dateKey: todayKey, decisions, heldBack });
+  const result = analysis.result;
+  const intake = routineProfile;
+  const choiceFor = (key: string, target: AlternativeTarget, replacingId: string | null, exploreLabel: string): ChoiceProps => ({
+    decisions,
+    onDecide: decide,
+    onUseInstead: useInstead,
+    alternatives: alternativeProductsFor(result, intake, catalog.products, routine, target, { decisions, replacingProductId: replacingId }),
+    exploring: exploring === key,
+    onExplore: () => setExploring((current) => (current === key ? null : key)),
+    exploreLabel,
+  });
+  const setAside = decisions.notForMe.flatMap((id) => {
+    const product = catalog.products.find((candidate) => candidate.id === id);
+    return product ? [product] : [];
+  });
   const techniqueAnswered = techniqueQuestionsAnswered(routineProfile);
   const session = routine.technique.session;
   const steps = routine[period];
@@ -250,7 +423,8 @@ export default function RoutineScreen() {
         <View style={styles.techniqueBlock}>
           <View style={styles.techniqueHeading}>
             <Text style={styles.planEyebrow}>TODAY’S TECHNIQUE</Text>
-            {session ? <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text> : null}
+            {session && isPlaceholderTechnique(session.technique) ? <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text> : null}
+            {session && !isPlaceholderTechnique(session.technique) ? <Text style={styles.reviewedBadge}>PRACTITIONER REVIEWED</Text> : null}
           </View>
           {session ? (
             <>
@@ -315,9 +489,40 @@ export default function RoutineScreen() {
 
       <InfoCard title="Evidence-based order" body="Scores compare the recorded ingredients with human clinical evidence for the goals in this check-in. They do not mean the finished product itself was clinically proven." tone="green" />
 
+      <InfoCard
+        title="Your choices"
+        body={decisions.inProtocol.length || decisions.notForMe.length
+          ? `${decisions.inProtocol.length} in your protocol · ${decisions.notForMe.length} set aside. Protocol products are scheduled first while they pass your safety and budget answers; set-aside products are never offered. Each card has an undo.`
+          : 'Add a product to your protocol to keep it, mark it not for me to see the next option, or explore other listed options for any step. Your choices are remembered on this device and never change a safety rule.'}
+        tone="lilac"
+      />
+
       <View style={styles.list}>
-        {steps.map((step, index) => <RoutineStepCard key={step.id} step={step} index={index} fictional={fictional} suggested={routine.interestSource === 'suggested'} />)}
+        {steps.map((step, index) => (
+          <RoutineStepCard
+            key={step.id}
+            step={step}
+            index={index}
+            fictional={fictional}
+            suggested={routine.interestSource === 'suggested'}
+            choice={choiceFor(step.id, { kind: 'role', role: step.role }, step.product?.id ?? null, selectionRoleLabels[step.role])}
+          />
+        ))}
       </View>
+
+      {setAside.length ? (
+        <View style={styles.setAsideCard}>
+          <Text style={styles.catalogEyebrow}>SET ASIDE BY YOU</Text>
+          {setAside.map((product) => (
+            <View key={product.id} style={styles.setAsideRow}>
+              <Text style={styles.setAsideName}>{product.brandName} · {product.productName}</Text>
+              <Pressable accessibilityRole="button" onPress={() => decide(product.id, 'clear')} style={styles.decisionGhost}>
+                <Text style={styles.decisionGhostText}>Bring back</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       {routine.interestPicks.length ? (
         <>
@@ -328,7 +533,14 @@ export default function RoutineScreen() {
               : 'One product per type you checked, chosen with the same safety, goal, and budget rules as the routine. Change the list any time from routine preferences.'}
           </Text>
           <View style={styles.list}>
-            {routine.interestPicks.map((pick) => <InterestPickCard key={pick.interest} pick={pick} fictional={fictional} />)}
+            {routine.interestPicks.map((pick) => (
+              <InterestPickCard
+                key={pick.interest}
+                pick={pick}
+                fictional={fictional}
+                choice={choiceFor(`pick:${pick.interest}`, { kind: 'interest', interest: pick.interest }, pick.product?.id ?? null, pluralProductType(pick.interest))}
+              />
+            ))}
           </View>
         </>
       ) : null}
@@ -387,6 +599,7 @@ const styles = StyleSheet.create({
   techniqueBlock: { borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 11, gap: 6 },
   techniqueHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   placeholderBadge: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.gold}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  reviewedBadge: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.green}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
   techniqueName: { color: colors.text, fontSize: 14, fontWeight: '700' },
   techniqueButton: { minHeight: 40, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.blue, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   techniqueButtonText: { color: colors.oliveDark, fontSize: 12, fontWeight: '700' },
@@ -430,4 +643,21 @@ const styles = StyleSheet.create({
   categoryOnly: { marginTop: 9, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line },
   categoryOnlyTitle: { color: colors.green, fontSize: 9, fontWeight: '700' },
   categoryOnlyBody: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 3 },
+  protocolBadge: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.green}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  decisionBar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 10 },
+  decisionButton: { minHeight: 34, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.blue, paddingHorizontal: 12, justifyContent: 'center' },
+  decisionButtonActive: { backgroundColor: `${colors.green}18`, borderColor: `${colors.green}88` },
+  decisionButtonPrimary: { backgroundColor: colors.blue },
+  decisionText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
+  decisionTextActive: { color: colors.green },
+  decisionTextPrimary: { color: colors.white, fontSize: 11, fontWeight: '700' },
+  decisionGhost: { minHeight: 34, justifyContent: 'center', paddingHorizontal: 4 },
+  decisionGhostText: { color: colors.oliveDark, fontSize: 11, fontWeight: '700' },
+  altList: { marginTop: 10, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.line, gap: 2 },
+  altHeading: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.8 },
+  altRow: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.line },
+  altEmpty: { color: colors.muted, fontSize: 10, lineHeight: 14, marginTop: 8 },
+  setAsideCard: { borderRadius: radius.medium, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, padding: 14, gap: 6, ...shadows.card },
+  setAsideRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
+  setAsideName: { color: colors.text, fontSize: 11, fontWeight: '600', flex: 1 },
 });

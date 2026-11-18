@@ -13,8 +13,23 @@ import { SKIN_OBSERVATION_TAGS, SKIN_ZONES } from '../analysis/observationTaxono
  *
  * Copy rules: techniques are described in cautious appearance language
  * ("may help skin look less puffy for a while"). They never claim to reshape
- * bone, lift permanently, treat, cure, or guarantee anything.
+ * bone, lift permanently, treat, cure, or guarantee anything, and they never
+ * state that a technique is "safe for all ages": age limits come from each
+ * device maker's own labelling.
+ *
+ * Practitioner review (2026-11-17, Dr. Bright): the five library entries
+ * were approved as written. "Recent" injectables and procedures mean within
+ * the last four weeks.
  */
+
+/** Shown on every guided session, before and after the timer. */
+export const UNIVERSAL_STOP_RULE = 'Stop if it hurts, marks the skin, or the skin stays red.';
+
+/** How long "recent" means for injectables and procedures. */
+export const RECENT_WEEKS = 4;
+
+/** Device techniques defer to the maker's labelling for age; the app sets no gate of its own. */
+export const DEVICE_AGE_GUIDANCE = 'Follow the device maker’s age guidance.';
 
 export const TECHNIQUE_CATEGORIES = ['gua_sha', 'facial_exercise', 'microcurrent', 'red_light', 'cupping'] as const;
 export type TechniqueCategory = typeof TECHNIQUE_CATEGORIES[number];
@@ -47,6 +62,10 @@ export const TECHNIQUE_EXCLUSION_FLAGS = [
   'active_breakout_area',
   'recent_injectables',
   'fragile_skin_or_blood_thinners',
+  'seizure_or_heart_condition',
+  'rosacea_or_broken_capillaries',
+  'active_infection_area',
+  'sunburn',
   'pregnancy_caution',
   'recent_procedure',
   'sensitive_skin_caution',
@@ -55,12 +74,16 @@ export type TechniqueExclusionFlag = typeof TECHNIQUE_EXCLUSION_FLAGS[number];
 
 export const techniqueExclusionCopy: Record<TechniqueExclusionFlag, string> = {
   implanted_device: 'Not for anyone with a pacemaker or other implanted electrical device.',
-  photosensitising_medication: 'Not while taking a medication that makes skin more sensitive to light.',
+  photosensitising_medication: 'Not while taking a medication, or living with a condition, that makes skin more sensitive to light.',
   active_breakout_area: 'Skip over areas with active breakouts or broken skin.',
-  recent_injectables: 'Not in the weeks after injectables; follow the practitioner’s advice.',
+  recent_injectables: `Not within ${RECENT_WEEKS} weeks of injectables; follow the practitioner’s advice.`,
   fragile_skin_or_blood_thinners: 'Not for fragile or thin skin, or while taking blood thinners.',
+  seizure_or_heart_condition: 'Not with a seizure history or a heart condition.',
+  rosacea_or_broken_capillaries: 'Not with rosacea or visible broken capillaries on the face.',
+  active_infection_area: 'Not over a cold sore or any skin infection.',
+  sunburn: 'Not on sunburned skin.',
   pregnancy_caution: 'Paused during pregnancy or nursing until reviewed with a professional.',
-  recent_procedure: 'Paused after a recent peel, laser, or other procedure; follow your aftercare.',
+  recent_procedure: `Paused for ${RECENT_WEEKS} weeks after a peel, laser, or other procedure; follow your aftercare.`,
   sensitive_skin_caution: 'Paused for a sensitive-skin preference until a gentler version is reviewed.',
 };
 
@@ -84,9 +107,14 @@ export const techniqueSchema = z.object({
   /** Cautious, appearance-only statement of what is and is not known. */
   evidenceNote: z.string().min(20).max(400),
   /** "Who should skip this", shown before every session. */
-  skipNote: z.string().min(10).max(400),
+  skipNote: z.string().min(10).max(600),
   reviewStatus: z.enum(['placeholder_awaiting_practitioner_review', 'practitioner_approved']),
-}).strict().refine((technique) => technique.steps.reduce((total, step) => total + step.seconds, 0) === technique.durationSeconds, 'durationSeconds must equal the sum of step seconds');
+  /** Who approved the entry and when; required once approved. */
+  reviewedBy: z.string().min(1).max(80).nullable().default(null),
+  reviewedAtIso: z.string().nullable().default(null),
+}).strict()
+  .refine((technique) => technique.steps.reduce((total, step) => total + step.seconds, 0) === technique.durationSeconds, 'durationSeconds must equal the sum of step seconds')
+  .refine((technique) => technique.reviewStatus !== 'practitioner_approved' || (technique.reviewedBy && technique.reviewedAtIso && Number.isFinite(Date.parse(technique.reviewedAtIso))), 'an approved technique must record who reviewed it and when');
 
 export type Technique = z.infer<typeof techniqueSchema>;
 export type TechniqueStep = z.infer<typeof techniqueStepSchema>;

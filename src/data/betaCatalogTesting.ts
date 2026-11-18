@@ -7,7 +7,10 @@
  * previews so matching, budget, and routine behavior can be exercised.
  *
  * Known hard blockers, missing/discontinued products, devices, supplements,
- * bundles, body care, and unreviewed sunscreens remain unavailable.
+ * bundles, and body care remain unavailable. Face sunscreens still under
+ * review are previewed like other topicals, with a reminder that a US
+ * sunscreen is an OTC drug whose Drug Facts panel is on the pack; sunscreens
+ * whose review recorded a blocker (no Drug Facts panel, delisted) stay out.
  */
 
 const missingProductPattern = /NOT FOUND|DOES NOT EXIST|discontinued/i;
@@ -26,7 +29,6 @@ export function applyBetaCatalogTestingOverride(entry: unknown): unknown {
     entry.active === true &&
     entry.productKind === 'single' &&
     typeof entry.routineSlot === 'string' &&
-    entry.routineSlot !== 'protect' &&
     entry.availabilityStatus !== 'discontinued' &&
     !missingProductPattern.test(blocker);
 
@@ -40,6 +42,9 @@ export function applyBetaCatalogTestingOverride(entry: unknown): unknown {
   const reviewNote = blocker
     ? ` Pending review note: ${blocker.replace(/^BLOCKER:\s*/i, '').trim()}`
     : '';
+  const sunscreenNote = entry.routineSlot === 'protect'
+    ? ' Sunscreen preview: a US sunscreen is an over-the-counter drug; check the Drug Facts panel on the pack for the SPF, broad-spectrum statement, and directions before relying on it.'
+    : '';
 
   return {
     ...entry,
@@ -49,7 +54,7 @@ export function applyBetaCatalogTestingOverride(entry: unknown): unknown {
     blocker: null,
     sourceNotes: {
       ...sourceNotes,
-      notes: `Beta-only research preview; not catalog-approved.${reviewNote}${existingNote}`,
+      notes: `Beta-only research preview; not catalog-approved.${sunscreenNote}${reviewNote}${existingNote}`,
     },
   };
 }

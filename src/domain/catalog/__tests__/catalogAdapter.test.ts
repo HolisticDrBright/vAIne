@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { evaluateProductEligibility, type SafetyProfile } from '../../recommendations/eligibility';
-import { convertCatalogEntries, deriveActiveFamilies, toProductCandidate } from '../catalogAdapter';
+import { convertCatalogEntries, deriveActiveFamilies, summarizeHeldBack, toProductCandidate } from '../catalogAdapter';
 import { CATALOG_ENTRY_SCHEMA_VERSION, catalogEntrySchema, type CatalogEntry } from '../catalogEntry';
 
 const NOW = '2026-08-06T12:00:00.000Z';
@@ -117,6 +117,31 @@ describe('catalog adapter: unpriced and non-routine entries', () => {
     const conversion = convertCatalogEntries([entry({ productId: 'bundle-1', productKind: 'bundle', routineSlot: null })], NOW);
     expect(conversion.candidates).toHaveLength(0);
     expect(conversion.outsideRoutine.map((item) => item.productId)).toEqual(['bundle-1']);
+  });
+});
+
+describe('catalog adapter: stale prices and held-back summaries', () => {
+  test('a price verified more than 90 days ago is withheld while the product stays offered', () => {
+    const later = '2026-11-18T12:00:00.000Z';
+    const conversion = convertCatalogEntries([entry({ priceVerifiedAtIso: '2026-08-06T00:00:00.000Z', lastReviewedAtIso: '2026-09-05T00:00:00.000Z' })], later);
+    expect(conversion.blocked).toEqual([]);
+    expect(conversion.candidates).toHaveLength(1);
+    expect(conversion.candidates[0].listPriceCents).toBeNull();
+    expect(conversion.candidates[0].priceVerifiedAtIso).toBeNull();
+    // The same row keeps its price while the verification is current.
+    expect(convertCatalogEntries([entry()], NOW).candidates[0].listPriceCents).toBe(1_899);
+  });
+
+  test('summarises held-back rows by slot and product type without carrying anything else', () => {
+    const blocked = convertCatalogEntries([
+      entry({ productId: 'spf', productName: 'Daily Mineral SPF 30', category: 'Sunscreen', routineSlot: 'protect', evidenceReviewStatus: 'pending' }),
+      entry({ productId: 'bundle', productKind: 'bundle', routineSlot: null, evidenceReviewStatus: 'pending' }),
+    ], NOW).blocked;
+    expect(blocked).toHaveLength(2);
+    expect(summarizeHeldBack(blocked)).toEqual([
+      { routineSlot: 'protect', productTypes: ['sunscreen'] },
+      { routineSlot: null, productTypes: [] },
+    ]);
   });
 });
 

@@ -6,7 +6,8 @@ import { techniqueLibrary } from '@/data/techniqueLibrary';
 import { withPlanDayDone } from '@/domain/profile/localProfile';
 import { toDateKey } from '@/domain/profile/planStreak';
 import { buildTechniqueSafetyProfile, techniqueQuestionsAnswered } from '@/domain/recommendations/routineBuilder';
-import { PLACEHOLDER_REVIEW_LABEL, techniqueCategoryLabels, techniqueToolLabels } from '@/domain/techniques/technique';
+import { PLACEHOLDER_REVIEW_LABEL, UNIVERSAL_STOP_RULE, isPlaceholderTechnique, techniqueCategoryLabels, techniqueToolLabels } from '@/domain/techniques/technique';
+import { useAnalysisSession } from '@/state/AnalysisSessionContext';
 import { evaluateTechniqueEligibility, techniqueReasonCopy } from '@/domain/techniques/techniqueEligibility';
 import { useLocalProfile } from '@/state/LocalProfileContext';
 import { useRoutineProfile } from '@/state/RoutineProfileContext';
@@ -29,6 +30,7 @@ export default function TechniqueSessionScreen() {
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const technique = techniqueLibrary.find((item) => item.id === id) ?? null;
   const { routineProfile } = useRoutineProfile();
+  const { analysis } = useAnalysisSession();
   const { updateProfile } = useLocalProfile();
 
   const [phase, setPhase] = useState<'ready' | 'running' | 'paused' | 'done'>('ready');
@@ -38,8 +40,8 @@ export default function TechniqueSessionScreen() {
 
   const eligibility = useMemo(() => {
     if (!technique || !routineProfile || !techniqueQuestionsAnswered(routineProfile)) return null;
-    return evaluateTechniqueEligibility(technique, buildTechniqueSafetyProfile(routineProfile), []);
-  }, [routineProfile, technique]);
+    return evaluateTechniqueEligibility(technique, buildTechniqueSafetyProfile(routineProfile, analysis.result), []);
+  }, [analysis.result, routineProfile, technique]);
 
   useEffect(() => {
     if (phase !== 'running' || !technique) return;
@@ -87,14 +89,20 @@ export default function TechniqueSessionScreen() {
     <Screen title={technique.name} back>
       <View style={styles.headingRow}>
         <Text style={styles.eyebrow}>{techniqueCategoryLabels[technique.category].toUpperCase()}</Text>
-        <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text>
+        {isPlaceholderTechnique(technique)
+          ? <Text style={styles.placeholderBadge}>{PLACEHOLDER_REVIEW_LABEL}</Text>
+          : <Text style={styles.reviewedBadge}>REVIEWED BY {technique.reviewedBy?.toUpperCase()}</Text>}
       </View>
       <Text style={styles.title}>{technique.name}</Text>
       <Text style={styles.subtitle}>
-        {Math.round(technique.durationSeconds / 60)} minutes · {technique.requiredTool ? techniqueToolLabels[technique.requiredTool] : 'No tool needed'}. Placeholder steps in cautious appearance language; a practitioner has not reviewed them yet.
+        {Math.round(technique.durationSeconds / 60)} minutes · {technique.requiredTool ? techniqueToolLabels[technique.requiredTool] : 'No tool needed'}.{' '}
+        {isPlaceholderTechnique(technique)
+          ? 'Placeholder steps in cautious appearance language; a practitioner has not reviewed them yet.'
+          : 'Steps in cautious appearance language, reviewed by a practitioner. Temporary effects only.'}
       </Text>
 
       <InfoCard title="Who should skip this" body={technique.skipNote} tone="gold" />
+      <InfoCard title="Stop rule" body={UNIVERSAL_STOP_RULE} tone="gold" />
       {blocked ? <InfoCard title="Not offered to you right now" body={eligibility!.reasons.map(techniqueReasonCopy).join(' ')} tone="gold" /> : null}
       {!toolOwned && technique.requiredTool ? <InfoCard title="Preview only" body={`This session needs a ${techniqueToolLabels[technique.requiredTool].toLowerCase()}, which you have not marked as owned. You can read the steps; the timer still runs if you want to follow along.`} tone="lilac" /> : null}
 
@@ -103,7 +111,8 @@ export default function TechniqueSessionScreen() {
         <Text style={styles.stepTitle}>{phase === 'done' ? 'Session complete' : step.title}</Text>
         <Text style={styles.clock}>{phase === 'done' ? formatClock(0) : formatClock(remaining)}</Text>
         <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.round((phase === 'done' ? 1 : progress) * 100)}%` }]} /></View>
-        <Text style={styles.cue}>{phase === 'done' ? 'Stop any time skin feels uncomfortable. Nothing here is a treatment.' : step.cue}</Text>
+        <Text style={styles.cue}>{phase === 'done' ? `${UNIVERSAL_STOP_RULE} Nothing here is a treatment.` : step.cue}</Text>
+        {phase === 'running' || phase === 'paused' ? <Text style={styles.stopRule}>{UNIVERSAL_STOP_RULE}</Text> : null}
         <View style={styles.controls}>
           {phase === 'ready' ? <PrimaryButton label="Start" onPress={start} disabled={blocked} /> : null}
           {phase === 'running' ? <PrimaryButton label="Pause" onPress={() => setPhase('paused')} /> : null}
@@ -147,6 +156,8 @@ const styles = StyleSheet.create({
   headingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   eyebrow: { color: colors.gold, fontSize: 9, fontWeight: '800', letterSpacing: 1.1 },
   placeholderBadge: { color: colors.gold, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.gold}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  reviewedBadge: { color: colors.green, fontSize: 7, fontWeight: '800', letterSpacing: 0.6, borderWidth: 1, borderColor: `${colors.green}66`, borderRadius: radius.pill, paddingHorizontal: 6, paddingVertical: 3 },
+  stopRule: { color: colors.gold, fontSize: 10, fontWeight: '700', textAlign: 'center' },
   title: { color: colors.text, fontFamily: fonts.display, fontSize: 27, lineHeight: 33, fontWeight: '400', marginTop: -4 },
   subtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: -6 },
   timerCard: { backgroundColor: colors.panel, borderRadius: radius.large, borderWidth: 1, borderColor: colors.line, padding: 18, alignItems: 'center', gap: 8, ...shadows.card },

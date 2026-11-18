@@ -16,7 +16,7 @@ export default function PrivacyScreen() {
   const { routineProfile } = useRoutineProfile();
   const { profile, forgetProfile } = useLocalProfile();
   const { baseline, clearBaseline } = useProgressBaseline();
-  const hasLocalData = Boolean(session.captures.length || baseline || analysis.result || routineProfile || profile.lastCheckIn || profile.consentDefaults || profile.reminder || profile.planLog);
+  const hasLocalData = Boolean(session.captures.length || baseline || analysis.result || routineProfile || profile.lastCheckIn || profile.consentDefaults || profile.reminder || profile.planLog || profile.productDecisions);
   const controls = [
     ['Analysis consent', session.consent?.analysis ? 'ON' : 'OFF', 'Required before starting a local capture session.'],
     ['Temporary device storage', session.consent?.temporaryDeviceStorage ? 'ON' : 'OFF', `${session.captures.length} temporary photo${session.captures.length === 1 ? '' : 's'} currently referenced by this session.`],
@@ -26,6 +26,7 @@ export default function PrivacyScreen() {
     ['Last check-in', profile.lastCheckIn ? 'SAVED' : 'OFF', profile.lastCheckIn ? 'The last validated, photo-free result (scores and observations only) is saved on this device.' : 'No check-in result is saved on this device.'],
     ['Daily reminder', profile.reminder?.enabled ? 'ON' : 'OFF', profile.reminder?.enabled ? `A local notification at ${formatReminderTime(profile.reminder.hour, profile.reminder.minute)} with fixed wording that never mentions your skin. No push token or server is involved.` : 'No reminder is scheduled on this device.'],
     ['Plan days', profile.planLog?.completedDays.length ? 'SAVED' : 'OFF', profile.planLog?.completedDays.length ? `${profile.planLog.completedDays.length} calendar date${profile.planLog.completedDays.length === 1 ? '' : 's'} on which you marked the plan done, used only for the streak count.` : 'No plan days are recorded on this device.'],
+    ['Product choices', profile.productDecisions ? 'SAVED' : 'OFF', profile.productDecisions ? `${profile.productDecisions.inProtocol.length} product${profile.productDecisions.inProtocol.length === 1 ? '' : 's'} in your protocol and ${profile.productDecisions.notForMe.length} set aside, stored as product ids only and used solely to order your routine.` : 'No product choices are saved on this device.'],
   ] as const;
 
   const deleteSession = async () => {
@@ -49,7 +50,7 @@ export default function PrivacyScreen() {
           </View>
         ))}
       </View>
-      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos (including optional close-ups), any saved baseline photos, in-memory face-alignment geometry, the remembered check-in result, and your saved routine answers. An account, if you have one, is separate and is deleted from the account screen." tone="green" />
+      <InfoCard title="Deletion is immediate" body="Delete all local vAIne data to remove temporary check-in photos (including optional close-ups), any saved baseline photos, in-memory face-alignment geometry, the remembered check-in result, your saved routine answers, and your product choices. An account, if you have one, is separate and is deleted from the account screen." tone="green" />
       <SecondaryButton
         label={hasLocalData ? 'Delete all local vAIne data' : 'No local vAIne data to delete'}
         onPress={() => { if (hasLocalData) void deleteSession(); }}

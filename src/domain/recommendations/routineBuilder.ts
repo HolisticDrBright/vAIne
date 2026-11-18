@@ -11,7 +11,7 @@ import {
   type SafetyProfile,
 } from './eligibility';
 import { matchesInterest, pluralProductType, suggestProductTypes, type ProductInterestMode, type ProductType } from './productTypes';
-import type { Technique, TechniqueTool } from '../techniques/technique';
+import { UNIVERSAL_STOP_RULE, type Technique, type TechniqueTool } from '../techniques/technique';
 import type { TechniqueSafetyProfile } from '../techniques/techniqueEligibility';
 import { pickDailyTechnique, type DailyTechniquePick } from '../techniques/dailyTechnique';
 
@@ -91,23 +91,45 @@ export interface RoutineSafetyIntake {
    * stay paused until the person has answered.
    */
   implantedDevice?: SafetyAnswer;
+  /** A medication or a condition that makes skin more sensitive to light. */
   lightSensitisingMedication?: SafetyAnswer;
   activeBreakouts?: SafetyAnswer;
+  /** Injectables within the last 4 weeks. */
   recentInjectables?: SafetyAnswer;
   fragileSkinOrBloodThinners?: SafetyAnswer;
+  seizureOrHeartCondition?: SafetyAnswer;
+  rosaceaOrBrokenCapillaries?: SafetyAnswer;
+  /** What is on the face right now; a cold sore or infection and sunburn block different techniques. */
+  facialSkinRightNow?: FacialSkinRightNow;
   /** Tools the person owns; only affects which techniques are doable today. */
   toolsOwned?: readonly TechniqueTool[];
 }
 
+export type FacialSkinRightNow = 'none' | 'cold_sore_or_infection' | 'sunburn' | 'both' | 'prefer_not_to_say';
+
 /** True once every technique safety question has an answer other than the default. */
 export function techniqueQuestionsAnswered(intake: RoutineSafetyIntake): boolean {
-  return [intake.implantedDevice, intake.lightSensitisingMedication, intake.activeBreakouts, intake.recentInjectables, intake.fragileSkinOrBloodThinners]
-    .every((answer) => answer !== undefined);
+  return [
+    intake.implantedDevice,
+    intake.lightSensitisingMedication,
+    intake.activeBreakouts,
+    intake.recentInjectables,
+    intake.fragileSkinOrBloodThinners,
+    intake.seizureOrHeartCondition,
+    intake.rosaceaOrBrokenCapillaries,
+    intake.facialSkinRightNow,
+  ].every((answer) => answer !== undefined);
 }
 
-export function buildTechniqueSafetyProfile(intake: RoutineSafetyIntake): TechniqueSafetyProfile {
+export function buildTechniqueSafetyProfile(
+  intake: RoutineSafetyIntake,
+  analysis?: Pick<SkinAnalysis, 'professionalReview'> | null,
+): TechniqueSafetyProfile {
   // An unanswered question is treated like "prefer not to say": cautious.
   const cautious = (answer: SafetyAnswer | undefined) => answer !== 'no';
+  const skinNow = intake.facialSkinRightNow;
+  const infectionNow = skinNow === undefined || skinNow === 'prefer_not_to_say' || skinNow === 'cold_sore_or_infection' || skinNow === 'both';
+  const sunburnNow = skinNow === undefined || skinNow === 'prefer_not_to_say' || skinNow === 'sunburn' || skinNow === 'both';
   return {
     ...buildSafetyProfile(intake),
     implantedDevice: cautious(intake.implantedDevice),
@@ -115,6 +137,11 @@ export function buildTechniqueSafetyProfile(intake: RoutineSafetyIntake): Techni
     activeBreakouts: cautious(intake.activeBreakouts),
     recentInjectables: cautious(intake.recentInjectables),
     fragileSkinOrBloodThinners: cautious(intake.fragileSkinOrBloodThinners),
+    seizureOrHeartCondition: cautious(intake.seizureOrHeartCondition),
+    rosaceaOrBrokenCapillaries: cautious(intake.rosaceaOrBrokenCapillaries),
+    activeInfection: infectionNow,
+    sunburn: sunburnNow,
+    professionalReviewRecommended: Boolean(analysis?.professionalReview.recommended),
   };
 }
 
@@ -138,7 +165,9 @@ export type NoProductReason =
   | 'over_budget'
   | 'routine_size_limit'
   | 'scheduled_elsewhere'
-  | 'no_products_of_type';
+  | 'no_products_of_type'
+  | 'duplicate_active'
+  | 'held_back_for_review';
 
 export interface BuiltRoutineStep {
   id: string;
@@ -151,6 +180,8 @@ export interface BuiltRoutineStep {
   matchedTags: readonly SkinObservationTag[];
   /** The shopping interest this product satisfies, when one decided the choice. */
   interest: ProductType | null;
+  /** The routine role this step fills; alternatives are drawn from the same role. */
+  role: SelectionRole;
   noProductReason: NoProductReason | null;
 }
 
@@ -182,6 +213,10 @@ export interface BuiltRoutine {
   interestSource: 'chosen' | 'suggested' | null;
   /** Today's technique session, chosen by rules from the technique library; null with a reason when none fits. */
   technique: DailyTechniquePick;
+  /** Key actives a candidate shared with a product already in the plan, so it was left out. */
+  skippedForActive: readonly SignatureActive[];
+  /** Products in the person's protocol that no longer pass their safety or budget answers. */
+  pinnedUnavailable: readonly string[];
 }
 
 const goalTags: Record<SkinAnalysis['routineGoals'][number], readonly SkinObservationTag[]> = {
@@ -231,6 +266,8 @@ export const noProductReasonCopy: Record<NoProductReason, string> = {
   routine_size_limit: 'A matching product was left out to honor the routine size you chose.',
   scheduled_elsewhere: 'Your selected product for this category is scheduled at another time of day.',
   no_products_of_type: 'The product list has no product of this type yet.',
+  duplicate_active: 'Matching products for this step share a key active with a product already in this routine, so they were left out to avoid doubling up.',
+  held_back_for_review: 'Listed products for this step are held back until their review is complete. See the held-back list for each reviewer’s reason.',
 };
 
 /** Explains a missing interest pick in words that name the type. */
@@ -244,6 +281,8 @@ export function interestReasonCopy(interest: ProductType, reason: NoProductReaso
     case 'safety_excluded': return `Listed ${plural} were excluded by your safety answers.`;
     case 'over_budget': return `Listed ${plural} that fit you are above your per-product budget.`;
     case 'no_goal_match': return `No listed ${plural} match the appearance goals in this check-in.`;
+    case 'duplicate_active': return `Listed ${plural} that fit you share a key active with a product already in this routine.`;
+    case 'held_back_for_review': return `Listed ${plural} are held back until their review is complete. See the held-back list for each reviewer’s reason.`;
     case 'hidden_for_review': return noProductReasonCopy.hidden_for_review;
     case 'routine_size_limit': return noProductReasonCopy.routine_size_limit;
     case 'scheduled_elsewhere': return noProductReasonCopy.scheduled_elsewhere;
@@ -308,6 +347,71 @@ function activesUnspecifiedFor(intake: RoutineSafetyIntake): boolean {
   return intake.currentStrongActives === 'yes' && (intake.currentActiveFamilies ?? []).length === 0;
 }
 
+/**
+ * Named actives that make two products redundant when both carry one. A
+ * person who already has a GHK-Cu serum gains nothing from a second GHK-Cu
+ * cream in the same plan. The vocabulary is deliberately narrow: it names
+ * treatment actives, never base ingredients (water, glycerin, hyaluronic
+ * acid, ceramides, niacinamide) that most products share.
+ */
+const SIGNATURE_ACTIVE_RULES: readonly [key: string, label: string, pattern: RegExp][] = [
+  ['ghk-cu', 'GHK-Cu (copper peptide)', /\bghk[\s-]*cu\b|\bcu[\s-]*ghk\b|copper\s+(?:tri)?peptide/i],
+  ['os-01', 'OS-01 (decapeptide-52)', /\bos-?01\b|decapeptide-52/i],
+  ['matrixyl', 'Matrixyl-type palmitoyl peptides', /\bmatrixyl\b|palmitoyl\s+(?:tri|penta)peptide-\d+/i],
+  ['argireline', 'acetyl hexapeptide-8 (Argireline)', /\bargireline\b|acetyl\s+hexapeptide-[38]\b/i],
+  ['exosomes', 'exosomes / extracellular vesicles', /exosome|extracellular\s+vesicle/i],
+  ['growth-factors', 'growth factors or conditioned media', /growth\s+factor|conditioned\s+media|\begf\b|\bfgf\b/i],
+  ['nad', 'NAD+ precursors', /\bnad\+?\b|nicotinamide\s+riboside|\bnmn\b/i],
+  ['spermidine', 'spermidine', /\bspermidine\b/i],
+  ['bakuchiol', 'bakuchiol', /\bbakuchiol\b/i],
+  ['azelaic-acid', 'azelaic acid', /\bazelaic\s+acid\b/i],
+  ['tranexamic-acid', 'tranexamic acid', /\btranexamic\s+acid\b/i],
+];
+
+/** Active families that count as a signature wherever they appear. */
+const SIGNATURE_FAMILIES: Readonly<Record<string, string>> = {
+  retinoid: 'a retinoid',
+  'vitamin-c': 'vitamin C',
+  hydroquinone: 'hydroquinone',
+};
+
+/** Only an active named early in the recorded ingredients, or in the name, counts as a signature. */
+const SIGNATURE_INGREDIENT_WINDOW = 8;
+
+export interface SignatureActive {
+  key: string;
+  label: string;
+}
+
+/** The named actives that define what a product is for; two products sharing one are redundant together. */
+export function signatureActives(product: ProductCandidate): SignatureActive[] {
+  const text = [product.productName, ...product.ingredients.slice(0, SIGNATURE_INGREDIENT_WINDOW)].join(' | ');
+  const found = new Map<string, string>();
+  for (const [key, label, pattern] of SIGNATURE_ACTIVE_RULES) {
+    if (pattern.test(text)) found.set(key, label);
+  }
+  for (const family of product.activeFamilies) {
+    const label = SIGNATURE_FAMILIES[family];
+    if (label) found.set(family, label);
+  }
+  return [...found].map(([key, label]) => ({ key, label }));
+}
+
+/** Signature actives two products have in common; empty means they can share a plan. */
+export function sharedSignatureActives(left: ProductCandidate, right: ProductCandidate): SignatureActive[] {
+  if (left.id === right.id) return [];
+  const rightKeys = new Set(signatureActives(right).map((active) => active.key));
+  return signatureActives(left).filter((active) => rightKeys.has(active.key));
+}
+
+function redundantWith(product: ProductCandidate, chosen: readonly ProductCandidate[]): SignatureActive[] {
+  for (const existing of chosen) {
+    const shared = sharedSignatureActives(existing, product);
+    if (shared.length) return shared;
+  }
+  return [];
+}
+
 function explainMissingProduct(
   slot: RoutineSlot,
   catalog: readonly ProductCandidate[],
@@ -334,6 +438,7 @@ function makeStep(
   noProductReason: NoProductReason | null,
   sequence = 0,
   titleOverride?: string,
+  role: SelectionRole = defaultRoleForSlot(slot),
 ): BuiltRoutineStep {
   return {
     id: `${period}-${slot}-${product?.id ?? 'guidance'}-${sequence}`,
@@ -343,6 +448,7 @@ function makeStep(
     product,
     matchedTags,
     interest,
+    role,
     noProductReason,
   };
 }
@@ -363,11 +469,44 @@ function explainMissingInterest(
   return 'over_budget';
 }
 
+/** What the person decided about listed products: added to their protocol, or set aside. */
+export interface ProductDecisions {
+  inProtocol: readonly string[];
+  notForMe: readonly string[];
+}
+
+export const emptyProductDecisions: ProductDecisions = { inProtocol: [], notForMe: [] };
+
+/** A listed product the visibility gate held back, reduced to what the builder needs to explain a gap. */
+export interface HeldBackSummary {
+  routineSlot: RoutineSlot | null;
+  productTypes: readonly ProductType[];
+}
+
 export interface RoutineBuildOptions {
   /** Technique library to draw today's session from; empty means no technique step. */
   techniques?: readonly Technique[];
   /** Device-local calendar date (YYYY-MM-DD) used to rotate the technique session. */
   dateKey?: string;
+  /**
+   * Products the person added to their protocol are placed first in their
+   * role (safety and budget still apply); products marked not for me are
+   * never offered. Neither relaxes a safety rule.
+   */
+  decisions?: ProductDecisions;
+  /** Held-back rows, so a step with no product can say "held back for review" instead of "none yet". */
+  heldBack?: readonly HeldBackSummary[];
+}
+
+/** Routine steps a conservative routine may still fill. */
+export function allowedSlotsFor(intake: RoutineSafetyIntake): Set<RoutineSlot> {
+  const holdTargetedSupport =
+    intake.pregnancyOrNursing !== 'no' ||
+    intake.recentProcedure !== 'no' ||
+    activesUnspecifiedFor(intake);
+  return new Set<RoutineSlot>(holdTargetedSupport
+    ? ['cleanse', 'hydrate', 'protect']
+    : ['cleanse', 'support', 'hydrate', 'protect', 'weekly']);
 }
 
 export function buildSyntheticRoutine(
@@ -386,14 +525,26 @@ export function buildSyntheticRoutine(
   const requestedTags = requestedTagsFor(analysis);
   const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
   const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
-  const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
+  const decisions = options.decisions ?? emptyProductDecisions;
+  const notForMe = new Set(decisions.notForMe);
+  const rankedAll = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker);
+  const ranked = rankedAll.filter(({ product }) => !notForMe.has(product.id));
+  const setAsideCount = rankedAll.length - ranked.length;
   const productCount = intake.routineProductCount ?? 4;
   const { interests, source: interestSource } = resolveProductInterests(intake, analysis);
-  const allowedSlots = new Set<RoutineSlot>(holdTargetedSupport
-    ? ['cleanse', 'hydrate', 'protect']
-    : ['cleanse', 'support', 'hydrate', 'protect', 'weekly']);
+  const allowedSlots = allowedSlotsFor(intake);
   const selectable = ranked.filter(({ product }) => allowedSlots.has(product.routineSlot));
-  const selected = namedSamplesHidden ? [] : selectRoutineProducts(selectable, productCount, interests);
+  const selection = namedSamplesHidden
+    ? { selected: [], skippedForActive: [], pinnedUnavailable: [] }
+    : selectRoutineProducts(selectable, productCount, interests, decisions.inProtocol);
+  const { selected, skippedForActive } = selection;
+  const pinnedUnavailable = selection.pinnedUnavailable.flatMap((id) => {
+    const product = catalog.find((candidate) => candidate.id === id);
+    return product ? [`${product.brandName} ${product.productName}`] : [];
+  });
+  const heldBack = options.heldBack ?? [];
+  const heldBackSlots = new Set(heldBack.map((item) => item.routineSlot));
+  const heldBackTypes = new Set(heldBack.flatMap((item) => item.productTypes));
 
   const coreSlots: RoutineSlot[] = holdTargetedSupport
     ? ['cleanse', 'hydrate']
@@ -422,6 +573,19 @@ export function buildSyntheticRoutine(
   if (intake.recentProcedure !== 'no') {
     notes.push('Follow the aftercare instructions from the professional who performed the recent procedure.');
   }
+  if (skippedForActive.length) {
+    const labels = [...new Set(skippedForActive.map((active) => active.label))];
+    notes.push(`Products sharing a key active already in this plan (${labels.join('; ')}) were left out so nothing is doubled up.`);
+  }
+  if (decisions.inProtocol.length) {
+    notes.push('Products you added to your protocol are scheduled first in their step whenever they still pass your safety and budget answers.');
+  }
+  if (pinnedUnavailable.length) {
+    notes.push(`In your protocol but not scheduled because of your current safety or budget answers: ${pinnedUnavailable.join(', ')}.`);
+  }
+  if (setAsideCount) {
+    notes.push(`${setAsideCount} matching product${setAsideCount === 1 ? '' : 's'} you marked not for me ${setAsideCount === 1 ? 'was' : 'were'} left out.`);
+  }
 
   const stepsFor = (slot: RoutineSlot, period: RoutinePeriod): BuiltRoutineStep[] => {
     const picks = selected.filter((selection) => (
@@ -436,16 +600,20 @@ export function buildSyntheticRoutine(
       null,
       index,
       titleForSelection(pick),
+      pick.role,
     ));
     const selectedInOtherPeriod = selected.some((selection) => selection.entry.product.routineSlot === slot);
-    const matchingButCapped = ranked.some((entry) => entry.product.routineSlot === slot);
+    const matchingAvailable = ranked.some((entry) => entry.product.routineSlot === slot);
+    const explained = explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
     const reason: NoProductReason = namedSamplesHidden
       ? 'hidden_for_review'
       : selectedInOtherPeriod
         ? 'scheduled_elsewhere'
-        : matchingButCapped && selected.length >= productCount
-          ? 'routine_size_limit'
-          : explainMissingProduct(slot, catalog, profile, requestedTags, maxPriceCents);
+        : matchingAvailable
+          ? (selected.length >= productCount ? 'routine_size_limit' : 'duplicate_active')
+          : explained === 'no_products_in_slot' && heldBackSlots.has(slot)
+            ? 'held_back_for_review'
+            : explained;
     return [makeStep(slot, period, null, [], null, reason)];
   };
 
@@ -475,15 +643,24 @@ export function buildSyntheticRoutine(
   const inRoutineIds = new Set(selected.map(({ entry }) => entry.product.id));
   const rankedForPicks = namedSamplesHidden
     ? []
-    : rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker, 'USD', { requireGoalMatch: false });
+    : rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker, 'USD', { requireGoalMatch: false })
+      .filter(({ product }) => !notForMe.has(product.id));
   const pickedIds = new Set<string>();
+  // Products already in the plan, plus earlier picks: a new pick must not
+  // share a key active with any of them.
+  const chosenProducts: ProductCandidate[] = selected.map(({ entry }) => entry.product);
   const interestPicks: InterestPick[] = interests.map((interest) => {
     const candidates = rankedForPicks.filter((entry) => (
       allowedSlots.has(entry.product.routineSlot) && entry.product.productTypes?.includes(interest)
     ));
-    const best = candidates.find((entry) => !pickedIds.has(entry.product.id)) ?? candidates[0];
+    const fresh = candidates.filter((entry) => !pickedIds.has(entry.product.id));
+    const pool = fresh.length ? fresh : candidates;
+    const best = pool.find((entry) => (
+      inRoutineIds.has(entry.product.id) || pickedIds.has(entry.product.id) || !redundantWith(entry.product, chosenProducts).length
+    ));
     if (best) {
       pickedIds.add(best.product.id);
+      if (!inRoutineIds.has(best.product.id)) chosenProducts.push(best.product);
       return {
         interest,
         product: best.product,
@@ -492,9 +669,14 @@ export function buildSyntheticRoutine(
         noProductReason: null,
       };
     }
+    const explained = explainMissingInterest(interest, catalog, allowedSlots, profile, requestedTags);
     const reason: NoProductReason = namedSamplesHidden
       ? 'hidden_for_review'
-      : explainMissingInterest(interest, catalog, allowedSlots, profile, requestedTags);
+      : pool.length
+        ? 'duplicate_active'
+        : explained === 'no_products_of_type' && heldBackTypes.has(interest)
+          ? 'held_back_for_review'
+          : explained;
     return { interest, product: null, matchedTags: [], inRoutine: false, noProductReason: reason };
   });
   if (interestSource === 'suggested') {
@@ -510,13 +692,16 @@ export function buildSyntheticRoutine(
 
   const technique = pickDailyTechnique(
     options.techniques ?? [],
-    buildTechniqueSafetyProfile(intake),
+    buildTechniqueSafetyProfile(intake, analysis),
     requestedTags,
     intake.toolsOwned ?? [],
     options.dateKey ?? '1970-01-01',
   );
   if (technique.session) {
-    notes.push(`Today’s technique is ${technique.session.technique.name.toLowerCase()}, chosen by the same safety answers as the products. It is placeholder content awaiting practitioner review and describes temporary appearance effects only.`);
+    const placeholder = technique.session.technique.reviewStatus !== 'practitioner_approved';
+    notes.push(`Today’s technique is ${technique.session.technique.name.toLowerCase()}, chosen by the same safety answers as the products. It describes temporary appearance effects only${placeholder ? ' and is placeholder content awaiting practitioner review' : ''}. ${UNIVERSAL_STOP_RULE}`);
+  } else if (technique.reason === 'professional_review_pending') {
+    notes.push('Techniques are paused because this check-in suggested a professional look. They resume once that has been reviewed.');
   }
 
   return {
@@ -532,11 +717,41 @@ export function buildSyntheticRoutine(
     interests,
     interestSource,
     technique,
+    skippedForActive,
+    pinnedUnavailable,
   };
 }
 
-type SelectionRole = 'protect' | 'targeted' | 'hydrate' | 'cleanse' | 'peptide' | 'exosome' | 'weekly' | 'toner';
+export type SelectionRole = 'protect' | 'targeted' | 'hydrate' | 'cleanse' | 'peptide' | 'exosome' | 'weekly' | 'toner';
 type RankedProduct = ReturnType<typeof rankEligibleProducts>[number];
+
+export const selectionRoleLabels: Record<SelectionRole, string> = {
+  protect: 'sunscreens',
+  targeted: 'targeted treatments',
+  hydrate: 'moisturizers',
+  cleanse: 'cleansers',
+  peptide: 'peptide treatments',
+  exosome: 'advanced regenerative treatments',
+  weekly: 'weekly treatments',
+  toner: 'toners and essences',
+};
+
+function defaultRoleForSlot(slot: RoutineSlot): SelectionRole {
+  switch (slot) {
+    case 'cleanse': return 'cleanse';
+    case 'support': return 'targeted';
+    case 'hydrate': return 'hydrate';
+    case 'protect': return 'protect';
+    case 'weekly': return 'weekly';
+  }
+}
+
+/** Most specific role first, so a pinned toner is scheduled as a toner, not as the moisturizer. */
+const ROLE_PRIORITY: readonly SelectionRole[] = ['protect', 'cleanse', 'weekly', 'toner', 'hydrate', 'peptide', 'exosome', 'targeted'];
+
+function roleForProduct(product: ProductCandidate): SelectionRole {
+  return ROLE_PRIORITY.find((role) => matchesRole(product, role)) ?? defaultRoleForSlot(product.routineSlot);
+}
 
 interface SelectedProduct {
   entry: RankedProduct;
@@ -605,23 +820,52 @@ function roleCandidates(ranked: readonly RankedProduct[], role: SelectionRole): 
   return matches;
 }
 
+interface RoutineSelection {
+  selected: SelectedProduct[];
+  skippedForActive: SignatureActive[];
+  /** Pinned ids that are not among the eligible, in-budget candidates. */
+  pinnedUnavailable: string[];
+}
+
 function selectRoutineProducts(
   ranked: readonly RankedProduct[],
   count: RoutineProductCount,
   interests: readonly ProductType[] = [],
-): SelectedProduct[] {
+  pinnedIds: readonly string[] = [],
+): RoutineSelection {
   const selected: SelectedProduct[] = [];
   const used = new Set<string>();
+  const filledRoles = new Set<SelectionRole>();
+  const skippedForActive: SignatureActive[] = [];
+  const pinnedUnavailable: string[] = [];
+  const chosen = () => selected.map(({ entry }) => entry.product);
   const take = (candidate: RankedProduct, role: SelectionRole) => {
     selected.push({ entry: candidate, role, interest: matchesInterest(candidate.product.productTypes, interests) });
     used.add(candidate.product.id);
+    filledRoles.add(role);
+  };
+  // Products the person put in their protocol go first, in the role they
+  // fit best. They were chosen deliberately, so they are not checked against
+  // each other for shared actives, and they may exceed the routine size.
+  for (const id of pinnedIds) {
+    if (used.has(id)) continue;
+    const candidate = ranked.find(({ product }) => product.id === id);
+    if (!candidate) { pinnedUnavailable.push(id); continue; }
+    take(candidate, roleForProduct(candidate.product));
+  }
+  const acceptable = (candidate: RankedProduct): boolean => {
+    if (used.has(candidate.product.id)) return false;
+    const shared = redundantWith(candidate.product, chosen());
+    if (shared.length) { skippedForActive.push(...shared); return false; }
+    return true;
   };
   const tryRole = (role: SelectionRole) => {
+    if (filledRoles.has(role)) return;
     // A targeted pick may already fill a later specialty role. Do not spend a
     // second routine slot on the same type of treatment just to fill the plan.
     if ((role === 'peptide' || role === 'exosome')
       && selected.some(({ entry }) => matchesRole(entry.product, role))) return;
-    const candidate = preferInterests(roleCandidates(ranked, role), interests).find(({ product }) => !used.has(product.id));
+    const candidate = preferInterests(roleCandidates(ranked, role), interests).find(acceptable);
     if (!candidate) return;
     take(candidate, role);
   };
@@ -632,11 +876,11 @@ function selectRoutineProducts(
     if (selected.length >= count) break;
     for (const candidate of preferInterests(roleCandidates(ranked, role), interests)) {
       if (selected.length >= count) break;
-      if (used.has(candidate.product.id)) continue;
+      if (!acceptable(candidate)) continue;
       take(candidate, role);
     }
   }
-  return selected;
+  return { selected, skippedForActive, pinnedUnavailable };
 }
 
 function titleForSelection(selection: SelectedProduct): string {
@@ -661,4 +905,64 @@ function periodsForSelection(selection: SelectedProduct): readonly RoutinePeriod
   if (product.activeFamilies.includes('retinoid') || product.activeFamilies.includes('exfoliating-acid')) return ['pm'];
   if (product.activeFamilies.includes('vitamin-c')) return ['am'];
   return ['am'];
+}
+
+export interface AlternativeProduct {
+  product: ProductCandidate;
+  matchedTags: readonly SkinObservationTag[];
+  /** Key actives this product shares with something already in the plan; empty means it adds something new. */
+  sharedActives: readonly SignatureActive[];
+  /** True when the product already fills another step of this routine. */
+  inRoutine: boolean;
+}
+
+export type AlternativeTarget =
+  | { kind: 'role'; role: SelectionRole }
+  | { kind: 'interest'; interest: ProductType };
+
+export const MAX_ALTERNATIVES = 8;
+
+/**
+ * Other listed products the person could use for a step or a shopping pick:
+ * every product that passes the same safety, budget, and conservative-routine
+ * rules and fits the same role (or type), best match first. A goal match is
+ * not required, because the person is choosing for themselves. Products
+ * marked not for me never appear; the product being replaced is excluded.
+ */
+export function alternativeProductsFor(
+  analysis: SkinAnalysis,
+  intake: RoutineSafetyIntake,
+  catalog: readonly ProductCandidate[],
+  routine: Pick<BuiltRoutine, 'am' | 'pm'>,
+  target: AlternativeTarget,
+  options: { decisions?: ProductDecisions; replacingProductId?: string | null; limit?: number } = {},
+): AlternativeProduct[] {
+  if (namedProductsHiddenFor(intake)) return [];
+  const decisions = options.decisions ?? emptyProductDecisions;
+  const notForMe = new Set(decisions.notForMe);
+  const profile = buildSafetyProfile(intake);
+  const requestedTags = requestedTagsFor(analysis);
+  const maxPriceCents = budgetMaximumCents[intake.budgetPreference];
+  const priceTieBreaker = intake.budgetPreference === 'no_limit' ? 'higher' : 'lower';
+  const allowedSlots = allowedSlotsFor(intake);
+  const inRoutine = new Map<string, ProductCandidate>();
+  for (const step of [...routine.am, ...routine.pm]) {
+    if (step.product) inRoutine.set(step.product.id, step.product);
+  }
+  const compareAgainst = [...inRoutine.values()].filter((product) => product.id !== options.replacingProductId);
+  const ranked = rankEligibleProducts(catalog, profile, requestedTags, maxPriceCents, priceTieBreaker, 'USD', { requireGoalMatch: false });
+  return ranked
+    .filter(({ product }) => (
+      allowedSlots.has(product.routineSlot)
+      && !notForMe.has(product.id)
+      && product.id !== options.replacingProductId
+      && (target.kind === 'role' ? matchesRole(product, target.role) : Boolean(product.productTypes?.includes(target.interest)))
+    ))
+    .slice(0, options.limit ?? MAX_ALTERNATIVES)
+    .map(({ product, eligibility }) => ({
+      product,
+      matchedTags: eligibility.matchedTags,
+      sharedActives: redundantWith(product, compareAgainst),
+      inRoutine: inRoutine.has(product.id),
+    }));
 }

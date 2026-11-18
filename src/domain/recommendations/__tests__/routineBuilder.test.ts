@@ -2,7 +2,12 @@ import { describe, expect, test } from 'vitest';
 import { approvedPrototypeCatalog } from '../../../data/prototypeCatalog';
 import { syntheticSkinAnalysis } from '../../../data/syntheticAnalysis';
 import {
+  alternativeProductsFor,
   buildSyntheticRoutine,
+  interestReasonCopy,
+  noProductReasonCopy,
+  sharedSignatureActives,
+  signatureActives,
   type RoutineSafetyIntake,
 } from '../routineBuilder';
 import type { ProductCandidate } from '../eligibility';
@@ -396,13 +401,19 @@ describe('routine builder technique session', () => {
     activeBreakouts: 'no' as const,
     recentInjectables: 'no' as const,
     fragileSkinOrBloodThinners: 'no' as const,
+    seizureOrHeartCondition: 'no' as const,
+    rosaceaOrBrokenCapillaries: 'no' as const,
+    facialSkinRightNow: 'none' as const,
     toolsOwned: ['gua_sha_tool'] as const,
   };
 
   test('unanswered technique questions are treated cautiously and add no session', () => {
     expect(techniqueQuestionsAnswered(standardIntake)).toBe(false);
     const profile = buildTechniqueSafetyProfile(standardIntake);
-    expect(profile).toMatchObject({ implantedDevice: true, photosensitisingMedication: true, activeBreakouts: true, recentInjectables: true, fragileSkinOrBloodThinners: true });
+    expect(profile).toMatchObject({
+      implantedDevice: true, photosensitisingMedication: true, activeBreakouts: true, recentInjectables: true, fragileSkinOrBloodThinners: true,
+      seizureOrHeartCondition: true, rosaceaOrBrokenCapillaries: true, activeInfection: true, sunburn: true, professionalReviewRecommended: false,
+    });
     const routine = buildSyntheticRoutine(syntheticSkinAnalysis, standardIntake, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
     expect(routine.technique.session).toBeNull();
     expect(routine.technique.reason).toBe('no_eligible_technique');
@@ -413,7 +424,8 @@ describe('routine builder technique session', () => {
     const routine = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
     expect(routine.technique.session).not.toBeNull();
     expect(routine.technique.session?.toolOwned).toBe(true);
-    expect(routine.notes.some((note) => /placeholder content awaiting practitioner review/.test(note))).toBe(true);
+    expect(routine.notes.some((note) => /Stop if it hurts, marks the skin, or the skin stays red/.test(note))).toBe(true);
+    expect(routine.notes.some((note) => /placeholder/.test(note))).toBe(false);
     const again = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
     expect(again.technique.session?.technique.id).toBe(routine.technique.session?.technique.id);
   });
@@ -425,9 +437,165 @@ describe('routine builder technique session', () => {
     expect(routine.am.length).toBeGreaterThan(0);
   });
 
+  test('the facial-skin answer splits infection from sunburn', () => {
+    expect(buildTechniqueSafetyProfile({ ...answered, facialSkinRightNow: 'cold_sore_or_infection' })).toMatchObject({ activeInfection: true, sunburn: false });
+    expect(buildTechniqueSafetyProfile({ ...answered, facialSkinRightNow: 'sunburn' })).toMatchObject({ activeInfection: false, sunburn: true });
+    expect(buildTechniqueSafetyProfile({ ...answered, facialSkinRightNow: 'both' })).toMatchObject({ activeInfection: true, sunburn: true });
+    expect(buildTechniqueSafetyProfile({ ...answered, facialSkinRightNow: 'prefer_not_to_say' })).toMatchObject({ activeInfection: true, sunburn: true });
+  });
+
+  test('a suggested professional look pauses the technique step and explains it', () => {
+    const flagged = { ...syntheticSkinAnalysis, professionalReview: { recommended: true, reason: 'Consider having this area reviewed by a qualified healthcare professional.', urgency: 'routine' as const } };
+    const routine = buildSyntheticRoutine(flagged, answered, approvedPrototypeCatalog, { techniques: techniqueLibrary, dateKey: '2026-11-17' });
+    expect(routine.technique).toMatchObject({ session: null, reason: 'professional_review_pending' });
+    expect(routine.notes.some((note) => /paused because this check-in suggested a professional look/.test(note))).toBe(true);
+    expect(routine.am.length).toBeGreaterThan(0);
+  });
+
   test('without a technique library the routine has no technique step', () => {
     const routine = buildSyntheticRoutine(syntheticSkinAnalysis, answered, approvedPrototypeCatalog);
     expect(routine.technique).toEqual({ session: null, reason: 'library_empty', needsTool: [] });
   });
 });
 
+
+describe('routine builder shared actives and product decisions', () => {
+  const make = (
+    id: string,
+    productName: string,
+    ingredients: readonly string[],
+    routineSlot: ProductCandidate['routineSlot'] = 'support',
+    overrides: Partial<ProductCandidate> = {},
+  ): ProductCandidate => ({
+    id,
+    brandName: 'Decision Test',
+    productName,
+    verificationStatus: 'official',
+    catalogReviewState: 'catalog_approved',
+    catalogSource: 'reviewed_research',
+    routineSlot,
+    listPriceCents: 4_000,
+    currencyCode: 'USD',
+    priceVerifiedAtIso: '2026-09-01T00:00:00.000Z',
+    observationTags: ['appearance.texture_irregular'],
+    activeFamilies: ingredients.some((item) => /peptide|ghk/i.test(item)) ? ['peptide'] : [],
+    ingredients,
+    exclusionFlags: [],
+    productTypes: routineSlot === 'protect' ? ['sunscreen'] : routineSlot === 'hydrate' ? ['moisturizer'] : routineSlot === 'cleanse' ? ['cleanser'] : /eye/i.test(productName) ? ['eye_care'] : ['serum', 'wrinkle_treatment'],
+    ...overrides,
+  });
+  const spf = make('d-spf', 'Daily SPF', ['zinc oxide'], 'protect');
+  const ghkSerum = make('d-ghk-serum', '2% GHK-Cu Serum', ['Aqua', 'GHK-Cu', 'Palmitoyl Tripeptide-1', 'Hyaluronic Acid']);
+  const facegevity = make('d-facegevity', 'FACEgevity', ['GHK-Cu (3%)', 'Acetyl Hexapeptide-8', 'Hyaluronic Acid'], 'support', { observationTags: ['appearance.texture_irregular', 'appearance.fine_lines_visible'] });
+  // Dark circles are not in the sample check-in, so the eye product never competes for a routine step.
+  const ghkEye = make('d-ghk-eye', 'Advanced Eye Formula', ['Aqua', 'GHK-Cu', 'Shea Butter'], 'support', { observationTags: ['appearance.dark_circles_visible'] });
+  const moisturizerA = make('d-moist-a', 'Barrier Cream', ['glycerin', 'ceramide NP'], 'hydrate', { observationTags: ['appearance.texture_irregular', 'appearance.hydration_look_low'] });
+  const moisturizerB = make('d-moist-b', 'Comfort Lotion', ['glycerin', 'squalane'], 'hydrate');
+  const cleanser = make('d-cleanse', 'Gentle Cleanser', ['glycerin'], 'cleanse');
+  const intake: RoutineSafetyIntake = { ...standardIntake, budgetPreference: 'no_limit', routineProductCount: 6 };
+  const scheduledIds = (routine: ReturnType<typeof buildSyntheticRoutine>) => new Set([...routine.am, ...routine.pm].flatMap((step) => (step.product ? [step.product.id] : [])));
+
+  test('names the key actives that define a product and ignores base ingredients', () => {
+    expect(signatureActives(ghkSerum).map((active) => active.key)).toEqual(['ghk-cu', 'matrixyl']);
+    expect(signatureActives(moisturizerA)).toEqual([]);
+    const buried = make('d-buried', 'Rich Cream', ['Aqua', 'Glycerin', 'Shea', 'Squalane', 'Panthenol', 'Tocopherol', 'Allantoin', 'Xanthan Gum', 'GHK-Cu'], 'hydrate');
+    expect(signatureActives(buried)).toEqual([]);
+    expect(sharedSignatureActives(ghkSerum, facegevity).map((active) => active.key)).toEqual(['ghk-cu']);
+  });
+
+  test('never schedules two products that share a key active', () => {
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, intake, [spf, ghkSerum, facegevity, moisturizerA, cleanser]);
+    const ids = scheduledIds(routine);
+    expect(Number(ids.has('d-ghk-serum')) + Number(ids.has('d-facegevity'))).toBe(1);
+    expect(routine.skippedForActive.map((active) => active.key)).toContain('ghk-cu');
+    expect(routine.notes.some((note) => /GHK-Cu/.test(note) && /doubled up/.test(note))).toBe(true);
+    for (const step of [...routine.am, ...routine.pm]) expect(step.role).toBeDefined();
+  });
+
+  test('a shopping pick never duplicates an active already in the plan', () => {
+    const routine = buildSyntheticRoutine(
+      syntheticSkinAnalysis,
+      { ...intake, routineProductCount: 2, productInterests: ['eye_care'] },
+      [spf, ghkSerum, ghkEye, cleanser],
+    );
+    expect(scheduledIds(routine).has('d-ghk-serum')).toBe(true);
+    expect(routine.interestPicks[0]).toEqual(expect.objectContaining({ interest: 'eye_care', product: null, noProductReason: 'duplicate_active' }));
+    expect(interestReasonCopy('eye_care', 'duplicate_active')).toMatch(/eye products.*share a key active/);
+  });
+
+  test('a product marked not for me is never offered and the next candidate takes its place', () => {
+    const chosen = buildSyntheticRoutine(syntheticSkinAnalysis, intake, [spf, ghkSerum, facegevity, moisturizerA, cleanser]);
+    const first = [...scheduledIds(chosen)].find((id) => id === 'd-ghk-serum' || id === 'd-facegevity')!;
+    const other = first === 'd-ghk-serum' ? 'd-facegevity' : 'd-ghk-serum';
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, intake, [spf, ghkSerum, facegevity, moisturizerA, cleanser], {
+      decisions: { inProtocol: [], notForMe: [first] },
+    });
+    const ids = scheduledIds(routine);
+    expect(ids.has(first)).toBe(false);
+    expect(ids.has(other)).toBe(true);
+    expect(routine.notes).toContain('1 matching product you marked not for me was left out.');
+    expect(routine.interestPicks).toEqual([]);
+  });
+
+  test('a product added to the protocol is scheduled first in its role, ahead of a better match', () => {
+    const without = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, routineProductCount: 4 }, [spf, ghkSerum, moisturizerA, moisturizerB, cleanser]);
+    expect(without.am.find((step) => step.slot === 'hydrate')?.product?.id).toBe('d-moist-a');
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, routineProductCount: 4 }, [spf, ghkSerum, moisturizerA, moisturizerB, cleanser], {
+      decisions: { inProtocol: ['d-moist-b'], notForMe: [] },
+    });
+    const hydrate = routine.am.find((step) => step.slot === 'hydrate');
+    expect(hydrate?.product?.id).toBe('d-moist-b');
+    expect(hydrate?.role).toBe('hydrate');
+    expect(scheduledIds(routine).has('d-moist-a')).toBe(false);
+    expect(routine.pinnedUnavailable).toEqual([]);
+    expect(routine.notes.some((note) => /added to your protocol are scheduled first/.test(note))).toBe(true);
+  });
+
+  test('a protocol product that no longer fits the safety or budget answers is reported, not scheduled', () => {
+    const pricey = { ...moisturizerB, listPriceCents: 20_000 };
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, budgetPreference: 'up_to_50', routineProductCount: 4 }, [spf, ghkSerum, moisturizerA, pricey, cleanser], {
+      decisions: { inProtocol: ['d-moist-b'], notForMe: [] },
+    });
+    expect(scheduledIds(routine).has('d-moist-b')).toBe(false);
+    expect(routine.pinnedUnavailable).toEqual(['Decision Test Comfort Lotion']);
+    expect(routine.notes.some((note) => /not scheduled because of your current safety or budget answers: Decision Test Comfort Lotion/.test(note))).toBe(true);
+  });
+
+  test('alternatives come from the same role, skip the product being replaced, and flag shared actives', () => {
+    const catalog = [spf, ghkSerum, facegevity, ghkEye, moisturizerA, moisturizerB, cleanser];
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, routineProductCount: 4 }, catalog);
+    const current = routine.am.find((step) => step.slot === 'support')!.product!;
+    const alternatives = alternativeProductsFor(syntheticSkinAnalysis, intake, catalog, routine, { kind: 'role', role: 'targeted' }, { replacingProductId: current.id });
+    expect(alternatives.map((item) => item.product.id)).not.toContain(current.id);
+    expect(alternatives.every((item) => item.product.routineSlot === 'support')).toBe(true);
+    // Swapping one GHK-Cu product for another is not a duplicate: the one being replaced is not compared.
+    expect(alternatives.every((item) => item.sharedActives.length === 0)).toBe(true);
+
+    const withGhkKept = alternativeProductsFor(syntheticSkinAnalysis, intake, catalog, routine, { kind: 'role', role: 'targeted' });
+    expect(withGhkKept.find((item) => item.product.id !== current.id && /ghk/i.test(item.product.ingredients.join(' ')))?.sharedActives.map((active) => active.key)).toEqual(['ghk-cu']);
+
+    const hydrate = alternativeProductsFor(syntheticSkinAnalysis, intake, catalog, routine, { kind: 'role', role: 'hydrate' }, { replacingProductId: 'd-moist-a', decisions: { inProtocol: [], notForMe: ['d-moist-b'] } });
+    expect(hydrate).toEqual([]);
+    const byType = alternativeProductsFor(syntheticSkinAnalysis, intake, catalog, routine, { kind: 'interest', interest: 'moisturizer' });
+    expect(byType.map((item) => item.product.id).sort()).toEqual(['d-moist-a', 'd-moist-b']);
+    expect(byType.find((item) => item.product.id === 'd-moist-a')?.inRoutine).toBe(true);
+  });
+
+  test('alternatives are hidden while named products are hidden for allergy review', () => {
+    const routine = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, knownAllergyOrReaction: 'yes' }, [spf, cleanser]);
+    expect(alternativeProductsFor(syntheticSkinAnalysis, { ...intake, knownAllergyOrReaction: 'yes' }, [spf, cleanser], routine, { kind: 'role', role: 'protect' })).toEqual([]);
+  });
+
+  test('an empty step says held back for review when the list has such products', () => {
+    const catalog = [ghkSerum, moisturizerA, cleanser];
+    const plain = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, productInterests: ['sunscreen'] }, catalog);
+    expect(plain.am.find((step) => step.slot === 'protect')?.noProductReason).toBe('no_products_in_slot');
+    expect(plain.interestPicks[0]?.noProductReason).toBe('no_products_of_type');
+    const explained = buildSyntheticRoutine(syntheticSkinAnalysis, { ...intake, productInterests: ['sunscreen'] }, catalog, {
+      heldBack: [{ routineSlot: 'protect', productTypes: ['sunscreen'] }],
+    });
+    expect(explained.am.find((step) => step.slot === 'protect')?.noProductReason).toBe('held_back_for_review');
+    expect(explained.interestPicks[0]?.noProductReason).toBe('held_back_for_review');
+    expect(noProductReasonCopy.held_back_for_review).toMatch(/held back until their review is complete/);
+  });
+});
