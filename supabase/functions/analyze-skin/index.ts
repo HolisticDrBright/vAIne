@@ -148,8 +148,12 @@ Deno.serve(async (request: Request) => {
     mode: 'live',
     providerId: PROVIDER_ID,
     promptVersion: SKIN_ANALYSIS_PROMPT_VERSION,
+    model,
     captureCount: analysis.captures.length,
     captureAngles: analysis.captures.map((capture) => capture.angle),
+    // Sizes only: numbers that help diagnose provider limits, never content.
+    captureKilobytes: analysis.captures.map((capture) => Math.round(capture.bytes.length / 1024)),
+    captureDimensions: analysis.captures.map((capture) => `${capture.width}x${capture.height}`),
   });
 
   let providerResponse: Awaited<ReturnType<typeof callProvider>>;
@@ -157,7 +161,17 @@ Deno.serve(async (request: Request) => {
     providerResponse = await callProvider(apiKey, model, analysis);
   } catch (error) {
     const status = typeof (error as { status?: number })?.status === 'number' ? (error as { status: number }).status : null;
-    await audit(admin, analysisId, userId, 'analysis_failed', { stage: 'provider', status });
+    // The provider's error type and a short message describe the request
+    // shape (size, parameters, model), never photo content. The audit helper
+    // still scrubs the detail if anything photo-like slipped in.
+    const providerError = (error as { error?: { type?: string; error?: { type?: string; message?: string } }; message?: string }) ?? {};
+    const errorType = providerError.error?.error?.type ?? providerError.error?.type ?? null;
+    const message = (providerError.error?.error?.message ?? providerError.message ?? '')
+      .replace(/[A-Za-z0-9+/=]{80,}/g, '[omitted]')
+      // A link in a provider message would trip the photo-free scan and hide the whole detail.
+      .replace(/\b[a-z]+:\/\/\S+/gi, '[link]')
+      .slice(0, 240);
+    await audit(admin, analysisId, userId, 'analysis_failed', { stage: 'provider', status, errorType, message: message || null });
     return json(502, { error: 'provider_unavailable' });
   } finally {
     // Release the photo bytes as early as possible.
@@ -199,7 +213,7 @@ Deno.serve(async (request: Request) => {
     completedAtIso,
     captureAngles: analysis.captures.map((capture) => capture.angle),
     qualityDecision: classification.decision,
-    imageQualityIssues: result.imageQuality.issues,
+    qualityIssues: result.imageQuality.issues,
     overallConfidence: result.overallConfidence,
     limitationCount: result.limitations.length,
   };
